@@ -339,7 +339,7 @@ select.fi{-webkit-appearance:none;appearance:none}
     <div class="fg"><label class="flbl" id="t-pass-series">Серия паспорта</label><input class="fi" id="rg-ps" placeholder="Серия иностранного паспорта" maxlength="15"></div>
     <div class="fg"><label class="flbl" id="t-pass-num3">Номер паспорта</label><input class="fi" id="rg-pn" placeholder="Номер паспорта" maxlength="20" inputmode="numeric"></div>
     <div class="fg"><label class="flbl" id="t-pass-issue">Дата выдачи паспорта</label><input type="date" class="fi" id="rg-pd"></div>
-    <div class="fg"><label class="flbl" id="t-citizenship3">Гражданство</label><select class="fi" id="rg-c">COUNTRIES</select></div>
+    <div class="fg"><label class="flbl" id="t-citizenship3">Гражданство</label><select class="fi" id="rg-c" onchange="updatePassportHints('rg-c','rg-ps','rg-pn','t-pass-series','t-pass-num3')">COUNTRIES</select></div>
     <button class="btn" onclick="doRegistry()" id="t-check-reg-btn">🔍 Проверить в реестре</button>
     <div id="rg-result" style="margin-top:14px"></div>
     <div class="divider"></div>
@@ -363,7 +363,7 @@ select.fi{-webkit-appearance:none;appearance:none}
     <div class="fg"><label class="flbl" id="t-ban-pnum">Номер паспорта</label><input class="fi" id="bn-pn" placeholder="Номер паспорта" maxlength="20" inputmode="numeric"></div>
     <div class="fg"><label class="flbl" id="t-ban-pdate">Дата выдачи паспорта</label><input type="date" class="fi" id="bn-pd"></div>
     <div class="fg"><label class="flbl" id="t-ban-pexp">Срок действия паспорта до</label><input type="date" class="fi" id="bn-pe"></div>
-    <div class="fg"><label class="flbl" id="t-ban-cit">Гражданство</label><select class="fi" id="bn-c">COUNTRIES</select></div>
+    <div class="fg"><label class="flbl" id="t-ban-cit">Гражданство</label><select class="fi" id="bn-c" onchange="updatePassportHints('bn-c','bn-ps','bn-pn','t-ban-pser','t-ban-pnum')">COUNTRIES</select></div>
     <button class="btn r" onclick="doBan()" id="t-ban-btn">🔍 Проверить запрет на въезд</button>
     <div id="bn-result" style="margin-top:14px"></div>
     <div class="divider"></div>
@@ -791,9 +791,26 @@ function showResult(elId){
 
 function doPatent1(){
   const s=v('cp-s'),n=v('cp-n'),bs=v('cp-bs'),bn=v('cp-bn'),p=v('cp-p'),c=v('cp-c');
-  if(!s||!n){toast('Введите серию и номер патента');return;}
+  if(!n){toast('Введите номер патента');return;}
   sendBot('check_patent',{type:'patent',s,n,bs,bn,p,c,lang:S.lang});
-  showResult('cp-result');
+  const resultEl = document.getElementById('cp-result');
+  resultEl.innerHTML = \`
+    <div class="res-card w" style="text-align:left">
+      <div class="res-ico" style="text-align:center">🪪</div>
+      <div class="res-t" style="text-align:center">Данные для проверки</div>
+      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.6">
+        Введите на сайте МВД:<br>
+        \${s ? '<b>Серия:</b> ' + s + '<br>' : ''}
+        <b>Номер:</b> \${n}<br>
+        \${bs ? '<b>Серия бланка:</b> ' + bs + '<br>' : ''}
+        \${bn ? '<b>Номер бланка:</b> ' + bn + '<br>' : ''}
+        \${p ? '<b>Паспорт:</b> ' + p : ''}
+      </div>
+    </div>
+    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank">
+      <button class="btn g" style="margin-top:10px">🔍 Проверить патент на МВД.РФ</button>
+    </a>
+  \`;
 }
 function doPatent2(){
   const s=v('cp2-s'),n=v('cp2-n'),c=v('cp2-c');
@@ -803,15 +820,58 @@ function doPatent2(){
 }
 function doRegistry(){
   const l=v('rg-l'),f=v('rg-f'),m=v('rg-m'),b=v('rg-b'),ps=v('rg-ps'),pn=v('rg-pn'),pd=v('rg-pd'),c=v('rg-c');
-  if(!l||!f||!b||!pn){toast('Заполните ФИО, дату рождения и номер паспорта');return;}
+  if(!l||!f||!b){toast('Заполните фамилию, имя и дату рождения');return;}
+  if(!pn){toast('Введите номер паспорта');return;}
+  // Отправляем данные боту для записи
   sendBot('check_registry',{l,f,m,b,ps,pn,pd,c,lang:S.lang});
-  showResult('rg-result');
+  // Открываем официальный сайт МВД с инструкцией
+  const resultEl = document.getElementById('rg-result');
+  resultEl.innerHTML = \`
+    <div class="res-card w" style="text-align:left">
+      <div class="res-ico" style="text-align:center">📋</div>
+      <div class="res-t" style="text-align:center">Данные собраны</div>
+      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.6">
+        Введите на сайте МВД:<br>
+        <b>Фамилия:</b> \${l}<br>
+        <b>Имя:</b> \${f}<br>
+        \${m ? '<b>Отчество:</b> ' + m + '<br>' : ''}
+        <b>Дата рождения:</b> \${b}<br>
+        \${ps ? '<b>Серия:</b> ' + ps + '<br>' : ''}
+        <b>Номер:</b> \${pn}<br>
+        \${pd ? '<b>Дата выдачи:</b> ' + pd : ''}
+      </div>
+    </div>
+    <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank">
+      <button class="btn g" style="margin-top:10px">🔍 Открыть реестр на МВД.РФ</button>
+    </a>
+  \`;
 }
 function doBan(){
   const l=v('bn-l'),f=v('bn-f'),m=v('bn-m'),b=v('bn-b'),ps=v('bn-ps'),pn=v('bn-pn'),pd=v('bn-pd'),pe=v('bn-pe'),c=v('bn-c');
-  if(!l||!f||!b||!pn){toast('Заполните ФИО, дату рождения и номер паспорта');return;}
+  if(!l||!f||!b){toast('Заполните фамилию, имя и дату рождения');return;}
+  if(!pn){toast('Введите номер паспорта');return;}
   sendBot('check_ban',{l,f,m,b,ps,pn,pd,pe,c,lang:S.lang});
-  showResult('bn-result');
+  const resultEl = document.getElementById('bn-result');
+  resultEl.innerHTML = \`
+    <div class="res-card w" style="text-align:left">
+      <div class="res-ico" style="text-align:center">📋</div>
+      <div class="res-t" style="text-align:center">Данные для проверки</div>
+      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.6">
+        Введите на сайте МВД:<br>
+        <b>Фамилия:</b> \${l}<br>
+        <b>Имя:</b> \${f}<br>
+        \${m ? '<b>Отчество:</b> ' + m + '<br>' : ''}
+        <b>Дата рождения:</b> \${b}<br>
+        \${ps ? '<b>Серия:</b> ' + ps + '<br>' : ''}
+        <b>Номер:</b> \${pn}<br>
+        \${pd ? '<b>Дата выдачи:</b> ' + pd + '<br>' : ''}
+        \${pe ? '<b>Действует до:</b> ' + pe : ''}
+      </div>
+    </div>
+    <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank">
+      <button class="btn r" style="margin-top:10px">🔍 Проверить запрет на МВД.РФ</button>
+    </a>
+  \`;
 }
 
 // ============================================================
@@ -863,6 +923,51 @@ function toast(msg){const o=document.querySelector('.toast');if(o)o.remove();con
 // ============================================================
 // INIT
 // ============================================================
+
+// ============================================================
+// PASSPORT FORMATS BY COUNTRY
+// ============================================================
+const PASSPORT_FORMATS = {
+    UZB: { label: "🇺🇿 Узбекистан", series: "2 буквы (AA, AB...)", num: "7 цифр (1234567)", example: "AA1234567", has_series: true },
+    TJK: { label: "🇹🇯 Таджикистан", series: "Серии нет", num: "8-9 цифр", example: "003456789", has_series: false },
+    KAZ: { label: "🇰🇿 Казахстан", series: "Буква N/S", num: "8 цифр", example: "N12345678", has_series: true },
+    KGZ: { label: "🇰🇬 Кыргызстан", series: "2 буквы (ID)", num: "7 цифр", example: "ID1234567", has_series: true },
+    AZE: { label: "🇦🇿 Азербайджан", series: "AA/AZE", num: "7 цифр", example: "AA1234567", has_series: true },
+    ARM: { label: "🇦🇲 Армения", series: "2 буквы (AF, AM)", num: "7 цифр", example: "AF1234567", has_series: true },
+    BLR: { label: "🇧🇾 Беларусь", series: "2 буквы (BM, MP)", num: "7 цифр", example: "BM1234567", has_series: true },
+    MDA: { label: "🇲🇩 Молдова", series: "Буква A/B", num: "6-7 цифр", example: "A123456", has_series: true },
+    UKR: { label: "🇺🇦 Украина", series: "2 буквы (PP, KA)", num: "6 цифр", example: "PP123456", has_series: true },
+    IND: { label: "🇮🇳 Индия", series: "Буква (J, L, P)", num: "7 цифр", example: "J1234567", has_series: true },
+    CHN: { label: "🇨🇳 Китай", series: "Нет серии", num: "9 символов (G12345678)", example: "G12345678", has_series: false },
+    OTHER: { label: "Другая страна", series: "Если есть", num: "Как в паспорте", example: "", has_series: false },
+};
+
+function updatePassportHints(countrySelectId, seriesId, numId, seriesLblId, numLblId) {
+    const cit = document.getElementById(countrySelectId)?.value;
+    const fmt = PASSPORT_FORMATS[cit] || PASSPORT_FORMATS.OTHER;
+    const seriesEl = document.getElementById(seriesId);
+    const numEl = document.getElementById(numId);
+    const seriesLblEl = document.getElementById(seriesLblId);
+    
+    if (!seriesEl || !numEl) return;
+    
+    if (fmt.has_series) {
+        if (seriesLblEl) seriesLblEl.textContent = "Серия паспорта (" + fmt.series + ")";
+        seriesEl.placeholder = fmt.example.replace(/[0-9]/g, '').slice(0, 4) || "Серия";
+        seriesEl.closest('.fg').style.display = 'block';
+    } else {
+        if (seriesLblEl) seriesLblEl.textContent = "Серия (необязательно для " + cit + ")";
+        seriesEl.placeholder = "Не требуется";
+        seriesEl.closest('.fg').style.display = 'block';
+    }
+    
+    numEl.placeholder = fmt.example || "Номер паспорта";
+    if (numLblId) {
+        const numLblEl = document.getElementById(numLblId);
+        if (numLblEl) numLblEl.textContent = "Номер паспорта (" + fmt.num + ")";
+    }
+}
+
 function init(){
   const av=S.user.first_name?.charAt(0).toUpperCase()||'М';
   document.getElementById('av').textContent=av;
