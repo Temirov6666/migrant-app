@@ -7,21 +7,40 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
-:root{--bg:#0f0f13;--card:#1a1a22;--card2:#22222e;--border:#2a2a38;--blue:#2d7ef7;--blue2:#1a6de0;--green:#1db954;--red:#e53935;--orange:#ff8c00;--text:#f0f0f5;--muted:#7a7a9a;--r:16px}
+:root{
+  --bg:#0f0f13;--card:#1a1a22;--card2:#22222e;--border:#2a2a38;
+  --blue:#2d7ef7;--blue2:#1a6de0;--green:#1db954;--red:#e53935;
+  --orange:#ff8c00;--yellow:#fbbf24;--purple:#7c3aed;
+  --text:#f0f0f5;--muted:#7a7a9a;--r:16px;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-bottom:84px}
+
+/* PAGES */
 .page{display:none;animation:fi .22s ease}.page.active{display:block}
-@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
 .hdr{padding:14px 16px 8px;display:flex;align-items:center;gap:10px}
 .hdr-back{width:36px;height:36px;background:var(--card);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:var(--text);font-size:20px;flex-shrink:0}
 .hdr-title{font-size:17px;font-weight:900;flex:1}
-.hdr-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;color:#fff;flex-shrink:0}
+.hdr-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;color:#fff;flex-shrink:0}
+
+/* NAV */
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.nb{flex:1;padding:10px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;transition:color .2s}
+.nb{flex:1;padding:10px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;transition:color .2s;position:relative}
 .nb.on{color:var(--blue)}.nb svg{width:22px;height:22px}
+.nb-badge{position:absolute;top:6px;right:calc(50% - 18px);background:var(--red);color:#fff;font-size:9px;font-weight:900;min-width:16px;height:16px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 3px}
+
+/* COMMON */
 .px{padding:0 16px}
 .card{background:var(--card);border-radius:var(--r);padding:16px;border:1px solid var(--border);margin-bottom:12px}
 .ctitle{font-size:12px;color:var(--muted);font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px}
+.divider{height:1px;background:var(--border);margin:14px 0}
+.empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:14px;font-weight:700;line-height:1.6}
+.empty .em{font-size:44px;display:block;margin-bottom:10px}
+
+/* DAYS COUNTER */
 .days-wrap{background:var(--card);border-radius:var(--r);padding:20px 16px;margin-bottom:12px;border:1px solid var(--border)}
 .days-num{font-size:56px;font-weight:900;line-height:1;text-align:center}
 .days-num.g{color:var(--green)}.days-num.o{color:var(--orange)}.days-num.r{color:var(--red)}
@@ -32,6 +51,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .pbar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .5s}
 .pbar-fill.w{background:linear-gradient(90deg,var(--orange),var(--red))}
 .pbar-lbls{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:3px;font-weight:700}
+
+/* PATENT CARD */
 .pat-card{background:var(--card);border-radius:var(--r);padding:15px;border:1px solid var(--border);margin-bottom:10px;cursor:pointer}
 .pat-card:active{border-color:var(--blue)}
 .pat-hdr{display:flex;align-items:center;gap:12px;margin-bottom:12px}
@@ -43,12 +64,19 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .pat-rows{display:flex;flex-direction:column;gap:5px}
 .pat-row{display:flex;justify-content:space-between;font-size:13px}
 .pat-row span:first-child{color:var(--muted)}.pat-row span:last-child{font-weight:700}
+
+/* CHECK ITEMS */
 .chk-list{display:flex;flex-direction:column;gap:10px}
 .chk-item{background:var(--card2);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;border:none;color:var(--text);font-family:'Nunito',sans-serif;text-align:left;border:1px solid transparent;transition:border-color .15s}
 .chk-item:active{border-color:var(--blue)}
 .chk-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.chk-ico.b{background:rgba(45,126,247,.18)}.chk-ico.g{background:rgba(29,185,84,.18)}.chk-ico.p{background:rgba(124,58,237,.18)}.chk-ico.o{background:rgba(255,140,0,.18)}.chk-ico.r{background:rgba(229,57,53,.18)}.chk-ico.y{background:rgba(251,191,36,.18)}
+.chk-ico.b{background:rgba(45,126,247,.18)}.chk-ico.g{background:rgba(29,185,84,.18)}
+.chk-ico.p{background:rgba(124,58,237,.18)}.chk-ico.o{background:rgba(255,140,0,.18)}
+.chk-ico.r{background:rgba(229,57,53,.18)}.chk-ico.y{background:rgba(251,191,36,.18)}
+.chk-ico.teal{background:rgba(20,184,166,.18)}
 .chk-txt{flex:1}.chk-t{font-size:14px;font-weight:800;margin-bottom:2px}.chk-s{font-size:12px;color:var(--muted);font-weight:600}
+
+/* SUB BANNER */
 .sub-ban{background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:var(--r);padding:16px;margin-bottom:12px;position:relative;overflow:hidden;cursor:pointer}
 .sub-ban::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1)}
 .sub-ban-t{font-size:15px;font-weight:900;margin-bottom:3px;color:#fff}
@@ -56,21 +84,38 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .sub-ban-fs{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
 .sub-ban-f{font-size:12px;color:rgba(255,255,255,.92);font-weight:700}
 .btn-sub{background:rgba(0,0,0,.22);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;width:100%}
+
+/* REF BANNER */
+.ref-ban{background:linear-gradient(135deg,#7c3aed,#2d7ef7);border-radius:var(--r);padding:16px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden}
+.ref-ban::before{content:'';position:absolute;bottom:-15px;left:-15px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)}
+.ref-ban-t{font-size:15px;font-weight:900;color:#fff;margin-bottom:4px}
+.ref-ban-s{font-size:12px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:10px}
+.ref-ban-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:10px;padding:9px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;width:100%}
+
+/* BUTTONS */
 .btn{background:var(--blue);color:#fff;border:none;border-radius:14px;padding:14px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;width:100%;transition:background .15s}
-.btn:active{background:var(--blue2)}.btn.out{background:transparent;border:2px solid var(--border);color:var(--text)}.btn.g{background:var(--green)}.btn.r{background:var(--red)}.btn.or{background:var(--orange)}
+.btn:active{background:var(--blue2)}.btn.out{background:transparent;border:2px solid var(--border);color:var(--text)}.btn.g{background:var(--green)}.btn.r{background:var(--red)}.btn.or{background:var(--orange)}.btn.pur{background:var(--purple)}
+
+/* FORMS */
 .fg{margin-bottom:14px}
 .flbl{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px;display:block;letter-spacing:.4px;text-transform:uppercase}
 .fi{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;outline:none;transition:border-color .2s}
 .fi:focus{border-color:var(--blue)}.fi::placeholder{color:var(--muted)}
 select.fi{-webkit-appearance:none;appearance:none}
+
+/* RESULT */
 .res-card{border-radius:var(--r);padding:20px;text-align:center;margin-bottom:14px}
 .res-card.ok{background:rgba(29,185,84,.1);border:2px solid var(--green)}
 .res-card.err{background:rgba(229,57,53,.1);border:2px solid var(--red)}
 .res-card.w{background:rgba(255,140,0,.1);border:2px solid var(--orange)}
 .res-ico{font-size:44px;margin-bottom:8px}.res-t{font-size:17px;font-weight:900;margin-bottom:5px}.res-s{font-size:13px;color:var(--muted);font-weight:600;line-height:1.5}
+
+/* INFO ROWS */
 .irows{display:flex;flex-direction:column}
 .irow{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px}
 .irow:last-child{border-bottom:none}.irow-l{color:var(--muted);font-weight:700}.irow-v{font-weight:800;max-width:58%;text-align:right;word-break:break-word}
+
+/* PLANS */
 .plans{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
 .plan-it{background:var(--card2);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;border:2px solid transparent;cursor:pointer;transition:border-color .15s}
 .plan-it.sel{border-color:var(--blue);background:rgba(45,126,247,.08)}
@@ -79,34 +124,44 @@ select.fi{-webkit-appearance:none;appearance:none}
 .plan-it.sel .plan-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff}
 .plan-inf{flex:1}.plan-n{font-size:14px;font-weight:800}.plan-p{font-size:12px;color:var(--muted);font-weight:600}
 .plan-pr{text-align:right}.plan-am{font-size:16px;font-weight:900}.plan-sv{font-size:11px;color:var(--green);font-weight:800}
+
+/* COMPARE */
 .cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .cmp-col{border-radius:14px;padding:13px;border:2px solid var(--border)}
 .cmp-col.bad{border-color:var(--red)}.cmp-col.gd{border-color:var(--green)}
 .cmp-t{font-size:13px;font-weight:900;margin-bottom:7px}
 .cmp-col.bad .cmp-t{color:var(--red)}.cmp-col.gd .cmp-t{color:var(--green)}
 .cmp-s{font-size:11px;color:var(--muted);line-height:1.5;font-weight:600}
+
+/* MMC LINK */
 .mmc-lnk{display:flex;align-items:center;gap:14px;padding:14px;background:var(--card2);border-radius:14px;cursor:pointer;text-decoration:none;color:var(--text);margin-bottom:10px;border:1px solid var(--border);transition:border-color .15s}
 .mmc-lnk:active{border-color:var(--blue)}
 .mmc-lnk-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .mmc-lnk-inf{flex:1}.mmc-lnk-t{font-size:14px;font-weight:800;margin-bottom:2px}.mmc-lnk-s{font-size:12px;color:var(--muted);font-weight:600}
+
+/* STAY GRID */
 .st-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .st-cell{background:var(--card2);border-radius:14px;padding:14px;text-align:center;border:1px solid var(--border)}
 .st-n{font-size:26px;font-weight:900;color:var(--blue)}.st-l{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}
+
+/* OVERLAY / SHEET */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end}
 .overlay.open{display:flex}
 .sheet{background:var(--card);border-radius:24px 24px 0 0;padding:20px 16px 40px;width:100%;max-height:92vh;overflow-y:auto}
 .sheet-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px}
+
+/* TOAST */
 .toast{position:fixed;bottom:92px;left:16px;right:16px;background:#1e293b;color:#fff;border-radius:14px;padding:13px 18px;font-size:14px;font-weight:700;text-align:center;z-index:999;animation:tin .3s ease,tout .3s ease 2.7s forwards;box-shadow:0 8px 32px rgba(0,0,0,.4)}
 @keyframes tin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes tout{from{opacity:1}to{opacity:0}}
 .spin{width:36px;height:36px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--blue);animation:sp .8s linear infinite;margin:28px auto}
 @keyframes sp{to{transform:rotate(360deg)}}
-.empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:14px;font-weight:700;line-height:1.6}
-.empty .em{font-size:44px;display:block;margin-bottom:10px}
+
+/* WARN BOXES */
 .warn-box{background:rgba(229,57,53,.1);border:1.5px solid var(--red);border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;color:var(--red);line-height:1.5;margin-bottom:14px}
 .info-box{background:rgba(45,126,247,.1);border:1.5px solid var(--blue);border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;color:var(--blue);line-height:1.5;margin-bottom:14px}
 .ok-box{background:rgba(29,185,84,.1);border:1.5px solid var(--green);border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;color:var(--green);line-height:1.5;margin-bottom:14px}
-.divider{height:1px;background:var(--border);margin:14px 0}
+
 /* CONSENT */
 .consent-overlay{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:500;display:flex;align-items:flex-end}
 .consent-sheet{background:var(--card);border-radius:24px 24px 0 0;padding:24px 16px 40px;width:100%;max-height:88vh;overflow-y:auto}
@@ -115,15 +170,18 @@ select.fi{-webkit-appearance:none;appearance:none}
 .cb.on{background:var(--blue);border-color:var(--blue)}
 .cb-txt{font-size:13px;font-weight:600;line-height:1.5;color:var(--muted)}
 .cb-txt a{color:var(--blue);text-decoration:none}
+
 /* LANG BAR */
 .lang-bar{display:flex;gap:6px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none}
 .lang-bar::-webkit-scrollbar{display:none}
 .lang-btn{flex-shrink:0;padding:6px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--card2);color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:all .15s;white-space:nowrap}
 .lang-btn.on{border-color:var(--blue);background:rgba(45,126,247,.15);color:var(--blue)}
+
 /* TABS */
 .tab-row{display:flex;gap:8px;margin-bottom:16px}
 .tab-btn{flex:1;padding:10px;border-radius:12px;border:2px solid var(--border);background:var(--card2);color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;transition:all .15s}
 .tab-btn.on{border-color:var(--blue);background:rgba(45,126,247,.15);color:var(--blue)}
+
 /* SVC CARD */
 .svc-card{background:linear-gradient(135deg,var(--card2),var(--card));border-radius:var(--r);padding:18px;margin-bottom:12px;border:1px solid var(--border)}
 .svc-card-t{font-size:16px;font-weight:900;margin-bottom:4px}
@@ -132,37 +190,91 @@ select.fi{-webkit-appearance:none;appearance:none}
 .svc-step{display:flex;gap:10px;font-size:13px;align-items:flex-start}
 .svc-step-n{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 .svc-step-t{font-weight:700;line-height:1.4}
+
+/* PAYMENT TRACKER */
+.pay-month-card{background:var(--card2);border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid var(--border)}
+.pay-month-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.pay-month-name{font-size:14px;font-weight:800}
+.pay-status{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800}
+.pay-status.paid{background:rgba(29,185,84,.2);color:var(--green)}
+.pay-status.due{background:rgba(255,140,0,.2);color:var(--orange)}
+.pay-status.late{background:rgba(229,57,53,.2);color:var(--red)}
+.pay-amount{font-size:13px;color:var(--muted);font-weight:700}
+
+/* ONBOARDING */
+.onb-overlay{position:fixed;inset:0;background:var(--bg);z-index:600;display:flex;flex-direction:column}
+.onb-header{padding:20px 20px 0;display:flex;justify-content:flex-end}
+.onb-skip{font-size:13px;color:var(--muted);font-weight:700;cursor:pointer;padding:8px}
+.onb-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.onb-emoji{font-size:72px;margin-bottom:20px;display:block}
+.onb-title{font-size:24px;font-weight:900;margin-bottom:10px;line-height:1.2}
+.onb-sub{font-size:15px;color:var(--muted);font-weight:600;line-height:1.6;max-width:300px}
+.onb-footer{padding:20px}
+.onb-dots{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.onb-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s}
+.onb-dot.on{background:var(--blue);width:24px;border-radius:99px}
+
+/* REFERRAL PAGE */
+.ref-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.ref-stat{background:var(--card2);border-radius:14px;padding:14px;text-align:center;border:1px solid var(--border)}
+.ref-stat-n{font-size:28px;font-weight:900;color:var(--purple)}
+.ref-stat-l{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}
+.ref-link-box{background:var(--card2);border-radius:14px;padding:14px;border:1.5px solid var(--border);margin-bottom:14px;cursor:pointer;transition:border-color .2s}
+.ref-link-box:active{border-color:var(--purple)}
+.ref-link-label{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.ref-link-text{font-size:13px;font-weight:800;color:var(--blue);word-break:break-all}
 </style>
 </head>
 <body>
 
+<!-- ===== ONBOARDING ===== -->
+<div class="onb-overlay" id="onb-overlay">
+  <div class="onb-header">
+    <span class="onb-skip" onclick="skipOnb()">Пропустить</span>
+  </div>
+  <div class="onb-body" id="onb-body">
+    <span class="onb-emoji" id="onb-emoji">🇷🇺</span>
+    <div class="onb-title" id="onb-title">Добро пожаловать!</div>
+    <div class="onb-sub" id="onb-sub">МигрантПро — ваш личный помощник для жизни и работы в России</div>
+  </div>
+  <div class="onb-footer">
+    <div class="onb-dots" id="onb-dots">
+      <div class="onb-dot on"></div>
+      <div class="onb-dot"></div>
+      <div class="onb-dot"></div>
+      <div class="onb-dot"></div>
+    </div>
+    <button class="btn" id="onb-next-btn" onclick="onbNext()">Далее →</button>
+  </div>
+</div>
+
 <!-- ===== CONSENT ===== -->
-<div class="consent-overlay" id="consent-overlay">
+<div class="consent-overlay" id="consent-overlay" style="display:none">
   <div class="consent-sheet">
-    <div style="font-size:20px;font-weight:900;margin-bottom:6px" id="ct-title">Добро пожаловать 👋</div>
-    <div style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:20px;line-height:1.6" id="ct-sub">Перед использованием ознакомьтесь с условиями</div>
+    <div style="font-size:20px;font-weight:900;margin-bottom:6px">Добро пожаловать 👋</div>
+    <div style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:20px;line-height:1.6">Перед использованием ознакомьтесь с условиями</div>
     <div class="card" style="font-size:13px;line-height:1.7;color:var(--muted);font-weight:600;max-height:180px;overflow-y:auto">
-      <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px" id="ct-pd">Обработка персональных данных</div>
-      <span id="ct-text">Используя данное приложение, вы соглашаетесь с обработкой ваших персональных данных (ФИО, паспортные данные, дата рождения, гражданство) в целях проверки документов через официальные сервисы МВД РФ. Данные передаются на официальные сайты государственных органов РФ. Хранение данных осуществляется только на вашем устройстве (localStorage). Мы не передаём данные третьим лицам. Вы можете удалить свои данные в любой момент.</span>
+      <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px">Обработка персональных данных</div>
+      Используя данное приложение, вы соглашаетесь с обработкой ваших персональных данных (ФИО, паспортные данные, дата рождения, гражданство) в целях проверки документов через официальные сервисы МВД РФ. Данные хранятся только на вашем устройстве. Мы не передаём данные третьим лицам.
     </div>
     <div class="cb-row" onclick="toggleCb('cb1')">
       <div class="cb" id="cb1"></div>
-      <div class="cb-txt" id="ct-a1">Я согласен на обработку персональных данных в соответствии с ФЗ-152 «О персональных данных»</div>
+      <div class="cb-txt">Я согласен на обработку персональных данных (ФЗ-152)</div>
     </div>
     <div class="cb-row" onclick="toggleCb('cb2')">
       <div class="cb" id="cb2"></div>
-      <div class="cb-txt" id="ct-a2">Я понимаю, что проверки осуществляются через официальные сервисы МВД РФ</div>
+      <div class="cb-txt">Я понимаю, что проверки через официальные сервисы МВД РФ</div>
     </div>
     <div class="cb-row" onclick="toggleCb('cb3')">
       <div class="cb" id="cb3"></div>
-      <div class="cb-txt"><span id="ct-a3">Я принимаю </span><a href="https://telegram.org/tos/mini-apps" target="_blank">Условия Telegram Mini Apps</a></div>
+      <div class="cb-txt">Я принимаю <a href="https://telegram.org/tos/mini-apps" target="_blank">Условия Telegram Mini Apps</a></div>
     </div>
-    <button class="btn" id="consent-btn" onclick="acceptConsent()" style="margin-top:16px;opacity:.4;pointer-events:none" id="ct-btn">Принять и продолжить</button>
+    <button class="btn" id="consent-btn" onclick="acceptConsent()" style="margin-top:16px;opacity:.4;pointer-events:none">Принять и продолжить</button>
   </div>
 </div>
 
 <!-- ===== HOME ===== -->
-<div class="page active" id="pg-home">
+<div class="page" id="pg-home">
   <div class="lang-bar" id="lang-bar">
     <button class="lang-btn on" onclick="setLang('ru')">🇷🇺 Рус</button>
     <button class="lang-btn" onclick="setLang('uz')">🇺🇿 O'zbek</button>
@@ -178,64 +290,80 @@ select.fi{-webkit-appearance:none;appearance:none}
   <div class="hdr">
     <div class="hdr-av" id="av">М</div>
     <div class="hdr-title" id="t-app-name">МигрантПро 🇷🇺</div>
-    <div id="sub-chip" style="font-size:11px;color:var(--muted);font-weight:800;background:var(--card2);padding:4px 10px;border-radius:99px;" id="t-free">Бесплатно</div>
+    <div id="sub-chip" style="font-size:11px;color:var(--muted);font-weight:800;background:var(--card2);padding:4px 10px;border-radius:99px;">Бесплатно</div>
   </div>
   <div class="px">
     <div class="days-wrap">
       <div class="days-num g" id="stay-num">—</div>
-      <div class="days-lbl" id="t-stay-lbl">дней до окончания пребывания (90 дней)</div>
-      <div class="days-dt" id="stay-dt" data-t="stay-hint">Укажите дату въезда в кабинете</div>
+      <div class="days-lbl" id="t-stay-lbl">дней до окончания пребывания</div>
+      <div class="days-dt" id="stay-dt">Укажите дату въезда в кабинете</div>
       <div class="pbar-wrap">
         <div class="pbar-track"><div class="pbar-fill" id="stay-bar" style="width:100%"></div></div>
-        <div class="pbar-lbls"><span>0</span><span>45</span><span id="t-90d">90 дней</span></div>
+        <div class="pbar-lbls"><span>0</span><span>45</span><span>90 дней</span></div>
       </div>
     </div>
+
     <div class="ctitle" id="t-my-patents">Мои патенты</div>
     <div id="pats-home"></div>
     <button class="btn out" style="margin-bottom:14px" onclick="openSheet('sh-patent')" id="t-add-patent">➕ Добавить патент</button>
-    <div class="sub-ban" onclick="go('profile')">
-      <div class="sub-ban-t" id="t-sub-title">🛡️ Автоматическая защита</div>
-      <div class="sub-ban-s" id="t-sub-sub">Бот следит за вашими документами 24/7</div>
-      <div class="sub-ban-fs">
-        <div class="sub-ban-f" id="t-sf1">⭐ Ежедневная проверка патента на МВД.РФ</div>
-        <div class="sub-ban-f" id="t-sf2">🔍 Реестр контролируемых лиц — каждый день</div>
-        <div class="sub-ban-f" id="t-sf3">⏰ Напоминания о сроках оплаты</div>
-      </div>
-      <button class="btn-sub" id="t-sub-btn">Подключить от 190 ₽/мес →</button>
+
+    <!-- Реферальный баннер -->
+    <div class="ref-ban" onclick="go('ref')">
+      <div class="ref-ban-t">🎁 Пригласи друга — получи 7 дней бесплатно!</div>
+      <div class="ref-ban-s">Ты и твой друг получите бонус. Без ограничений!</div>
+      <button class="ref-ban-btn">Получить реферальную ссылку →</button>
     </div>
-    <div class="ctitle" style="margin-top:4px" id="t-gov-checks">Проверки в государственных базах</div>
+
+    <div class="sub-ban" onclick="go('profile')">
+      <div class="sub-ban-t">🛡️ Автоматическая защита</div>
+      <div class="sub-ban-s">Бот следит за вашими документами 24/7</div>
+      <div class="sub-ban-fs">
+        <div class="sub-ban-f">⭐ Ежедневная проверка патента на МВД.РФ</div>
+        <div class="sub-ban-f">🔍 Реестр контролируемых лиц — каждый день</div>
+        <div class="sub-ban-f">⏰ Напоминания о сроках оплаты патента</div>
+      </div>
+      <button class="btn-sub">Подключить от 190 ₽/мес →</button>
+    </div>
+
+    <div class="ctitle" style="margin-top:4px">Проверки в госбазах</div>
     <div class="chk-list">
       <button class="chk-item" onclick="go('check-patent')">
         <div class="chk-ico b">🪪</div>
-        <div class="chk-txt"><div class="chk-t" id="t-chk-patent">Проверить патент / разрешение</div><div class="chk-s" id="t-chk-patent-s">Действительность — сервисы.гувм.мвд.рф</div></div>
+        <div class="chk-txt"><div class="chk-t">Проверить патент / разрешение</div><div class="chk-s">Действительность — МВД.РФ</div></div>
         <span style="color:var(--muted);font-size:20px">›</span>
       </button>
       <button class="chk-item" onclick="go('check-registry')">
         <div class="chk-ico g">🛡️</div>
-        <div class="chk-txt"><div class="chk-t" id="t-chk-reg">Реестр контролируемых лиц</div><div class="chk-s" id="t-chk-reg-s">Проверка по базе МВД РФ</div></div>
+        <div class="chk-txt"><div class="chk-t">Реестр контролируемых лиц</div><div class="chk-s">Проверка по базе МВД РФ</div></div>
         <span style="color:var(--muted);font-size:20px">›</span>
       </button>
       <button class="chk-item" onclick="go('check-ban')">
         <div class="chk-ico r">🚫</div>
-        <div class="chk-txt"><div class="chk-t" id="t-chk-ban">Запрет на въезд в Россию</div><div class="chk-s" id="t-chk-ban-s">Проверка по базе ГУВМ МВД РФ</div></div>
+        <div class="chk-txt"><div class="chk-t">Запрет на въезд в Россию</div><div class="chk-s">Проверка по базе ГУВМ МВД РФ</div></div>
         <span style="color:var(--muted);font-size:20px">›</span>
       </button>
       <button class="chk-item" onclick="go('check-ready')">
         <div class="chk-ico o">📋</div>
-        <div class="chk-txt"><div class="chk-t" id="t-chk-ready">Готовность патента в ММЦ</div><div class="chk-s" id="t-chk-ready-s">Уведомление о готовности</div></div>
+        <div class="chk-txt"><div class="chk-t">Готовность патента в ММЦ</div><div class="chk-s">Уведомление о готовности</div></div>
         <span style="color:var(--muted);font-size:20px">›</span>
       </button>
     </div>
-    <div class="ctitle" style="margin-top:16px" id="t-services">Услуги</div>
+
+    <div class="ctitle" style="margin-top:16px">Услуги</div>
     <div class="chk-list">
+      <button class="chk-item" onclick="go('payment-tracker')">
+        <div class="chk-ico teal">💳</div>
+        <div class="chk-txt"><div class="chk-t">Трекер оплаты патента</div><div class="chk-s">Контроль платежей, напоминания</div></div>
+        <span style="color:var(--muted);font-size:20px">›</span>
+      </button>
       <button class="chk-item" onclick="go('snils')">
         <div class="chk-ico p">🪪</div>
-        <div class="chk-txt"><div class="chk-t" id="t-svc-snils">Как получить СНИЛС</div><div class="chk-s" id="t-svc-snils-s">Пошаговая инструкция для иностранца</div></div>
+        <div class="chk-txt"><div class="chk-t">Как получить СНИЛС</div><div class="chk-s">Пошаговая инструкция</div></div>
         <span style="color:var(--muted);font-size:20px">›</span>
       </button>
       <button class="chk-item" onclick="go('inn')">
         <div class="chk-ico y">🔢</div>
-        <div class="chk-txt"><div class="chk-t" id="t-svc-inn">Как получить ИНН</div><div class="chk-s" id="t-svc-inn-s">Постановка на учёт в налоговой</div></div>
+        <div class="chk-txt"><div class="chk-t">Как получить ИНН</div><div class="chk-s">Постановка на учёт в налоговой</div></div>
         <span style="color:var(--muted);font-size:20px">›</span>
       </button>
     </div>
@@ -244,127 +372,201 @@ select.fi{-webkit-appearance:none;appearance:none}
 
 <!-- ===== CABINET ===== -->
 <div class="page" id="pg-cabinet">
-  <div class="hdr"><div class="hdr-title" id="t-cabinet">Личный кабинет</div></div>
+  <div class="hdr"><div class="hdr-title">Личный кабинет</div></div>
   <div class="px">
     <div class="card" style="display:flex;align-items:center;gap:14px;">
       <div class="hdr-av" style="width:54px;height:54px;font-size:21px;" id="cab-av">М</div>
       <div>
         <div style="font-size:16px;font-weight:900;" id="cab-name">—</div>
         <div style="font-size:12px;color:var(--muted);font-weight:600;" id="cab-id">TG ID: —</div>
-        <div id="cab-badge" style="display:inline-block;margin-top:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800;background:var(--card2);color:var(--muted)" id="t-free-plan">Бесплатный план</div>
+        <div id="cab-badge" style="display:inline-block;margin-top:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800;background:var(--card2);color:var(--muted)">Бесплатный план</div>
       </div>
     </div>
-    <div class="ctitle" id="t-cab-patents">Мои патенты</div>
+    <div class="ctitle">Мои патенты</div>
     <div id="pats-cab"></div>
-    <button class="btn" style="margin-bottom:14px" onclick="openSheet('sh-patent')" id="t-add-patent2">➕ Добавить патент</button>
-    <div class="ctitle" id="t-stay-period">Срок пребывания (90 дней)</div>
+    <button class="btn" style="margin-bottom:14px" onclick="openSheet('sh-patent')">➕ Добавить патент</button>
+    <div class="ctitle">Срок пребывания (90 дней)</div>
     <div class="card">
       <div class="fg">
-        <label class="flbl" id="t-entry-date">Дата въезда в Россию</label>
+        <label class="flbl">Дата въезда в Россию</label>
         <input type="date" class="fi" id="entry-inp" oninput="saveEntry(this.value)">
       </div>
       <div id="stay-detail" style="display:none">
         <div class="st-grid">
-          <div class="st-cell"><div class="st-n" id="cd-in">—</div><div class="st-l" id="t-days-in">дней в России</div></div>
-          <div class="st-cell"><div class="st-n" id="cd-left">—</div><div class="st-l" id="t-days-left">дней осталось</div></div>
+          <div class="st-cell"><div class="st-n" id="cd-in">—</div><div class="st-l">дней в России</div></div>
+          <div class="st-cell"><div class="st-n" id="cd-left">—</div><div class="st-l">дней осталось</div></div>
         </div>
       </div>
     </div>
-    <div class="ctitle" id="t-my-docs">Мои документы</div>
+    <div class="ctitle">Мои документы</div>
     <div class="chk-list">
       <button class="chk-item" onclick="docAction('contract')">
         <div class="chk-ico b">📄</div>
-        <div class="chk-txt"><div class="chk-t" id="t-doc-contract">Трудовой договор</div><div class="chk-s" id="t-doc-contract-s">Загрузить и поделиться с работодателем</div></div>
+        <div class="chk-txt"><div class="chk-t">Трудовой договор</div><div class="chk-s">Загрузить и поделиться с работодателем</div></div>
         <span style="color:var(--muted);font-size:20px">›</span>
       </button>
       <button class="chk-item" onclick="docAction('notify')">
         <div class="chk-ico g">📬</div>
-        <div class="chk-txt"><div class="chk-t" id="t-doc-notify">Уведомление о трудоустройстве</div><div class="chk-s" id="t-doc-notify-s">Отправка уведомления в МВД</div></div>
+        <div class="chk-txt"><div class="chk-t">Уведомление о трудоустройстве</div><div class="chk-s">Отправка уведомления в МВД</div></div>
         <span style="color:var(--muted);font-size:20px">›</span>
       </button>
       <button class="chk-item" onclick="docAction('receipt')">
         <div class="chk-ico o">🧾</div>
-        <div class="chk-txt"><div class="chk-t" id="t-doc-receipt">Чеки об оплате патента</div><div class="chk-s" id="t-doc-receipt-s">Архив всех платежей</div></div>
+        <div class="chk-txt"><div class="chk-t">Чеки об оплате патента</div><div class="chk-s">Архив всех платежей</div></div>
         <span style="color:var(--muted);font-size:20px">›</span>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAYMENT TRACKER ===== -->
+<div class="page" id="pg-payment-tracker">
+  <div class="hdr">
+    <button class="hdr-back" onclick="go('home')">‹</button>
+    <div class="hdr-title">💳 Трекер оплаты патента</div>
+  </div>
+  <div class="px">
+    <div class="ok-box">✅ Оплачивайте патент ежемесячно до указанной даты. Просрочка — аннулирование патента!</div>
+    <div class="card">
+      <div class="fg">
+        <label class="flbl">Ежемесячная сумма (руб.)</label>
+        <input type="number" class="fi" id="pt-amount" placeholder="Например: 7500" oninput="updatePaymentTracker()">
+      </div>
+      <div class="fg">
+        <label class="flbl">Дата оплаты (каждый месяц)</label>
+        <input type="number" class="fi" id="pt-day" placeholder="Число месяца: 15" min="1" max="28" oninput="updatePaymentTracker()">
+      </div>
+      <div class="fg">
+        <label class="flbl">Начало действия патента</label>
+        <input type="date" class="fi" id="pt-start" oninput="updatePaymentTracker()">
+      </div>
+    </div>
+
+    <div class="ctitle">История платежей</div>
+    <div id="payment-list"></div>
+
+    <div class="card" id="pt-total-card" style="display:none">
+      <div class="irows">
+        <div class="irow"><span class="irow-l">Оплачено месяцев</span><span class="irow-v" id="pt-paid-count" style="color:var(--green)">0</span></div>
+        <div class="irow"><span class="irow-l">Сумма оплачено</span><span class="irow-v" id="pt-paid-sum">0 ₽</span></div>
+        <div class="irow"><span class="irow-l">Следующий платёж</span><span class="irow-v" id="pt-next" style="color:var(--orange)">—</span></div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="markPaid()" style="margin-bottom:10px">✅ Отметить текущий месяц оплаченным</button>
+    <button class="btn out" onclick="sendBot('payment_reminder',{})">🔔 Включить напоминания в боте</button>
+  </div>
+</div>
+
+<!-- ===== REFERRAL PAGE ===== -->
+<div class="page" id="pg-ref">
+  <div class="hdr">
+    <button class="hdr-back" onclick="go('home')">‹</button>
+    <div class="hdr-title">🎁 Пригласить друга</div>
+  </div>
+  <div class="px">
+    <div style="text-align:center;padding:20px 0 10px">
+      <div style="font-size:48px;margin-bottom:10px">🎁</div>
+      <div style="font-size:18px;font-weight:900;margin-bottom:6px">Зарабатывай бонусы!</div>
+      <div style="font-size:13px;color:var(--muted);font-weight:600;line-height:1.6">Пригласи друга — вы оба получите<br><b style="color:var(--green)">+7 дней подписки бесплатно</b></div>
+    </div>
+
+    <div class="ref-stat-grid">
+      <div class="ref-stat">
+        <div class="ref-stat-n" id="ref-invited">0</div>
+        <div class="ref-stat-l">Друзей приглашено</div>
+      </div>
+      <div class="ref-stat">
+        <div class="ref-stat-n" id="ref-days">0</div>
+        <div class="ref-stat-l">Дней заработано</div>
+      </div>
+    </div>
+
+    <div class="ref-link-box" onclick="copyRefLink()">
+      <div class="ref-link-label">🔗 Ваша реферальная ссылка</div>
+      <div class="ref-link-text" id="ref-link">Загрузка...</div>
+    </div>
+
+    <button class="btn pur" onclick="shareRefLink()" style="margin-bottom:10px">📤 Поделиться ссылкой</button>
+    <button class="btn out" onclick="copyRefLink()">📋 Скопировать ссылку</button>
+
+    <div class="card" style="margin-top:16px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:10px">💡 Как это работает:</div>
+      <div class="svc-steps">
+        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t">Отправьте ссылку другу-мигранту</div></div>
+        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t">Друг переходит по ссылке и запускает бота</div></div>
+        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t">Вы оба получаете +7 дней подписки</div></div>
+        <div class="svc-step"><div class="svc-step-n">∞</div><div class="svc-step-t">Без ограничений — приглашайте сколько угодно!</div></div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- ===== CHECK PATENT ===== -->
 <div class="page" id="pg-check-patent">
-  <div class="hdr">
-    <button class="hdr-back" onclick="go('home')">‹</button>
-    <div class="hdr-title">🪪 Проверка патента</div>
-  </div>
+  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">🪪 Проверка патента</div></div>
   <div class="px">
-    <div class="info-box" id="t-patent-info">📌 Официальный сервис ГУВМ МВД РФ. МВД требует капчу — нажмите кнопку для перехода на сайт МВД с вашими данными.</div>
+    <div class="info-box">📌 После заполнения — откроем сайт МВД с вашими данными. Останется только ввести капчу.</div>
     <div class="tab-row">
-      <button class="tab-btn on" id="tb-p1" onclick="swTab('p',1)" id="t-by-patent">По патенту</button>
-      <button class="tab-btn" id="tb-p2" onclick="swTab('p',2)" id="t-by-passport">По паспорту</button>
+      <button class="tab-btn on" id="tb-p1" onclick="swTab('p',1)">По патенту</button>
+      <button class="tab-btn" id="tb-p2" onclick="swTab('p',2)">По паспорту</button>
     </div>
     <div id="ptab1">
-      <div class="fg"><label class="flbl" id="t-doc-series">Серия документа (лицевая сторона)</label><input class="fi" id="cp-s" placeholder="50, 77, МСК..." maxlength="10"></div>
-      <div class="fg"><label class="flbl" id="t-doc-num">Номер документа (лицевая сторона)</label><input class="fi" id="cp-n" placeholder="2500433815" maxlength="15" inputmode="numeric"></div>
-      <div class="fg"><label class="flbl" id="t-blank-series">Серия бланка (оборотная сторона)</label><input class="fi" id="cp-bs" placeholder="ПР, МФЦ..." maxlength="10"></div>
-      <div class="fg"><label class="flbl" id="t-blank-num">Номер бланка (оборотная сторона)</label><input class="fi" id="cp-bn" placeholder="6892529" maxlength="15" inputmode="numeric"></div>
-      <div class="fg"><label class="flbl" id="t-pass-num">Номер паспорта иностранного гражданина</label><input class="fi" id="cp-p" placeholder="Номер паспорта" maxlength="20"></div>
-      <div class="fg"><label class="flbl" id="t-citizenship">Гражданство</label><select class="fi" id="cp-c">COUNTRIES</select></div>
-      <button class="btn" onclick="doPatent1()" id="t-check-btn">🔍 Проверить на МВД.РФ</button>
+      <div class="fg"><label class="flbl">Серия документа (лицевая)</label><input class="fi" id="cp-s" placeholder="50, 77, МСК..." maxlength="10"></div>
+      <div class="fg"><label class="flbl">Номер документа (лицевая)</label><input class="fi" id="cp-n" placeholder="2500433815" maxlength="15" inputmode="numeric"></div>
+      <div class="fg"><label class="flbl">Серия бланка (оборотная, если есть)</label><input class="fi" id="cp-bs" placeholder="ПР, МФЦ..." maxlength="10"></div>
+      <div class="fg"><label class="flbl">Номер бланка (оборотная, если есть)</label><input class="fi" id="cp-bn" placeholder="6892529" maxlength="15" inputmode="numeric"></div>
+      <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="cp-p" placeholder="Номер паспорта" maxlength="20"></div>
+      <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="cp-c"><option value="">Выберите страну</option></select></div>
+      <button class="btn g" onclick="doPatent1()">🔍 Проверить на МВД.РФ</button>
     </div>
     <div id="ptab2" style="display:none">
-      <div class="fg"><label class="flbl" id="t-pass-series2">Серия паспорта</label><input class="fi" id="cp2-s" placeholder="Серия иностранного паспорта" maxlength="15"></div>
-      <div class="fg"><label class="flbl" id="t-pass-num2">Номер паспорта</label><input class="fi" id="cp2-n" placeholder="Номер паспорта" maxlength="20"></div>
-      <div class="fg"><label class="flbl" id="t-citizenship2">Гражданство</label><select class="fi" id="cp2-c">COUNTRIES</select></div>
-      <button class="btn" onclick="doPatent2()" id="t-check-btn2">🔍 Проверить на МВД.РФ</button>
+      <div class="fg"><label class="flbl">Серия паспорта (если есть)</label><input class="fi" id="cp2-s" placeholder="Серия" maxlength="15"></div>
+      <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="cp2-n" placeholder="Номер" maxlength="20"></div>
+      <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="cp2-c"><option value="">Выберите страну</option></select></div>
+      <button class="btn g" onclick="doPatent2()">🔍 Проверить на МВД.РФ</button>
     </div>
     <div id="cp-result" style="margin-top:14px"></div>
     <div class="divider"></div>
-    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank"><button class="btn out" id="t-open-mvd">🌐 Открыть сервисы.гувм.мвд.рф</button></a>
+    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank"><button class="btn out">🌐 Открыть сервисы.гувм.мвд.рф</button></a>
   </div>
 </div>
 
 <!-- ===== CHECK REGISTRY ===== -->
 <div class="page" id="pg-check-registry">
-  <div class="hdr">
-    <button class="hdr-back" onclick="go('home')">‹</button>
-    <div class="hdr-title" id="t-reg-title">🛡️ Реестр контролируемых лиц</div>
-  </div>
+  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">🛡️ Реестр контролируемых лиц</div></div>
   <div class="px">
-    <div class="info-box" id="t-reg-info">📌 Реестр контролируемых лиц МВД РФ. Для проверки необходимы паспортные данные.</div>
-    <div class="fg"><label class="flbl" id="t-lastname">Фамилия</label><input class="fi" id="rg-l" placeholder="Фамилия (как в паспорте)"></div>
-    <div class="fg"><label class="flbl" id="t-firstname">Имя</label><input class="fi" id="rg-f" placeholder="Имя"></div>
-    <div class="fg"><label class="flbl" id="t-middlename">Отчество (если есть)</label><input class="fi" id="rg-m" placeholder="Оставьте пустым если нет"></div>
-    <div class="fg"><label class="flbl" id="t-birthdate">Дата рождения</label><input type="date" class="fi" id="rg-b"></div>
-    <div class="fg"><label class="flbl" id="t-pass-series">Серия паспорта</label><input class="fi" id="rg-ps" placeholder="Серия иностранного паспорта" maxlength="15"></div>
-    <div class="fg"><label class="flbl" id="t-pass-num3">Номер паспорта</label><input class="fi" id="rg-pn" placeholder="Номер паспорта" maxlength="20" inputmode="numeric"></div>
-    <div class="fg"><label class="flbl" id="t-pass-issue">Дата выдачи паспорта</label><input type="date" class="fi" id="rg-pd"></div>
-    <div class="fg"><label class="flbl" id="t-citizenship3">Гражданство</label><select class="fi" id="rg-c" onchange="updatePassportHints('rg-c','rg-ps','rg-pn','t-pass-series','t-pass-num3')">COUNTRIES</select></div>
-    <button class="btn" onclick="doRegistry()" id="t-check-reg-btn">🔍 Проверить в реестре</button>
+    <div class="info-box">📌 Реестр контролируемых лиц МВД РФ. Заполните данные — откроем сайт МВД.</div>
+    <div class="fg"><label class="flbl">Фамилия</label><input class="fi" id="rg-l" placeholder="Фамилия (как в паспорте)"></div>
+    <div class="fg"><label class="flbl">Имя</label><input class="fi" id="rg-f" placeholder="Имя"></div>
+    <div class="fg"><label class="flbl">Отчество (если есть)</label><input class="fi" id="rg-m" placeholder="Оставьте пустым если нет"></div>
+    <div class="fg"><label class="flbl">Дата рождения</label><input type="date" class="fi" id="rg-b"></div>
+    <div class="fg"><label class="flbl">Серия паспорта (если есть)</label><input class="fi" id="rg-ps" placeholder="Серия (необязательно)" maxlength="15"></div>
+    <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="rg-pn" placeholder="Номер паспорта" maxlength="20" inputmode="numeric"></div>
+    <div class="fg"><label class="flbl">Дата выдачи паспорта (если есть)</label><input type="date" class="fi" id="rg-pd"></div>
+    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="rg-c" onchange="updatePassHints('rg-c','rg-ps','rg-pn')"><option value="">Выберите страну</option></select></div>
+    <button class="btn" onclick="doRegistry()">🔍 Проверить в реестре</button>
     <div id="rg-result" style="margin-top:14px"></div>
     <div class="divider"></div>
-    <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank"><button class="btn out" id="t-open-mvd2">🌐 Открыть на МВД.РФ</button></a>
+    <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank"><button class="btn out">🌐 Открыть на МВД.РФ</button></a>
   </div>
 </div>
 
 <!-- ===== CHECK BAN ===== -->
 <div class="page" id="pg-check-ban">
-  <div class="hdr">
-    <button class="hdr-back" onclick="go('home')">‹</button>
-    <div class="hdr-title">🚫 Запрет на въезд</div>
-  </div>
+  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">🚫 Запрет на въезд</div></div>
   <div class="px">
-    <div class="warn-box" id="t-ban-warn">⚠️ Для проверки необходимы точные паспортные данные. Неправильные данные дадут неверный результат.</div>
-    <div class="fg"><label class="flbl" id="t-ban-lastname">Фамилия (как в паспорте)</label><input class="fi" id="bn-l" placeholder="Латиницей как в паспорте"></div>
-    <div class="fg"><label class="flbl" id="t-ban-firstname">Имя (как в паспорте)</label><input class="fi" id="bn-f" placeholder="Имя"></div>
-    <div class="fg"><label class="flbl" id="t-ban-mid">Отчество (если есть)</label><input class="fi" id="bn-m" placeholder="Оставьте пустым если нет"></div>
-    <div class="fg"><label class="flbl" id="t-ban-birth">Дата рождения</label><input type="date" class="fi" id="bn-b"></div>
-    <div class="fg"><label class="flbl" id="t-ban-pser">Серия паспорта</label><input class="fi" id="bn-ps" placeholder="Серия иностранного паспорта" maxlength="15"></div>
-    <div class="fg"><label class="flbl" id="t-ban-pnum">Номер паспорта</label><input class="fi" id="bn-pn" placeholder="Номер паспорта" maxlength="20" inputmode="numeric"></div>
-    <div class="fg"><label class="flbl" id="t-ban-pdate">Дата выдачи паспорта</label><input type="date" class="fi" id="bn-pd"></div>
-    <div class="fg"><label class="flbl" id="t-ban-pexp">Срок действия паспорта до</label><input type="date" class="fi" id="bn-pe"></div>
-    <div class="fg"><label class="flbl" id="t-ban-cit">Гражданство</label><select class="fi" id="bn-c" onchange="updatePassportHints('bn-c','bn-ps','bn-pn','t-ban-pser','t-ban-pnum')">COUNTRIES</select></div>
-    <button class="btn r" onclick="doBan()" id="t-ban-btn">🔍 Проверить запрет на въезд</button>
+    <div class="warn-box">⚠️ Для точной проверки нужны данные точно как в паспорте.</div>
+    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="bn-c" onchange="updatePassHints('bn-c','bn-ps','bn-pn')"><option value="">Выберите страну</option></select></div>
+    <div class="fg"><label class="flbl">Фамилия (как в паспорте)</label><input class="fi" id="bn-l" placeholder="Латиницей или кириллицей"></div>
+    <div class="fg"><label class="flbl">Имя</label><input class="fi" id="bn-f" placeholder="Имя"></div>
+    <div class="fg"><label class="flbl">Отчество (если есть)</label><input class="fi" id="bn-m" placeholder="Оставьте пустым если нет"></div>
+    <div class="fg"><label class="flbl">Дата рождения</label><input type="date" class="fi" id="bn-b"></div>
+    <div class="fg"><label class="flbl" id="bn-ser-lbl">Серия паспорта (если есть)</label><input class="fi" id="bn-ps" placeholder="Серия (необязательно)" maxlength="15"></div>
+    <div class="fg"><label class="flbl" id="bn-num-lbl">Номер паспорта</label><input class="fi" id="bn-pn" placeholder="Номер паспорта" maxlength="20" inputmode="numeric"></div>
+    <div class="fg"><label class="flbl">Дата выдачи паспорта</label><input type="date" class="fi" id="bn-pd"></div>
+    <div class="fg"><label class="flbl">Срок действия (если есть)</label><input type="date" class="fi" id="bn-pe"></div>
+    <button class="btn r" onclick="doBan()">🔍 Проверить запрет на въезд</button>
     <div id="bn-result" style="margin-top:14px"></div>
     <div class="divider"></div>
     <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank"><button class="btn out">🌐 Открыть на МВД.РФ</button></a>
@@ -375,7 +577,7 @@ select.fi{-webkit-appearance:none;appearance:none}
 <div class="page" id="pg-check-ready">
   <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">📋 Готовность патента</div></div>
   <div class="px">
-    <div class="res-card w"><div class="res-ico">📋</div><div class="res-t" id="t-ready-title">Готовность в ММЦ Сахарово</div><div class="res-s" id="t-ready-sub">Проверьте статус на официальном сайте ММЦ или позвоните по телефону горячей линии</div></div>
+    <div class="res-card w"><div class="res-ico">📋</div><div class="res-t">Готовность в ММЦ Сахарово</div><div class="res-s">Проверьте статус на официальном сайте ММЦ или позвоните по телефону</div></div>
     <a href="https://mc.mos.ru" target="_blank" style="display:block;margin-bottom:10px"><button class="btn">🌐 mc.mos.ru — Сайт ММЦ</button></a>
     <div class="card"><div class="irows">
       <div class="irow"><span class="irow-l">Горячая линия</span><span class="irow-v"><a href="tel:+74952038820" style="color:var(--blue);text-decoration:none;font-weight:800">+7 (495) 203-88-20</a></span></div>
@@ -387,94 +589,82 @@ select.fi{-webkit-appearance:none;appearance:none}
 
 <!-- ===== SNILS ===== -->
 <div class="page" id="pg-snils">
-  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title" id="t-snils-title">Получение СНИЛС 🪪</div></div>
+  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">Получение СНИЛС 🪪</div></div>
   <div class="px">
-    <div class="ok-box" id="t-snils-info">✅ СНИЛС (страховой номер) нужен для официального трудоустройства. Выдаётся бесплатно через работодателя или МФЦ.</div>
+    <div class="ok-box">✅ СНИЛС нужен для официального трудоустройства. Выдаётся бесплатно.</div>
     <div class="svc-card">
-      <div class="svc-card-t" id="t-snils-way1">Способ 1: Через работодателя</div>
-      <div class="svc-card-s" id="t-snils-way1-s">Самый простой. Работодатель оформляет сам при приёме на работу.</div>
+      <div class="svc-card-t">Способ 1: Через работодателя</div>
+      <div class="svc-card-s">Самый простой — работодатель оформляет сам.</div>
       <div class="svc-steps">
-        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t" id="t-snils-w1s1">Предоставьте работодателю паспорт и миграционные документы</div></div>
-        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t" id="t-snils-w1s2">Работодатель подаёт заявку в СФР (Социальный фонд России)</div></div>
-        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t" id="t-snils-w1s3">СНИЛС оформляется в течение 5 рабочих дней</div></div>
+        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t">Предоставьте паспорт и миграционные документы</div></div>
+        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t">Работодатель подаёт заявку в СФР</div></div>
+        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t">СНИЛС готов через 5 рабочих дней</div></div>
       </div>
     </div>
-    <div class="svc-card" style="margin-top:4px">
-      <div class="svc-card-t" id="t-snils-way2">Способ 2: Через МФЦ</div>
-      <div class="svc-card-s" id="t-snils-way2-s">Самостоятельно через многофункциональный центр.</div>
+    <div class="svc-card">
+      <div class="svc-card-t">Способ 2: Через МФЦ</div>
       <div class="svc-steps">
-        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t" id="t-snils-w2s1">Возьмите паспорт + нотариальный перевод</div></div>
-        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t" id="t-snils-w2s2">Возьмите РВП, ВНЖ или патент на работу</div></div>
-        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t" id="t-snils-w2s3">Придите в любой МФЦ и заполните заявление АДВ-1</div></div>
-        <div class="svc-step"><div class="svc-step-n">4</div><div class="svc-step-t" id="t-snils-w2s4">Получите СНИЛС через 5 рабочих дней</div></div>
+        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t">Паспорт + нотариальный перевод</div></div>
+        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t">РВП, ВНЖ или патент</div></div>
+        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t">МФЦ → заявление АДВ-1</div></div>
+        <div class="svc-step"><div class="svc-step-n">4</div><div class="svc-step-t">Получите СНИЛС через 5 дней</div></div>
       </div>
     </div>
-    <div class="card" style="margin-top:4px">
-      <div style="font-size:13px;font-weight:800;margin-bottom:10px" id="t-snils-docs">📋 Необходимые документы</div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:800;margin-bottom:10px">📋 Документы</div>
       <div class="irows">
-        <div class="irow"><span class="irow-l">1</span><span class="irow-v" id="t-snils-d1">Паспорт + нотариальный перевод</span></div>
-        <div class="irow"><span class="irow-l">2</span><span class="irow-v" id="t-snils-d2">Патент / РВП / ВНЖ</span></div>
-        <div class="irow"><span class="irow-l">3</span><span class="irow-v" id="t-snils-d3">Регистрация по месту жительства</span></div>
-        <div class="irow"><span class="irow-l" id="t-price">Стоимость</span><span class="irow-v" style="color:var(--green)" id="t-free-svc">Бесплатно</span></div>
+        <div class="irow"><span class="irow-l">1</span><span class="irow-v">Паспорт + нотариальный перевод</span></div>
+        <div class="irow"><span class="irow-l">2</span><span class="irow-v">Патент / РВП / ВНЖ</span></div>
+        <div class="irow"><span class="irow-l">3</span><span class="irow-v">Регистрация по месту жительства</span></div>
+        <div class="irow"><span class="irow-l">Стоимость</span><span class="irow-v" style="color:var(--green)">Бесплатно</span></div>
       </div>
     </div>
-    <a href="https://gosuslugi.ru/situation/workForForeign" target="_blank"><button class="btn" style="margin-bottom:10px" id="t-snils-gosuslugi">🏛️ Оформить через Госуслуги</button></a>
-    <button class="btn out" onclick="go('home')" id="t-back-main">← Главное меню</button>
+    <a href="https://gosuslugi.ru/situation/workForForeign" target="_blank"><button class="btn" style="margin-bottom:10px">🏛️ Оформить через Госуслуги</button></a>
+    <button class="btn out" onclick="go('home')">← Главное меню</button>
   </div>
 </div>
 
 <!-- ===== INN ===== -->
 <div class="page" id="pg-inn">
-  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title" id="t-inn-title">Получение ИНН 🔢</div></div>
+  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">Получение ИНН 🔢</div></div>
   <div class="px">
-    <div class="ok-box" id="t-inn-info">✅ ИНН (индивидуальный налоговый номер) нужен для уплаты налогов и работы. Выдаётся бесплатно.</div>
+    <div class="ok-box">✅ ИНН нужен для уплаты налогов. Выдаётся бесплатно.</div>
     <div class="svc-card">
-      <div class="svc-card-t" id="t-inn-online">Онлайн через сайт ФНС</div>
-      <div class="svc-card-s" id="t-inn-online-s">Самый быстрый способ. Можно сделать не выходя из дома.</div>
+      <div class="svc-card-t">Онлайн через ФНС</div>
       <div class="svc-steps">
-        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t" id="t-inn-s1">Зайдите на сайт nalog.ru → «Узнать ИНН»</div></div>
-        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t" id="t-inn-s2">Введите ФИО, дату рождения, данные паспорта</div></div>
-        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t" id="t-inn-s3">Если ИНН уже есть — система покажет его сразу</div></div>
-        <div class="svc-step"><div class="svc-step-n">4</div><div class="svc-step-t" id="t-inn-s4">Если нет — подайте заявление онлайн или в налоговой</div></div>
-        <div class="svc-step"><div class="svc-step-n">5</div><div class="svc-step-t" id="t-inn-s5">ИНН присваивается в течение 5 рабочих дней</div></div>
+        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t">nalog.ru → «Узнать ИНН»</div></div>
+        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t">ФИО + дата рождения + данные паспорта</div></div>
+        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t">Если нет — подайте заявление онлайн</div></div>
+        <div class="svc-step"><div class="svc-step-n">4</div><div class="svc-step-t">ИНН присваивается в течение 5 дней</div></div>
       </div>
     </div>
-    <div class="card" style="margin-top:4px">
-      <div style="font-size:13px;font-weight:800;margin-bottom:10px" id="t-inn-docs">📋 Необходимые документы</div>
-      <div class="irows">
-        <div class="irow"><span class="irow-l">1</span><span class="irow-v" id="t-inn-d1">Паспорт + нотариальный перевод</span></div>
-        <div class="irow"><span class="irow-l">2</span><span class="irow-v" id="t-inn-d2">Миграционная карта</span></div>
-        <div class="irow"><span class="irow-l">3</span><span class="irow-v" id="t-inn-d3">Уведомление о постановке на учёт</span></div>
-        <div class="irow"><span class="irow-l" id="t-inn-price">Стоимость</span><span class="irow-v" style="color:var(--green)" id="t-inn-free">Бесплатно</span></div>
-      </div>
-    </div>
-    <a href="https://service.nalog.ru/inn.do" target="_blank"><button class="btn" style="margin-bottom:10px" id="t-inn-check">🔍 Узнать ИНН на сайте ФНС</button></a>
-    <a href="https://gosuslugi.ru" target="_blank"><button class="btn out" style="margin-bottom:10px" id="t-inn-gosuslugi">🏛️ Подать заявку на Госуслугах</button></a>
-    <button class="btn out" onclick="go('home')" id="t-back-main2">← Главное меню</button>
+    <a href="https://service.nalog.ru/inn.do" target="_blank"><button class="btn" style="margin-bottom:10px">🔍 Узнать ИНН на сайте ФНС</button></a>
+    <a href="https://gosuslugi.ru" target="_blank"><button class="btn out" style="margin-bottom:10px">🏛️ Подать заявку на Госуслугах</button></a>
+    <button class="btn out" onclick="go('home')">← Главное меню</button>
   </div>
 </div>
 
 <!-- ===== MMC ===== -->
 <div class="page" id="pg-mmc">
-  <div class="hdr"><div class="hdr-title" id="t-mmc-title">ММЦ Сахарово 🏛️</div></div>
+  <div class="hdr"><div class="hdr-title">ММЦ Сахарово 🏛️</div></div>
   <div class="px">
     <div class="card" style="text-align:center;padding:18px">
       <div style="font-size:32px;margin-bottom:8px">🏛️</div>
-      <div style="font-size:15px;font-weight:900;margin-bottom:3px" id="t-mmc-name">Многофункциональный миграционный центр</div>
+      <div style="font-size:15px;font-weight:900;margin-bottom:3px">Многофункциональный миграционный центр</div>
       <div style="font-size:12px;color:var(--muted);font-weight:600">Варшавское шоссе, 64-й км, д.1 стр.47</div>
       <div style="font-size:13px;color:var(--green);font-weight:800;margin-top:6px">Ежедневно 8:00–20:00</div>
     </div>
-    <div class="ctitle" id="t-mmc-booking">Запись и сервисы</div>
-    <a class="mmc-lnk" href="https://mmc.mos.ru/client-office" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(45,126,247,.18)">📝</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t" id="t-mmc-rvp">Запись на РВП / ВНЖ / Гражданство</div><div class="mmc-lnk-s">mmc.mos.ru — Личный кабинет ММЦ</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://mc.mos.ru" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(29,185,84,.18)">🏛️</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t" id="t-mmc-site">Официальный сайт ММЦ</div><div class="mmc-lnk-s">mc.mos.ru — новости, расписание</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/testing/" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(251,191,36,.18)">📚</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t" id="t-mmc-exam">Экзамен по русскому языку</div><div class="mmc-lnk-s" id="t-mmc-exam-s">Запись на тестирование в ММЦ</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/medical/" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(29,185,84,.18)">🏥</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t" id="t-mmc-med">Медицинское освидетельствование</div><div class="mmc-lnk-s" id="t-mmc-med-s">Запись на медкомиссию для патента</div></div><span style="color:var(--muted)">›</span></a>
-    <div class="ctitle" style="margin-top:4px" id="t-mvd-checks">Проверки МВД.РФ</div>
+    <div class="ctitle">Запись и сервисы</div>
+    <a class="mmc-lnk" href="https://mmc.mos.ru/client-office" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(45,126,247,.18)">📝</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Запись на РВП / ВНЖ / Гражданство</div><div class="mmc-lnk-s">mmc.mos.ru — личный кабинет ММЦ</div></div><span style="color:var(--muted)">›</span></a>
+    <a class="mmc-lnk" href="https://mc.mos.ru" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(29,185,84,.18)">🏛️</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Официальный сайт ММЦ</div><div class="mmc-lnk-s">mc.mos.ru — новости, расписание</div></div><span style="color:var(--muted)">›</span></a>
+    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/testing/" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(251,191,36,.18)">📚</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Экзамен по русскому языку</div><div class="mmc-lnk-s">Запись на тестирование в ММЦ</div></div><span style="color:var(--muted)">›</span></a>
+    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/medical/" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(29,185,84,.18)">🏥</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Медицинское освидетельствование</div><div class="mmc-lnk-s">Запись на медкомиссию для патента</div></div><span style="color:var(--muted)">›</span></a>
+    <div class="ctitle" style="margin-top:4px">Проверки МВД.РФ</div>
     <a class="mmc-lnk" href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(229,57,53,.18)">🔍</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Проверить патент — МВД.РФ</div><div class="mmc-lnk-s">сервисы.гувм.мвд.рф</div></div><span style="color:var(--muted)">›</span></a>
     <a class="mmc-lnk" href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(124,58,237,.18)">🚫</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Реестр контролируемых лиц</div><div class="mmc-lnk-s">Проверка запрета — МВД.РФ</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://service.nalog.ru/inn.do" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(255,140,0,.18)">🔢</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Узнать ИНН</div><div class="mmc-lnk-s">Сервис ФНС России</div></div><span style="color:var(--muted)">›</span></a>
+    <a class="mmc-lnk" href="https://service.nalog.ru/inn.do" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(255,140,0,.18)">🔢</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Узнать ИНН — ФНС России</div><div class="mmc-lnk-s">service.nalog.ru</div></div><span style="color:var(--muted)">›</span></a>
     <a class="mmc-lnk" href="https://gosuslugi.ru" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(45,126,247,.18)">🏛️</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Госуслуги</div><div class="mmc-lnk-s">Электронные госуслуги</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://fssprus.ru/iss/ip" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(229,57,53,.18)">⚖️</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t" id="t-fssp">Исполнительные производства ФССП</div><div class="mmc-lnk-s" id="t-fssp-s">Проверка долгов</div></div><span style="color:var(--muted)">›</span></a>
+    <a class="mmc-lnk" href="https://fssprus.ru/iss/ip" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(229,57,53,.18)">⚖️</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Исполнительные производства ФССП</div><div class="mmc-lnk-s">Проверка долгов</div></div><span style="color:var(--muted)">›</span></a>
     <div class="card" style="margin-top:4px"><div style="font-size:13px;font-weight:800;margin-bottom:10px">📞 Контакты ММЦ</div>
       <div class="irows">
         <div class="irow"><span class="irow-l">Горячая линия</span><span class="irow-v"><a href="tel:+74952038820" style="color:var(--blue);text-decoration:none;font-weight:800">+7 (495) 203-88-20</a></span></div>
@@ -487,22 +677,32 @@ select.fi{-webkit-appearance:none;appearance:none}
 
 <!-- ===== PROFILE / SUB ===== -->
 <div class="page" id="pg-profile">
-  <div class="hdr"><div class="hdr-title" id="t-sub-page">Подписка 🛡️</div></div>
+  <div class="hdr"><div class="hdr-title">Подписка 🛡️</div></div>
   <div class="px">
-    <div style="font-size:14px;color:var(--muted);font-weight:600;margin-bottom:16px;line-height:1.5" id="t-sub-desc">Работаете в России? Мы позаботимся о ваших документах — вы сможете спокойно работать.</div>
-    <div style="font-size:13px;font-weight:900;margin-bottom:10px" id="t-why">Почему это важно?</div>
+    <div style="font-size:14px;color:var(--muted);font-weight:600;margin-bottom:16px;line-height:1.5">Работаете в России? Мы позаботимся о ваших документах.</div>
+    <div style="font-size:13px;font-weight:900;margin-bottom:10px">Почему это важно?</div>
     <div class="cmp">
-      <div class="cmp-col bad"><div class="cmp-t">❌ <span id="t-without-sub">Без подписки</span></div><div class="cmp-s" id="t-without-sub-text">Пропущенный платёж → аннулированный патент → штраф или депортация</div></div>
-      <div class="cmp-col gd"><div class="cmp-t">✅ <span id="t-with-sub">С подпиской</span></div><div class="cmp-s" id="t-with-sub-text">Спокойная работа, все документы под контролем</div></div>
+      <div class="cmp-col bad"><div class="cmp-t">❌ Без подписки</div><div class="cmp-s">Пропущенный платёж → аннулированный патент → штраф или депортация</div></div>
+      <div class="cmp-col gd"><div class="cmp-t">✅ С подпиской</div><div class="cmp-s">Спокойная работа, все документы под контролем</div></div>
     </div>
     <div class="plans">
-      <div class="plan-it" onclick="pickPlan(this,'1m',190)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">1 <span id="t-month">месяц</span></div></div><div class="plan-pr"><div class="plan-am">190 ₽</div></div></div>
-      <div class="plan-it" onclick="pickPlan(this,'2m',370)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">2 <span id="t-months2">месяца</span></div><div class="plan-p">185 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">370 ₽</div></div></div>
-      <div class="plan-it sel" onclick="pickPlan(this,'3m',480)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">3 <span id="t-months3">месяца</span></div><div class="plan-p">160 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">480 ₽</div><div class="plan-sv" id="t-benefit1">выгода 16%</div></div></div>
-      <div class="plan-it" onclick="pickPlan(this,'6m',900)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">6 <span id="t-months5">месяцев</span></div><div class="plan-p">150 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">900 ₽</div><div class="plan-sv" id="t-benefit2">выгода 22%</div></div></div>
-      <div class="plan-it" onclick="pickPlan(this,'12m',1500)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">12 <span id="t-months12">месяцев</span></div><div class="plan-p">125 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">1 500 ₽</div><div class="plan-sv" id="t-benefit3">выгода 35%</div></div></div>
+      <div class="plan-it" onclick="pickPlan(this,'1m',190)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">1 месяц</div></div><div class="plan-pr"><div class="plan-am">190 ₽</div></div></div>
+      <div class="plan-it" onclick="pickPlan(this,'2m',370)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">2 месяца</div><div class="plan-p">185 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">370 ₽</div></div></div>
+      <div class="plan-it sel" onclick="pickPlan(this,'3m',480)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">3 месяца</div><div class="plan-p">160 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">480 ₽</div><div class="plan-sv">выгода 16%</div></div></div>
+      <div class="plan-it" onclick="pickPlan(this,'6m',900)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">6 месяцев</div><div class="plan-p">150 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">900 ₽</div><div class="plan-sv">выгода 22%</div></div></div>
+      <div class="plan-it" onclick="pickPlan(this,'12m',1500)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">12 месяцев</div><div class="plan-p">125 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">1 500 ₽</div><div class="plan-sv">выгода 35%</div></div></div>
     </div>
     <button class="btn" id="pay-btn" onclick="pay()">Оплатить 480 ₽</button>
+    <div style="margin-top:20px;">
+      <div style="font-size:13px;font-weight:900;margin-bottom:12px">✅ Что вы получаете:</div>
+      <div class="chk-list">
+        <div class="chk-item" style="cursor:default"><div class="chk-ico y">⭐</div><div class="chk-txt"><div class="chk-t">Автопроверка документов каждый день</div><div class="chk-s">24/7 мониторинг</div></div></div>
+        <div class="chk-item" style="cursor:default"><div class="chk-ico g">🔍</div><div class="chk-txt"><div class="chk-t">Реестр контролируемых лиц</div><div class="chk-s">Проверяется каждый день</div></div></div>
+        <div class="chk-item" style="cursor:default"><div class="chk-ico b">🪪</div><div class="chk-txt"><div class="chk-t">Патент — проверяется ежедневно</div><div class="chk-s">Сразу узнаете если патент аннулирован</div></div></div>
+        <div class="chk-item" style="cursor:default"><div class="chk-ico r">⏰</div><div class="chk-txt"><div class="chk-t">Умные напоминания</div><div class="chk-s">Никогда не пропустите срок оплаты</div></div></div>
+        <div class="chk-item" style="cursor:default"><div class="chk-ico teal">💳</div><div class="chk-txt"><div class="chk-t">Трекер оплаты патента</div><div class="chk-s">Контроль всех ежемесячных платежей</div></div></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -510,25 +710,33 @@ select.fi{-webkit-appearance:none;appearance:none}
 <div class="overlay" id="sh-patent" onclick="closeSheet(event,'sh-patent')">
   <div class="sheet" onclick="stopProp(event)">
     <div class="sheet-handle"></div>
-    <div style="font-size:17px;font-weight:900;margin-bottom:18px" id="t-add-pat-title">🪪 Добавить патент</div>
-    <div class="fg"><label class="flbl" id="t-ap-ser">Серия (лицевая сторона)</label><input class="fi" id="ap-s" placeholder="50, 77, МСК..." maxlength="10"></div>
-    <div class="fg"><label class="flbl" id="t-ap-num">Номер (лицевая сторона)</label><input class="fi" id="ap-n" placeholder="2500433815" maxlength="15" inputmode="numeric"></div>
-    <div class="fg"><label class="flbl" id="t-ap-bser">Серия бланка (оборотная)</label><input class="fi" id="ap-bs" placeholder="ПР, МФЦ..." maxlength="10"></div>
-    <div class="fg"><label class="flbl" id="t-ap-bnum">Номер бланка (оборотная)</label><input class="fi" id="ap-bn" placeholder="6892529" maxlength="15" inputmode="numeric"></div>
-    <div class="fg"><label class="flbl" id="t-ap-iss">Дата выдачи</label><input type="date" class="fi" id="ap-i"></div>
-    <div class="fg"><label class="flbl" id="t-ap-exp">Действует до</label><input type="date" class="fi" id="ap-e"></div>
-    <div class="fg"><label class="flbl" id="t-ap-reg">Регион действия</label><input class="fi" id="ap-r" placeholder="Москва, Московская обл..."></div>
-    <button class="btn" onclick="savePat()" style="margin-bottom:10px" id="t-save">Сохранить</button>
-    <button class="btn out" onclick="closeSheet2('sh-patent')" id="t-cancel">Отмена</button>
+    <div style="font-size:17px;font-weight:900;margin-bottom:18px">🪪 Добавить патент</div>
+    <div class="fg"><label class="flbl">Серия (лицевая сторона)</label><input class="fi" id="ap-s" placeholder="50, 77, МСК..." maxlength="10"></div>
+    <div class="fg"><label class="flbl">Номер (лицевая сторона)</label><input class="fi" id="ap-n" placeholder="2500433815" maxlength="15" inputmode="numeric"></div>
+    <div class="fg"><label class="flbl">Серия бланка (оборотная, если есть)</label><input class="fi" id="ap-bs" placeholder="ПР, МФЦ..." maxlength="10"></div>
+    <div class="fg"><label class="flbl">Номер бланка (оборотная, если есть)</label><input class="fi" id="ap-bn" placeholder="6892529" maxlength="15" inputmode="numeric"></div>
+    <div class="fg"><label class="flbl">Дата выдачи</label><input type="date" class="fi" id="ap-i"></div>
+    <div class="fg"><label class="flbl">Действует до</label><input type="date" class="fi" id="ap-e"></div>
+    <div class="fg"><label class="flbl">Регион действия</label><input class="fi" id="ap-r" placeholder="Москва, Московская обл..."></div>
+    <button class="btn" onclick="savePat()" style="margin-bottom:10px">Сохранить патент</button>
+    <button class="btn out" onclick="closeSheet2('sh-patent')">Отмена</button>
   </div>
 </div>
 
 <!-- ===== NAV ===== -->
 <nav class="nav">
-  <button class="nb on" id="nb-home" onclick="go('home')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span id="t-nav-home">Главная</span></button>
-  <button class="nb" id="nb-cabinet" onclick="go('cabinet')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span id="t-nav-cabinet">Кабинет</span></button>
-  <button class="nb" id="nb-mmc" onclick="go('mmc')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg><span id="t-nav-mmc">Сахарово</span></button>
-  <button class="nb" id="nb-profile" onclick="go('profile')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg><span id="t-nav-sub">Подписка</span></button>
+  <button class="nb on" id="nb-home" onclick="go('home')">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Главная
+  </button>
+  <button class="nb" id="nb-cabinet" onclick="go('cabinet')">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Кабинет
+  </button>
+  <button class="nb" id="nb-mmc" onclick="go('mmc')">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Сахарово
+  </button>
+  <button class="nb" id="nb-profile" onclick="go('profile')">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>Подписка
+  </button>
 </nav>
 
 <script>
@@ -536,47 +744,98 @@ const tg = window.Telegram?.WebApp;
 if(tg){tg.ready();tg.expand();}
 
 // ============================================================
-// TRANSLATIONS (10 languages)
+// PASSPORT FORMATS
 // ============================================================
-const TR = {
-ru:{consent_title:"Добро пожаловать 👋",consent_sub:"Перед использованием ознакомьтесь с условиями",app_name:"МигрантПро 🇷🇺",free:"Бесплатно",stay_lbl:"дней до окончания пребывания",stay_hint:"Укажите дату въезда в кабинете",my_patents:"Мои патенты",add_patent:"➕ Добавить патент",sub_title:"🛡️ Автоматическая защита",sub_sub:"Бот следит за вашими документами 24/7",sf1:"⭐ Ежедневная проверка патента на МВД.РФ",sf2:"🔍 Реестр контролируемых лиц — каждый день",sf3:"⏰ Напоминания о сроках оплаты",sub_btn:"Подключить от 190 ₽/мес →",gov_checks:"Проверки в государственных базах",chk_patent:"Проверить патент / разрешение",chk_patent_s:"Действительность — сервисы.гувм.мвд.рф",chk_reg:"Реестр контролируемых лиц",chk_reg_s:"Проверка по базе МВД РФ",chk_ban:"Запрет на въезд в Россию",chk_ban_s:"Проверка по базе ГУВМ МВД РФ",chk_ready:"Готовность патента в ММЦ",chk_ready_s:"Уведомление о готовности",services:"Услуги",svc_snils:"Как получить СНИЛС",svc_snils_s:"Пошаговая инструкция для иностранца",svc_inn:"Как получить ИНН",svc_inn_s:"Постановка на учёт в налоговой",cabinet:"Личный кабинет",free_plan:"Бесплатный план",stay_period:"Срок пребывания (90 дней)",entry_date:"Дата въезда в Россию",days_in:"дней в России",days_left:"дней осталось",my_docs:"Мои документы",doc_contract:"Трудовой договор",doc_contract_s:"Загрузить и поделиться с работодателем",doc_notify:"Уведомление о трудоустройстве",doc_notify_s:"Отправка уведомления в МВД",doc_receipt:"Чеки об оплате патента",doc_receipt_s:"Архив всех платежей",lastname:"Фамилия",firstname:"Имя",middlename:"Отчество (если есть)",birthdate:"Дата рождения",pass_series:"Серия паспорта",pass_num:"Номер паспорта",pass_issue:"Дата выдачи паспорта",pass_expire:"Срок действия паспорта до",citizenship:"Гражданство",by_patent:"По патенту",by_passport:"По паспорту",doc_series:"Серия документа (лицевая сторона)",doc_num:"Номер документа (лицевая сторона)",blank_series:"Серия бланка (оборотная сторона)",blank_num:"Номер бланка (оборотная сторона)",pass_num_foreign:"Номер паспорта иностранного гражданина",check_btn:"🔍 Проверить на МВД.РФ",open_mvd:"🌐 Открыть сервисы.гувм.мвд.рф",reg_info:"📌 Реестр контролируемых лиц МВД РФ. Для проверки необходимы паспортные данные.",ban_warn:"⚠️ Для проверки необходимы точные паспортные данные.",check_reg_btn:"🔍 Проверить в реестре",check_ban_btn:"🔍 Проверить запрет на въезд",ready_title:"Готовность в ММЦ Сахарово",ready_sub:"Проверьте статус на сайте ММЦ или позвоните по горячей линии",mmc_title:"ММЦ Сахарово 🏛️",mmc_name:"Многофункциональный миграционный центр",mmc_booking:"Запись и сервисы",mmc_rvp:"Запись на РВП / ВНЖ / Гражданство",mmc_site:"Официальный сайт ММЦ",mmc_exam:"Экзамен по русскому языку",mmc_exam_s:"Запись на тестирование в ММЦ",mmc_med:"Медицинское освидетельствование",mmc_med_s:"Запись на медкомиссию для патента",mvd_checks:"Проверки МВД.РФ",fssp:"Исполнительные производства ФССП",fssp_s:"Проверка долгов",sub_page:"Подписка 🛡️",sub_desc:"Работаете в России? Мы позаботимся о ваших документах.",why:"Почему это важно?",without_sub:"Без подписки",without_sub_text:"Пропущенный платёж → аннулированный патент → штраф или депортация",with_sub:"С подпиской",with_sub_text:"Спокойная работа, все документы под контролем",month:"месяц",months2:"месяца",months3:"месяца",months5:"месяцев",months12:"месяцев",benefit1:"выгода 16%",benefit2:"выгода 22%",benefit3:"выгода 35%",snils_title:"Получение СНИЛС 🪪",snils_info:"✅ СНИЛС нужен для трудоустройства. Выдаётся бесплатно.",snils_way1:"Способ 1: Через работодателя",snils_way1_s:"Самый простой способ",snils_w1s1:"Предоставьте работодателю паспорт и миграционные документы",snils_w1s2:"Работодатель подаёт заявку в СФР",snils_w1s3:"СНИЛС оформляется в течение 5 рабочих дней",snils_way2:"Способ 2: Через МФЦ",snils_way2_s:"Самостоятельно через МФЦ",snils_w2s1:"Возьмите паспорт + нотариальный перевод",snils_w2s2:"Возьмите РВП, ВНЖ или патент",snils_w2s3:"Придите в МФЦ и заполните заявление АДВ-1",snils_w2s4:"Получите СНИЛС через 5 рабочих дней",snils_docs:"📋 Необходимые документы",snils_d1:"Паспорт + нотариальный перевод",snils_d2:"Патент / РВП / ВНЖ",snils_d3:"Регистрация по месту жительства",price:"Стоимость",free_svc:"Бесплатно",snils_gosuslugi:"🏛️ Оформить через Госуслуги",back_main:"← Главное меню",inn_title:"Получение ИНН 🔢",inn_info:"✅ ИНН нужен для уплаты налогов. Выдаётся бесплатно.",inn_online:"Онлайн через сайт ФНС",inn_online_s:"Самый быстрый способ",inn_s1:"Зайдите на nalog.ru → «Узнать ИНН»",inn_s2:"Введите ФИО, дату рождения, данные паспорта",inn_s3:"Если ИНН уже есть — система покажет сразу",inn_s4:"Если нет — подайте заявление онлайн",inn_s5:"ИНН присваивается в течение 5 рабочих дней",inn_docs:"📋 Необходимые документы",inn_d1:"Паспорт + нотариальный перевод",inn_d2:"Миграционная карта",inn_d3:"Уведомление о постановке на учёт",inn_check:"🔍 Узнать ИНН на сайте ФНС",inn_gosuslugi:"🏛️ Подать заявку на Госуслугах",nav_home:"Главная",nav_cabinet:"Кабинет",nav_mmc:"Сахарово",nav_sub:"Подписка",patent_info:"📌 Официальный сервис ГУВМ МВД РФ. МВД требует капчу — нажмите кнопку для перехода на сайт МВД.",consent_agree1:"Я согласен на обработку персональных данных (ФЗ-152)",consent_agree2:"Я понимаю, что проверки через официальные сервисы МВД РФ",consent_agree3:"Я принимаю ",consent_btn:"Принять и продолжить",result_sent:"✉️ Запрос отправлен боту",result_sent_s:"Бот проверит по базе МВД РФ и пришлёт результат в Telegram чат. Для мгновенной проверки — нажмите кнопку ниже и введите капчу на сайте МВД.",ap_title:"🪪 Добавить патент",ap_ser:"Серия (лицевая сторона)",ap_num:"Номер (лицевая сторона)",ap_bser:"Серия бланка (оборотная)",ap_bnum:"Номер бланка (оборотная)",ap_iss:"Дата выдачи",ap_exp:"Действует до",ap_reg:"Регион действия",save:"Сохранить",cancel:"Отмена",added_ok:"✅ Патент добавлен!",fill_required:"⚠️ Заполните серию, номер и даты"},
-
-uz:{consent_title:"Xush kelibsiz 👋",consent_sub:"Foydalanishdan oldin shartlarni ko'rib chiqing",app_name:"MigrantPro 🇷🇺",free:"Bepul",stay_lbl:"kunlar qoldi (90 kun)",stay_hint:"Kabinetda kirish sanasini kiriting",my_patents:"Mening patentlarim",add_patent:"➕ Patent qo'shish",sub_title:"🛡️ Avtomatik himoya",sub_sub:"Bot hujjatlaringizni 24/7 kuzatadi",sf1:"⭐ Patent har kuni MVD.RF da tekshiriladi",sf2:"🔍 Nazorat shaxslar reestri — har kuni",sf3:"⏰ To'lov muddatlari eslatmalari",sub_btn:"190 ₽/oydan ulang →",gov_checks:"Davlat bazalarida tekshirish",chk_patent:"Patentni tekshirish",chk_patent_s:"MVD.RF rasmiy xizmati",chk_reg:"Nazorat shaxslar reestri",chk_reg_s:"MVD RF bazasi bo'yicha tekshirish",chk_ban:"Rossiyaga kirish taqiqi",chk_ban_s:"GUVD MVD RF bazasi",chk_ready:"MMTSda patent tayyorligi",chk_ready_s:"Hujjatlar tayyorligi haqida xabar",services:"Xizmatlar",svc_snils:"SNILS qanday olish",svc_snils_s:"Chet el fuqarosi uchun yo'riqnoma",svc_inn:"INN qanday olish",svc_inn_s:"Soliq organida ro'yxatga olish",cabinet:"Shaxsiy kabinet",free_plan:"Bepul tarif",stay_period:"Qolish muddati (90 kun)",entry_date:"Rossiyaga kirish sanasi",days_in:"kunlar Rossiyada",days_left:"kunlar qoldi",my_docs:"Mening hujjatlarim",doc_contract:"Mehnat shartnomasi",doc_contract_s:"Yuklash va ish beruvchi bilan ulashish",doc_notify:"Ish haqida xabarnoma",doc_notify_s:"MVDga xabarnoma yuborish",doc_receipt:"Patent to'lov cheklari",doc_receipt_s:"Barcha to'lovlar arxivi",lastname:"Familiya",firstname:"Ism",middlename:"Otasining ismi (agar bo'lsa)",birthdate:"Tug'ilgan sana",pass_series:"Pasport seriyasi",pass_num:"Pasport raqami",pass_issue:"Pasport berilgan sana",pass_expire:"Pasport amal qilish muddati",citizenship:"Fuqarolik",by_patent:"Patent bo'yicha",by_passport:"Pasport bo'yicha",doc_series:"Hujjat seriyasi (old tomonidan)",doc_num:"Hujjat raqami (old tomonidan)",blank_series:"Blank seriyasi (orqa tomondan)",blank_num:"Blank raqami (orqa tomondan)",pass_num_foreign:"Chet el fuqarosining pasport raqami",check_btn:"🔍 MVD.RF da tekshirish",open_mvd:"🌐 MVD.RF saytini ochish",reg_info:"📌 MVD RF nazorat shaxslar reestri. Tekshirish uchun pasport ma'lumotlari kerak.",ban_warn:"⚠️ Tekshirish uchun aniq pasport ma'lumotlari kerak.",check_reg_btn:"🔍 Reestrda tekshirish",check_ban_btn:"🔍 Kirish taqiqini tekshirish",ready_title:"MMTs Saxarovoda tayyorlik",ready_sub:"MMTs rasmiy saytida holatni tekshiring yoki qo'ng'iroq qiling",mmc_title:"MMTs Saxarovo 🏛️",mmc_name:"Ko'p funksiyali migratsiya markazi",mmc_booking:"Yozilish va xizmatlar",mmc_rvp:"RVP / VNJ / Fuqarolikka yozilish",mmc_site:"MMTs rasmiy sayti",mmc_exam:"Rus tili imtihoni",mmc_exam_s:"MMTsda sinovga yozilish",mmc_med:"Tibbiy ko'rik",mmc_med_s:"Patent uchun tibbiy komissiyaga yozilish",mvd_checks:"MVD.RF tekshiruvlari",fssp:"FSSP ijro ishlari",fssp_s:"Qarzlarni tekshirish",sub_page:"Obuna 🛡️",sub_desc:"Rossiyada ishlayapsizmi? Biz hujjatlaringizni boqamiz.",why:"Nima uchun bu muhim?",without_sub:"Obunasize",without_sub_text:"O'tkazib yuborilgan to'lov → bekor qilingan patent → jarima yoki deportatsiya",with_sub:"Obuna bilan",with_sub_text:"Tinch ish, barcha hujjatlar nazoratda",month:"oy",months2:"oy",months3:"oy",months5:"oy",months12:"oy",benefit1:"16% foyda",benefit2:"22% foyda",benefit3:"35% foyda",snils_title:"SNILS olish 🪪",snils_info:"✅ SNILS rasmiy ish uchun kerak. Bepul beriladi.",snils_way1:"1-yo'l: Ish beruvchi orqali",snils_way1_s:"Eng oddiy yo'l",snils_w1s1:"Ish beruvchiga pasport va migratsiya hujjatlarini bering",snils_w1s2:"Ish beruvchi SFRga ariza beradi",snils_w1s3:"SNILS 5 ish kunida rasmiylashtiriladi",snils_way2:"2-yo'l: MFTs orqali",snils_way2_s:"MFTs orqali mustaqil",snils_w2s1:"Pasport + notarial tarjima oling",snils_w2s2:"RVP, VNJ yoki patent oling",snils_w2s3:"MFTsga boring va ADV-1 arizasini to'ldiring",snils_w2s4:"5 ish kunidan keyin SNILS oling",snils_docs:"📋 Kerakli hujjatlar",snils_d1:"Pasport + notarial tarjima",snils_d2:"Patent / RVP / VNJ",snils_d3:"Yashash joyi bo'yicha ro'yxat",price:"Narx",free_svc:"Bepul",snils_gosuslugi:"🏛️ Gosuslugi orqali rasmiylashtirish",back_main:"← Bosh menyu",inn_title:"INN olish 🔢",inn_info:"✅ INN soliq to'lash uchun kerak. Bepul beriladi.",inn_online:"FNS sayti orqali onlayn",inn_online_s:"Eng tez usul",inn_s1:"nalog.ru saytiga o'ting → «INN ni bilish»",inn_s2:"FIO, tug'ilgan sana, pasport ma'lumotlarini kiriting",inn_s3:"INN mavjud bo'lsa — tizim darhol ko'rsatadi",inn_s4:"Yo'q bo'lsa — onlayn ariza bering",inn_s5:"INN 5 ish kunida beriladi",inn_docs:"📋 Kerakli hujjatlar",inn_d1:"Pasport + notarial tarjima",inn_d2:"Migratsiya kartasi",inn_d3:"Ro'yxatga qo'yish haqida xabarnoma",inn_check:"🔍 FNS saytida INNni bilish",inn_gosuslugi:"🏛️ Gosuslugilarda ariza berish",nav_home:"Asosiy",nav_cabinet:"Kabinet",nav_mmc:"Saxarovo",nav_sub:"Obuna",patent_info:"📌 GUVD MVD RF rasmiy xizmati. MVD kaptcha talab qiladi — MVD saytiga ma'lumotlaringiz bilan o'tish uchun tugmani bosing.",consent_agree1:"Shaxsiy ma'lumotlarni qayta ishlashga rozi bo'laman (152-FZ)",consent_agree2:"Tekshiruvlar MVD RF rasmiy xizmatlari orqali ekanini tushunaman",consent_agree3:"Men qabul qilaman ",consent_btn:"Qabul qilish va davom etish",result_sent:"✉️ So'rov botga yuborildi",result_sent_s:"Bot MVD RF bazasi orqali tekshiradi va natijani Telegram chatga yuboradi.",ap_title:"🪪 Patent qo'shish",ap_ser:"Seriya (old tomoni)",ap_num:"Raqam (old tomoni)",ap_bser:"Blank seriyasi (orqa tomoni)",ap_bnum:"Blank raqami (orqa tomoni)",ap_iss:"Berilgan sana",ap_exp:"Amal qilish muddati",ap_reg:"Harakat hududi",save:"Saqlash",cancel:"Bekor qilish",added_ok:"✅ Patent qo'shildi!",fill_required:"⚠️ Seriya, raqam va sanalarni to'ldiring"},
-
-tj:{consent_title:"Хуш омадед 👋",consent_sub:"Пеш аз истифода бо шартҳо шиносед",app_name:"MigrantPro 🇷🇺",free:"Ройгон",stay_lbl:"рӯзҳо қолидааст (90 рӯз)",stay_hint:"Санаи воридшавиро дар кабинет нишон диҳед",my_patents:"Патентҳои ман",add_patent:"➕ Патент илова кунед",sub_title:"🛡️ Ҳимояи автоматӣ",sub_sub:"Бот ҳуҷҷатҳои шуморо 24/7 назорат мекунад",sf1:"⭐ Санҷиши ҳаррӯзаи патент дар МВД.РФ",sf2:"🔍 Реестри шахсони назоратшаванда — ҳар рӯз",sf3:"⏰ Ёдоварии мӯҳлатҳои пардохт",sub_btn:"Аз 190 ₽/моҳ пайваст шавед →",gov_checks:"Санҷиш дар пойгоҳи давлатӣ",chk_patent:"Патентро санҷед",chk_patent_s:"Хизмати расмии ГУВМ МВД РФ",chk_reg:"Реестри шахсони назоратшаванда",chk_reg_s:"Санҷиш аз рӯи пойгоҳи МВД РФ",chk_ban:"Манъи воридшавӣ ба Россия",chk_ban_s:"Санҷиш аз рӯи пойгоҳи МВД",chk_ready:"Омодагии патент дар ММЦ",chk_ready_s:"Огоҳнома дар бораи омодагии ҳуҷҷатҳо",services:"Хизматҳо",svc_snils:"Чӣ гуна СНИЛС гирифтан мумкин",svc_snils_s:"Дастурамал барои шаҳрванди хориҷӣ",svc_inn:"Чӣ гуна ИНН гирифтан мумкин",svc_inn_s:"Бақайдгирӣ дар ташкилоти андоз",cabinet:"Кабинети шахсӣ",free_plan:"Нархи ройгон",stay_period:"Мӯҳлати иқомат (90 рӯз)",entry_date:"Санаи воридшавӣ ба Россия",days_in:"рӯз дар Россия",days_left:"рӯз қолидааст",my_docs:"Ҳуҷҷатҳои ман",doc_contract:"Шартномаи меҳнатӣ",doc_contract_s:"Бор кардан ва мубодила бо корфармо",doc_notify:"Огоҳнома дар бораи ба кор омадан",doc_notify_s:"Фиристодани огоҳнома ба МВД",doc_receipt:"Чекҳои пардохти патент",doc_receipt_s:"Бойгонии ҳамаи пардохтҳо",lastname:"Насаб",firstname:"Ном",middlename:"Номи падар (агар бошад)",birthdate:"Санаи таваллуд",pass_series:"Серияи шиноснома",pass_num:"Рақами шиноснома",pass_issue:"Санаи додани шиноснома",pass_expire:"Мӯҳлати эътибори шиноснома",citizenship:"Шаҳрвандӣ",by_patent:"Аз рӯи патент",by_passport:"Аз рӯи шиноснома",doc_series:"Серияи ҳуҷҷат (рӯи пеш)",doc_num:"Рақами ҳуҷҷат (рӯи пеш)",blank_series:"Серияи бланк (рӯи пушт)",blank_num:"Рақами бланк (рӯи пушт)",pass_num_foreign:"Рақами шиносномаи шаҳрванди хориҷӣ",check_btn:"🔍 Санҷиш дар МВД.РФ",open_mvd:"🌐 Кушодани сервисы.гувм.мвд.рф",reg_info:"📌 Реестри шахсони назоратшавандаи МВД РФ. Барои санҷиш маълумоти шиноснома лозим аст.",ban_warn:"⚠️ Барои санҷиш маълумоти дақиқи шиноснома лозим аст.",check_reg_btn:"🔍 Санҷиш дар реестр",check_ban_btn:"🔍 Санҷиши манъи воридшавӣ",ready_title:"Омодагии ММЦ Саҳарово",ready_sub:"Ҳолатро дар сайти расмии ММЦ санҷед ё занг занед",mmc_title:"ММЦ Саҳарово 🏛️",mmc_name:"Маркази бисёрфунксиявии муҳоҷират",mmc_booking:"Навиштан ва хизматҳо",mmc_rvp:"Навиштан барои РВП / ВНЖ / Шаҳрвандӣ",mmc_site:"Сайти расмии ММЦ",mmc_exam:"Имтиҳон аз забони русӣ",mmc_exam_s:"Навиштан барои санҷиш дар ММЦ",mmc_med:"Муоинаи тиббӣ",mmc_med_s:"Навиштан барои комиссияи тиббӣ",mvd_checks:"Санҷишҳои МВД.РФ",fssp:"Мурофиаҳои иҷроӣ ФССП",fssp_s:"Санҷиши қарзҳо",sub_page:"Обуна 🛡️",sub_desc:"Дар Россия кор мекунед? Мо ба ҳуҷҷатҳои шумо ғамхорӣ мекунем.",why:"Чаро ин муҳим аст?",without_sub:"Бидуни обуна",without_sub_text:"Пардохти гузаштасуда → патенти бекоршуда → ҷарима ё депортатсия",with_sub:"Бо обуна",with_sub_text:"Кори ором, ҳамаи ҳуҷҷатҳо таҳти назорат",month:"моҳ",months2:"моҳ",months3:"моҳ",months5:"моҳ",months12:"моҳ",benefit1:"фоида 16%",benefit2:"фоида 22%",benefit3:"фоида 35%",snils_title:"Гирифтани СНИЛС 🪪",snils_info:"✅ СНИЛС барои ба кор расмӣ кор кардан лозим аст. Ройгон дода мешавад.",snils_way1:"Роҳи 1: Тавассути корфармо",snils_way1_s:"Осонтарин роҳ",snils_w1s1:"Ба корфармо шиноснома ва ҳуҷҷатҳои муҳоҷиратиро диҳед",snils_w1s2:"Корфармо ба СФР дархост медиҳад",snils_w1s3:"СНИЛС дар муддати 5 рӯзи корӣ расмӣ мешавад",snils_way2:"Роҳи 2: Тавассути МФЦ",snils_way2_s:"Мустақил тавассути МФЦ",snils_w2s1:"Шиноснома + тарҷумаи нотариалиро гиред",snils_w2s2:"РВП, ВНЖ ё патентро гиред",snils_w2s3:"Ба ҳар МФЦ биёед ва аризаи АДВ-1 пур кунед",snils_w2s4:"СНИЛС-ро пас аз 5 рӯзи корӣ гиред",snils_docs:"📋 Ҳуҷҷатҳои зарурӣ",snils_d1:"Шиноснома + тарҷумаи нотариалӣ",snils_d2:"Патент / РВП / ВНЖ",snils_d3:"Бақайдгирӣ аз рӯи ҷои зист",price:"Арзиш",free_svc:"Ройгон",snils_gosuslugi:"🏛️ Расмӣ кардан тавассути Госуслуги",back_main:"← Менюи асосӣ",inn_title:"Гирифтани ИНН 🔢",inn_info:"✅ ИНН барои пардохти андоз лозим аст. Ройгон дода мешавад.",inn_online:"Онлайн тавассути сайти ФНС",inn_online_s:"Тезтарин роҳ",inn_s1:"Ба nalog.ru равед → «Донистани ИНН»",inn_s2:"ФИО, санаи таваллуд, маълумоти шиносномаро ворид кунед",inn_s3:"Агар ИНН бошад — система фавран нишон медиҳад",inn_s4:"Агар набошад — онлайн дархост диҳед",inn_s5:"ИНН дар муддати 5 рӯзи корӣ таъин мешавад",inn_docs:"📋 Ҳуҷҷатҳои зарурӣ",inn_d1:"Шиноснома + тарҷумаи нотариалӣ",inn_d2:"Карточкаи муҳоҷиратӣ",inn_d3:"Огоҳнома дар бораи ба ҳисоб гирифтан",inn_check:"🔍 Донистани ИНН дар сайти ФНС",inn_gosuslugi:"🏛️ Додани дархост дар Госуслуги",nav_home:"Асосӣ",nav_cabinet:"Кабинет",nav_mmc:"Саҳарово",nav_sub:"Обуна",patent_info:"📌 Хизмати расмии ГУВМ МВД РФ. МВД капча талаб мекунад.",consent_agree1:"Ман ба коркарди маълумоти шахсӣ розиям (ФЗ-152)",consent_agree2:"Ман мефаҳмам, ки санҷишҳо тавассути хизматҳои расмии МВД РФ анҷом мешаванд",consent_agree3:"Ман қабул мекунам ",consent_btn:"Қабул кардан ва идома додан",result_sent:"✉️ Дархост ба бот фиристода шуд",result_sent_s:"Бот аз рӯи пойгоҳи МВД РФ тафтиш мекунад ва натиҷаро ба чати Telegram мефиристад.",ap_title:"🪪 Илова кардани патент",ap_ser:"Серия (рӯи пеш)",ap_num:"Рақам (рӯи пеш)",ap_bser:"Серияи бланк (рӯи пушт)",ap_bnum:"Рақами бланк (рӯи пушт)",ap_iss:"Санаи додан",ap_exp:"Эътибор дорад то",ap_reg:"Минтақаи амал",save:"Нигоҳ доштан",cancel:"Бекор кардан",added_ok:"✅ Патент илова шуд!",fill_required:"⚠️ Серия, рақам ва санаҳоро пур кунед"},
-
-kz:{consent_title:"Қош келдіңіз 👋",app_name:"MigrantPro 🇷🇺",free:"Тегін",stay_lbl:"күн қалды (90 күн)",my_patents:"Менің патенттерім",add_patent:"➕ Патент қосу",sub_title:"🛡️ Автоматты қорғаныс",sub_btn:"190 ₽/айдан қосылу →",gov_checks:"Мемлекеттік базаларда тексеру",chk_patent:"Патентті тексеру",chk_reg:"Бақыланатын тұлғалар тізілімі",chk_ban:"Ресейге кіруге тыйым",chk_ready:"ММЦ-да патент дайындығы",services:"Қызметтер",svc_snils:"СНИЛС алу",svc_snils_s:"Шетел азаматы үшін нұсқаулық",svc_inn:"ЖСН алу",svc_inn_s:"Салық органында тіркелу",cabinet:"Жеке кабинет",free_plan:"Тегін тариф",entry_date:"Ресейге кіру күні",days_in:"күн Ресейде",days_left:"күн қалды",my_docs:"Менің құжаттарым",lastname:"Тегі",firstname:"Аты",middlename:"Әкесінің аты (бар болса)",birthdate:"Туған күні",pass_series:"Төлқұжат сериясы",pass_num:"Төлқұжат нөмірі",pass_issue:"Төлқұжат берілген күні",pass_expire:"Төлқұжат жарамдылық мерзімі",citizenship:"Азаматтығы",by_patent:"Патент бойынша",by_passport:"Төлқұжат бойынша",check_btn:"🔍 МВД.РФ тексеру",check_reg_btn:"🔍 Тізімде тексеру",check_ban_btn:"🔍 Тыйымды тексеру",sub_page:"Жазылым 🛡️",without_sub:"Жазылымсыз",with_sub:"Жазылыммен",month:"ай",months2:"ай",months5:"ай",months12:"ай",benefit1:"16% пайда",benefit2:"22% пайда",benefit3:"35% пайда",snils_title:"СНИЛС алу 🪪",inn_title:"ЖСН алу 🔢",nav_home:"Басты",nav_cabinet:"Кабинет",nav_mmc:"Сахарово",nav_sub:"Жазылым",consent_agree1:"Жеке деректерді өңдеуге келісемін (152-ФЗ)",consent_agree2:"Тексерулер МВД РФ ресми қызметтері арқылы жүзеге асатынын түсінемін",consent_agree3:"Мен қабылдаймын ",consent_btn:"Қабылдау",save:"Сақтау",cancel:"Болдырмау",added_ok:"✅ Патент қосылды!",fill_required:"⚠️ Серия, нөмір және күндерді толтырыңыз"},
-
-ky:{app_name:"MigrantPro 🇷🇺",free:"Акысыз",my_patents:"Менин патенттерим",add_patent:"➕ Патент кошуу",sub_btn:"190 ₽/айдан туташуу →",gov_checks:"Мамлекеттик базаларда текшерүү",chk_patent:"Патентти текшерүү",chk_reg:"Контролдоочу жактар реестри",chk_ban:"Россияга кирүүгө тыюу",services:"Кызматтар",svc_snils:"СНИЛС алуу",svc_inn:"ИНН алуу",cabinet:"Жеке кабинет",free_plan:"Акысыз тариф",entry_date:"Россияга кирген күн",days_in:"күн Россияда",days_left:"күн калды",my_docs:"Менин документтерим",lastname:"Фамилия",firstname:"Аты",middlename:"Атасынын аты",birthdate:"Туулган күнү",pass_series:"Паспорт сериясы",pass_num:"Паспорт номери",pass_issue:"Паспорт берилген күн",citizenship:"Жарандыгы",by_patent:"Патент боюнча",by_passport:"Паспорт боюнча",check_btn:"🔍 МВД текшерүү",check_reg_btn:"🔍 Реестрде текшерүү",check_ban_btn:"🔍 Тыюуну текшерүү",sub_page:"Жазылуу 🛡️",month:"ай",benefit1:"16% пайда",benefit2:"22% пайда",benefit3:"35% пайда",snils_title:"СНИЛС алуу 🪪",inn_title:"ИНН алуу 🔢",nav_home:"Башкы",nav_cabinet:"Кабинет",nav_mmc:"Сахарово",nav_sub:"Жазылуу",consent_agree1:"Жеке маалыматтарды иштетүүгө макулмун (152-ФЗ)",consent_agree2:"Текшерүүлөр МВД РФ расмий кызматтары аркылуу жүргүзүлөрүн түшүнөм",consent_agree3:"Мен кабыл алам ",consent_btn:"Кабыл алуу",save:"Сактоо",cancel:"Жокко чыгаруу",added_ok:"✅ Патент кошулду!",fill_required:"⚠️ Серия, номер жана даталарды толтуруңуз"},
-
-az:{app_name:"MigrantPro 🇷🇺",free:"Pulsuz",my_patents:"Mənim patentlərim",add_patent:"➕ Patent əlavə et",sub_btn:"190 ₽/aydan qoşulun →",gov_checks:"Dövlət bazalarında yoxlama",chk_patent:"Patenti yoxla",chk_reg:"Nəzarət şəxslərinin reyestri",chk_ban:"Rusiyaya giriş qadağası",services:"Xidmətlər",svc_snils:"SNILS necə almaq",svc_inn:"İNN necə almaq",cabinet:"Şəxsi kabinet",free_plan:"Pulsuz tarif",entry_date:"Rusiyaya giriş tarixi",days_in:"gün Rusiyada",days_left:"gün qalıb",my_docs:"Mənim sənədlərim",lastname:"Soyad",firstname:"Ad",middlename:"Ata adı (varsa)",birthdate:"Doğum tarixi",pass_series:"Pasport seriyası",pass_num:"Pasport nömrəsi",pass_issue:"Pasport verilmə tarixi",citizenship:"Vətəndaşlıq",by_patent:"Patentə görə",by_passport:"Pasporta görə",check_btn:"🔍 MVD.RF yoxla",check_reg_btn:"🔍 Reyestrdə yoxla",check_ban_btn:"🔍 Qadağanı yoxla",sub_page:"Abunəlik 🛡️",month:"ay",benefit1:"16% fayda",benefit2:"22% fayda",benefit3:"35% fayda",snils_title:"SNILS almaq 🪪",inn_title:"İNN almaq 🔢",nav_home:"Əsas",nav_cabinet:"Kabinet",nav_mmc:"Saxarovo",nav_sub:"Abunəlik",consent_agree1:"Şəxsi məlumatların işlənməsinə razıyam (152-ФЗ)",consent_agree2:"Yoxlamaların MVD RF rəsmi xidmətləri vasitəsilə həyata keçirildiyini anlayıram",consent_agree3:"Mən qəbul edirəm ",consent_btn:"Qəbul et",save:"Saxla",cancel:"Ləğv et",added_ok:"✅ Patent əlavə edildi!",fill_required:"⚠️ Seriya, nömrə və tarixləri doldurun"},
-
-md:{app_name:"MigrantPro 🇷🇺",free:"Gratuit",my_patents:"Patentele mele",add_patent:"➕ Adaugă brevet",sub_btn:"De la 190 ₽/lună →",gov_checks:"Verificare în bazele de stat",chk_patent:"Verifică brevetul",chk_reg:"Registrul persoanelor controlate",chk_ban:"Interdicție de intrare în Rusia",services:"Servicii",svc_snils:"Cum să obțineți SNILS",svc_inn:"Cum să obțineți INN",cabinet:"Cabinet personal",free_plan:"Plan gratuit",entry_date:"Data intrării în Rusia",days_in:"zile în Rusia",days_left:"zile rămase",my_docs:"Documentele mele",lastname:"Nume de familie",firstname:"Prenume",middlename:"Patronimic (dacă există)",birthdate:"Data nașterii",pass_series:"Seria pașaportului",pass_num:"Numărul pașaportului",pass_issue:"Data eliberării pașaportului",citizenship:"Cetățenie",by_patent:"După brevet",by_passport:"După pașaport",check_btn:"🔍 Verifică pe MVD.RF",check_reg_btn:"🔍 Verifică în registru",check_ban_btn:"🔍 Verifică interdicția",sub_page:"Abonament 🛡️",month:"lună",benefit1:"economie 16%",benefit2:"economie 22%",benefit3:"economie 35%",snils_title:"Cum să obțineți SNILS 🪪",inn_title:"Cum să obțineți INN 🔢",nav_home:"Acasă",nav_cabinet:"Cabinet",nav_mmc:"Saharovo",nav_sub:"Abonament",consent_agree1:"Sunt de acord cu prelucrarea datelor personale (FZ-152)",consent_agree2:"Înțeleg că verificările se efectuează prin serviciile oficiale ale MVD RF",consent_agree3:"Accept ",consent_btn:"Acceptă și continuă",save:"Salvează",cancel:"Anulează",added_ok:"✅ Brevet adăugat!",fill_required:"⚠️ Completați seria, numărul și datele"},
-
-ua:{app_name:"MigrantPro 🇷🇺",free:"Безкоштовно",my_patents:"Мої патенти",add_patent:"➕ Додати патент",sub_btn:"Від 190 ₽/міс →",gov_checks:"Перевірки в державних базах",chk_patent:"Перевірити патент",chk_reg:"Реєстр підконтрольних осіб",chk_ban:"Заборона в'їзду до Росії",services:"Послуги",svc_snils:"Як отримати СНІЛС",svc_inn:"Як отримати ІНН",cabinet:"Особистий кабінет",free_plan:"Безкоштовний план",entry_date:"Дата в'їзду до Росії",days_in:"днів у Росії",days_left:"днів залишилось",my_docs:"Мої документи",lastname:"Прізвище",firstname:"Ім'я",middlename:"По батькові (якщо є)",birthdate:"Дата народження",pass_series:"Серія паспорта",pass_num:"Номер паспорта",pass_issue:"Дата видачі паспорта",citizenship:"Громадянство",by_patent:"За патентом",by_passport:"За паспортом",check_btn:"🔍 Перевірити на МВД.РФ",check_reg_btn:"🔍 Перевірити в реєстрі",check_ban_btn:"🔍 Перевірити заборону",sub_page:"Підписка 🛡️",month:"місяць",benefit1:"вигода 16%",benefit2:"вигода 22%",benefit3:"вигода 35%",snils_title:"Отримання СНІЛС 🪪",inn_title:"Отримання ІНН 🔢",nav_home:"Головна",nav_cabinet:"Кабінет",nav_mmc:"Сахарово",nav_sub:"Підписка",consent_agree1:"Я погоджуюсь на обробку персональних даних (ФЗ-152)",consent_agree2:"Я розумію, що перевірки здійснюються через офіційні сервіси МВД РФ",consent_agree3:"Я приймаю ",consent_btn:"Прийняти і продовжити",save:"Зберегти",cancel:"Скасувати",added_ok:"✅ Патент додано!",fill_required:"⚠️ Заповніть серію, номер і дати"},
-
-by:{app_name:"MigrantPro 🇷🇺",free:"Бясплатна",my_patents:"Мае патэнты",add_patent:"➕ Дадаць патэнт",sub_btn:"Ад 190 ₽/мес →",gov_checks:"Праверкі ў дзяржаўных базах",chk_patent:"Праверыць патэнт",chk_reg:"Рэестр кантраляваных асоб",chk_ban:"Забарона ўезду ў Расею",services:"Паслугі",svc_snils:"Як атрымаць СНІЛС",svc_inn:"Як атрымаць ІНН",cabinet:"Асабісты кабінет",free_plan:"Бясплатны тарыф",entry_date:"Дата ўезду ў Расею",days_in:"дзён у Расеі",days_left:"дзён засталося",my_docs:"Мае дакументы",lastname:"Прозвішча",firstname:"Імя",middlename:"Імя па бацьку",birthdate:"Дата нараджэння",pass_series:"Серыя пашпарта",pass_num:"Нумар пашпарта",pass_issue:"Дата выдачы пашпарта",citizenship:"Грамадзянства",by_patent:"Па патэнту",by_passport:"Па пашпарту",check_btn:"🔍 Праверыць на МВД.РФ",check_reg_btn:"🔍 Праверыць у рэестры",check_ban_btn:"🔍 Праверыць забарону",sub_page:"Падпіска 🛡️",month:"месяц",benefit1:"выгада 16%",benefit2:"выгада 22%",benefit3:"выгада 35%",snils_title:"Атрыманне СНІЛС 🪪",inn_title:"Атрыманне ІНН 🔢",nav_home:"Галоўная",nav_cabinet:"Кабінет",nav_mmc:"Сахарава",nav_sub:"Падпіска",consent_agree1:"Я згаджаюся на апрацоўку асабістых дадзеных (ФЗ-152)",consent_agree2:"Я разумею, што праверкі ажыццяўляюцца праз афіцыйныя сэрвісы МВД РФ",consent_agree3:"Я прымаю ",consent_btn:"Прыняць і працягнуць",save:"Захаваць",cancel:"Скасаваць",added_ok:"✅ Патэнт дададзены!",fill_required:"⚠️ Запоўніце серыю, нумар і даты"},
-
-hy:{app_name:"MigrantPro 🇷🇺",free:"Անվճար",my_patents:"Իմ արտոնագրերը",add_patent:"➕ Ավելացնել արտոնագիր",sub_btn:"190 ₽/ամսից →",gov_checks:"Ստուգում պետական բազաներում",chk_patent:"Ստուգել արտոնագիրը",chk_reg:"Վերահսկվող անձանց ռեեստր",chk_ban:"Ռուսաստան մուտքի արգելք",services:"Ծառայություններ",svc_snils:"Ինչպես ստանալ СНИЛС",svc_inn:"Ինչպես ստանալ ИНН",cabinet:"Անձնական կաբինետ",free_plan:"Անվճար տարիք",entry_date:"Ռուսաստան մուտքի ամսաթիվ",days_in:"օր Ռուսաստանում",days_left:"օր մնացել է",my_docs:"Իմ փաստաթղթերը",lastname:"Ազգանուն",firstname:"Անուն",middlename:"Հայրանուն (եթե կա)",birthdate:"Ծննդյան ամսաթիվ",pass_series:"Անձնագրի սերիա",pass_num:"Անձնագրի համար",pass_issue:"Անձնագրի տրման ամսաթիվ",citizenship:"Քաղաքացիություն",by_patent:"Արտոնագրով",by_passport:"Անձնագրով",check_btn:"🔍 ՆԳՆ-ում ստուգել",check_reg_btn:"🔍 Ռեեստրում ստուգել",check_ban_btn:"🔍 Արգելքը ստուգել",sub_page:"Բաժանորդագրություն 🛡️",month:"ամիս",benefit1:"16% շահ",benefit2:"22% շահ",benefit3:"35% շահ",snils_title:"СНИЛС ստանալ 🪪",inn_title:"ИНН ստանալ 🔢",nav_home:"Գլխ.",nav_cabinet:"Կաբինետ",nav_mmc:"Սախարովո",nav_sub:"Բաժանորդ.",consent_agree1:"Համաձայն եմ անձնական տվյալների մշակմանը (ФЗ-152)",consent_agree2:"Հասկանում եմ, որ ստուգումներն իրականացվում են ՆԳՆ ՌԴ պաշտոնական ծառայությունների միջոցով",consent_agree3:"Ընդունում եմ ",consent_btn:"Ընդունել",save:"Պահպանել",cancel:"Չեղարկել",added_ok:"✅ Արտոնագիրը ավելացվել է!",fill_required:"⚠️ Լրացրեք սերիան, համարը և ամսաթվերը"}
+const PASS_FMT = {
+  UZB:{series:"AA (2 буквы)",num:"1234567 (7 цифр)",has_series:true,example:"AA1234567"},
+  TJK:{series:"Серии нет",num:"003456789 (8-9 цифр)",has_series:false,example:"003456789"},
+  KAZ:{series:"N или S",num:"12345678 (8 цифр)",has_series:true,example:"N12345678"},
+  KGZ:{series:"ID (2 буквы)",num:"1234567 (7 цифр)",has_series:true,example:"ID1234567"},
+  AZE:{series:"AA",num:"1234567 (7 цифр)",has_series:true,example:"AA1234567"},
+  ARM:{series:"AF, AM (2 буквы)",num:"1234567 (7 цифр)",has_series:true,example:"AF1234567"},
+  BLR:{series:"BM, MP (2 буквы)",num:"1234567 (7 цифр)",has_series:true,example:"BM1234567"},
+  MDA:{series:"A или B",num:"123456 (6-7 цифр)",has_series:true,example:"A123456"},
+  UKR:{series:"PP, КА (2 буквы)",num:"123456 (6 цифр)",has_series:true,example:"PP123456"},
+  IND:{series:"Буква J, L, P",num:"1234567 (7 цифр)",has_series:true,example:"J1234567"},
+  CHN:{series:"Нет серии",num:"G12345678 (9 симв.)",has_series:false,example:"G12345678"},
+  OTHER:{series:"Если есть",num:"Как в паспорте",has_series:false,example:""},
 };
 
-const COUNTRIES_HTML = `<option value="">--</option><option value="UZB">🇺🇿 Узбекистан</option><option value="TJK">🇹🇯 Таджикистан</option><option value="KAZ">🇰🇿 Казахстан</option><option value="AZE">🇦🇿 Азербайджан</option><option value="ARM">🇦🇲 Армения</option><option value="BLR">🇧🇾 Беларусь</option><option value="MDA">🇲🇩 Молдова</option><option value="KGZ">🇰🇬 Кыргызстан</option><option value="UKR">🇺🇦 Украина</option><option value="IND">🇮🇳 Индия</option><option value="CHN">🇨🇳 Китай</option><option value="VNM">🇻🇳 Вьетнам</option><option value="OTHER">Другая / Other</option>`;
-document.querySelectorAll('select.fi').forEach(s=>s.innerHTML=s.innerHTML.replace('COUNTRIES',COUNTRIES_HTML));
-// Also replace placeholder
-document.body.innerHTML = document.body.innerHTML.replace(/COUNTRIES/g, COUNTRIES_HTML);
+const COUNTRIES_HTML = `<option value="">-- Выберите --</option>
+<option value="UZB">🇺🇿 Узбекистан</option>
+<option value="TJK">🇹🇯 Таджикистан</option>
+<option value="KAZ">🇰🇿 Казахстан</option>
+<option value="AZE">🇦🇿 Азербайджан</option>
+<option value="ARM">🇦🇲 Армения</option>
+<option value="BLR">🇧🇾 Беларусь</option>
+<option value="MDA">🇲🇩 Молдова</option>
+<option value="KGZ">🇰🇬 Кыргызстан</option>
+<option value="UKR">🇺🇦 Украина</option>
+<option value="IND">🇮🇳 Индия</option>
+<option value="CHN">🇨🇳 Китай</option>
+<option value="OTHER">Другая страна</option>`;
+
+document.querySelectorAll('select.fi').forEach(s=>{
+  if(!s.innerHTML.includes('option value="UZB"')) s.innerHTML += COUNTRIES_HTML;
+  else s.innerHTML = COUNTRIES_HTML;
+});
+
+function updatePassHints(citId, seriesId, numId){
+  const cit = document.getElementById(citId)?.value;
+  const fmt = PASS_FMT[cit] || PASS_FMT.OTHER;
+  const serEl = document.getElementById(seriesId);
+  const numEl = document.getElementById(numId);
+  const serLbl = document.querySelector(`[for="${seriesId}"], label[id="${seriesId}-lbl"]`);
+  if(serEl){
+    serEl.placeholder = fmt.has_series ? fmt.series : 'Не требуется';
+    if(serLbl) serLbl.textContent = fmt.has_series ? `Серия паспорта (${fmt.series})` : 'Серия (не требуется)';
+  }
+  if(numEl) numEl.placeholder = fmt.example || 'Номер паспорта';
+}
 
 // ============================================================
 // STATE
 // ============================================================
 const S = {
+  user: tg?.initDataUnsafe?.user || {first_name:'Пользователь',id:'demo'},
   lang: localStorage.getItem('mpro_lang')||'ru',
-  user: tg?.initDataUnsafe?.user||{first_name:'Пользователь',id:'demo'},
   patents: JSON.parse(localStorage.getItem('mpro_pats')||'[]'),
   entry: localStorage.getItem('mpro_entry')||'',
   plan:'3m', price:480,
   consented: localStorage.getItem('mpro_consented')==='1',
-  cbs:{cb1:false,cb2:false,cb3:false}
+  onbDone: localStorage.getItem('mpro_onb')==='1',
+  cbs:{cb1:false,cb2:false,cb3:false},
+  payments: JSON.parse(localStorage.getItem('mpro_payments')||'[]'),
+  refStats: {invited:0, days:0},
 };
+
+// ============================================================
+// ONBOARDING
+// ============================================================
+const ONB_STEPS = [
+  {emoji:'🇷🇺',title:'Добро пожаловать!',sub:'МигрантПро — ваш личный помощник для жизни и работы в России'},
+  {emoji:'🪪',title:'Контролируй патент',sub:'Добавь патент — бот напомнит об оплате и проверит действительность на МВД.РФ'},
+  {emoji:'🛡️',title:'Проверки за секунды',sub:'Реестр контролируемых лиц, запрет въезда — всё в одном месте'},
+  {emoji:'🎁',title:'Приглашай — получай!',sub:'Пригласи друга по реферальной ссылке — вы оба получите 7 дней подписки бесплатно'},
+];
+let onbStep = 0;
+
+function onbNext(){
+  onbStep++;
+  if(onbStep >= ONB_STEPS.length){ skipOnb(); return; }
+  const s = ONB_STEPS[onbStep];
+  document.getElementById('onb-emoji').textContent = s.emoji;
+  document.getElementById('onb-title').textContent = s.title;
+  document.getElementById('onb-sub').textContent = s.sub;
+  document.querySelectorAll('.onb-dot').forEach((d,i)=>d.classList.toggle('on',i===onbStep));
+  if(onbStep === ONB_STEPS.length-1) document.getElementById('onb-next-btn').textContent = 'Начать →';
+}
+
+function skipOnb(){
+  localStorage.setItem('mpro_onb','1');
+  document.getElementById('onb-overlay').style.display='none';
+  if(!S.consented) document.getElementById('consent-overlay').style.display='flex';
+}
 
 // ============================================================
 // CONSENT
@@ -594,140 +853,73 @@ function acceptConsent(){
   S.consented=true;
   document.getElementById('consent-overlay').style.display='none';
 }
-function checkConsent(){
-  document.getElementById('consent-overlay').style.display=S.consented?'none':'flex';
-}
-
-// ============================================================
-// LANGUAGE
-// ============================================================
-function t(key){const d=TR[S.lang]||TR.ru;return d[key]||TR.ru[key]||key;}
-
-function setLang(lang){
-  S.lang=lang;
-  localStorage.setItem('mpro_lang',lang);
-  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
-    const langs=['ru','uz','tj','kz','ky','az','md','ua','by','hy'];
-    b.classList.toggle('on',langs[i]===lang);
-  });
-  applyLang();
-  sendBot('lang_changed',{lang});
-}
-
-const TRANSLATE_MAP = {
-  'av':null,'t-app-name':'app_name','sub-chip':'free',
-  't-stay-lbl':'stay_lbl','t-90d':null,'t-my-patents':'my_patents',
-  't-add-patent':'add_patent','t-sub-title':'sub_title','t-sub-sub':'sub_sub',
-  't-sf1':'sf1','t-sf2':'sf2','t-sf3':'sf3','t-sub-btn':'sub_btn',
-  't-gov-checks':'gov_checks','t-chk-patent':'chk_patent','t-chk-patent-s':'chk_patent_s',
-  't-chk-reg':'chk_reg','t-chk-reg-s':'chk_reg_s','t-chk-ban':'chk_ban',
-  't-chk-ban-s':'chk_ban_s','t-chk-ready':'chk_ready','t-chk-ready-s':'chk_ready_s',
-  't-services':'services','t-svc-snils':'svc_snils','t-svc-snils-s':'svc_snils_s',
-  't-svc-inn':'svc_inn','t-svc-inn-s':'svc_inn_s',
-  't-cabinet':'cabinet','t-cab-patents':'my_patents','t-add-patent2':'add_patent',
-  't-stay-period':'stay_period','t-entry-date':'entry_date','t-days-in':'days_in',
-  't-days-left':'days_left','t-my-docs':'my_docs','t-doc-contract':'doc_contract',
-  't-doc-contract-s':'doc_contract_s','t-doc-notify':'doc_notify','t-doc-notify-s':'doc_notify_s',
-  't-doc-receipt':'doc_receipt','t-doc-receipt-s':'doc_receipt_s',
-  't-patent-info':'patent_info','t-by-patent':'by_patent','t-by-passport':'by_passport',
-  't-doc-series':'doc_series','t-doc-num':'doc_num','t-blank-series':'blank_series',
-  't-blank-num':'blank_num','t-pass-num':'pass_num_foreign','t-citizenship':'citizenship',
-  't-check-btn':'check_btn','t-open-mvd':'open_mvd',
-  't-pass-series2':'pass_series','t-pass-num2':'pass_num','t-citizenship2':'citizenship','t-check-btn2':'check_btn',
-  't-reg-title':'chk_reg','t-reg-info':'reg_info','t-lastname':'lastname','t-firstname':'firstname',
-  't-middlename':'middlename','t-birthdate':'birthdate','t-pass-series':'pass_series',
-  't-pass-num3':'pass_num','t-pass-issue':'pass_issue','t-citizenship3':'citizenship',
-  't-check-reg-btn':'check_reg_btn','t-open-mvd2':'open_mvd',
-  't-ban-warn':'ban_warn','t-ban-lastname':'lastname','t-ban-firstname':'firstname',
-  't-ban-mid':'middlename','t-ban-birth':'birthdate','t-ban-pser':'pass_series',
-  't-ban-pnum':'pass_num','t-ban-pdate':'pass_issue','t-ban-pexp':'pass_expire',
-  't-ban-cit':'citizenship','t-ban-btn':'check_ban_btn',
-  't-ready-title':'ready_title','t-ready-sub':'ready_sub',
-  't-mmc-title':'mmc_title','t-mmc-name':'mmc_name','t-mmc-booking':'mmc_booking',
-  't-mmc-rvp':'mmc_rvp','t-mmc-site':'mmc_site','t-mmc-exam':'mmc_exam',
-  't-mmc-exam-s':'mmc_exam_s','t-mmc-med':'mmc_med','t-mmc-med-s':'mmc_med_s',
-  't-mvd-checks':'mvd_checks','t-fssp':'fssp','t-fssp-s':'fssp_s',
-  't-sub-page':'sub_page','t-sub-desc':'sub_desc','t-why':'why',
-  't-without-sub':'without_sub','t-without-sub-text':'without_sub_text',
-  't-with-sub':'with_sub','t-with-sub-text':'with_sub_text',
-  't-month':'month','t-months2':'months2','t-months3':'months3',
-  't-months5':'months5','t-months12':'months12',
-  't-benefit1':'benefit1','t-benefit2':'benefit2','t-benefit3':'benefit3',
-  't-snils-title':'snils_title','t-snils-info':'snils_info',
-  't-snils-way1':'snils_way1','t-snils-way1-s':'snils_way1_s',
-  't-snils-w1s1':'snils_w1s1','t-snils-w1s2':'snils_w1s2','t-snils-w1s3':'snils_w1s3',
-  't-snils-way2':'snils_way2','t-snils-way2-s':'snils_way2_s',
-  't-snils-w2s1':'snils_w2s1','t-snils-w2s2':'snils_w2s2',
-  't-snils-w2s3':'snils_w2s3','t-snils-w2s4':'snils_w2s4',
-  't-snils-docs':'snils_docs','t-snils-d1':'snils_d1','t-snils-d2':'snils_d2',
-  't-snils-d3':'snils_d3','t-price':'price','t-free-svc':'free_svc',
-  't-snils-gosuslugi':'snils_gosuslugi','t-back-main':'back_main','t-back-main2':'back_main',
-  't-inn-title':'inn_title','t-inn-info':'inn_info',
-  't-inn-online':'inn_online','t-inn-online-s':'inn_online_s',
-  't-inn-s1':'inn_s1','t-inn-s2':'inn_s2','t-inn-s3':'inn_s3','t-inn-s4':'inn_s4','t-inn-s5':'inn_s5',
-  't-inn-docs':'inn_docs','t-inn-d1':'inn_d1','t-inn-d2':'inn_d2','t-inn-d3':'inn_d3',
-  't-inn-price':'price','t-inn-free':'free_svc',
-  't-inn-check':'inn_check','t-inn-gosuslugi':'inn_gosuslugi',
-  't-nav-home':'nav_home','t-nav-cabinet':'nav_cabinet','t-nav-mmc':'nav_mmc','t-nav-sub':'nav_sub',
-  't-free-plan':'free_plan',
-  't-add-pat-title':'ap_title','t-ap-ser':'ap_ser','t-ap-num':'ap_num',
-  't-ap-bser':'ap_bser','t-ap-bnum':'ap_bnum','t-ap-iss':'ap_iss','t-ap-exp':'ap_exp',
-  't-ap-reg':'ap_reg','t-save':'save','t-cancel':'cancel',
-  'ct-title':'consent_title','ct-sub':'consent_sub',
-  'ct-a1':'consent_agree1','ct-a2':'consent_agree2','ct-a3':'consent_agree3',
-  'consent-btn':'consent_btn'
-};
-
-function applyLang(){
-  for(const[id,key] of Object.entries(TRANSLATE_MAP)){
-    if(!key) continue;
-    const el=document.getElementById(id);
-    if(el && t(key)) el.textContent=t(key);
-  }
-  renderPats();
-}
 
 // ============================================================
 // ROUTING
 // ============================================================
-const PM={home:'pg-home',cabinet:'pg-cabinet',mmc:'pg-mmc',profile:'pg-profile',
+const PM={
+  home:'pg-home',cabinet:'pg-cabinet',mmc:'pg-mmc',profile:'pg-profile',
+  ref:'pg-ref','payment-tracker':'pg-payment-tracker',
   'check-patent':'pg-check-patent','check-registry':'pg-check-registry',
-  'check-ban':'pg-check-ban','check-ready':'pg-check-ready',snils:'pg-snils',inn:'pg-inn'};
+  'check-ban':'pg-check-ban','check-ready':'pg-check-ready',
+  snils:'pg-snils',inn:'pg-inn'
+};
 const NM={home:'nb-home',cabinet:'nb-cabinet',mmc:'nb-mmc',profile:'nb-profile'};
-let curPage='home';
 
 function go(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(PM[page]||'pg-home').classList.add('active');
+  const pid=PM[page]||'pg-home';
+  document.getElementById(pid)?.classList.add('active');
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
-  if(NM[page]) document.getElementById(NM[page]).classList.add('on');
-  curPage=page; window.scrollTo(0,0);
+  if(NM[page]) document.getElementById(NM[page])?.classList.add('on');
+  window.scrollTo(0,0);
+  if(page==='payment-tracker') renderPaymentTracker();
+  if(page==='ref') renderRefPage();
+}
+
+// ============================================================
+// LANG
+// ============================================================
+function setLang(lang){
+  S.lang=lang;
+  localStorage.setItem('mpro_lang',lang);
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
+    const ls=['ru','uz','tj','kz','ky','az','md','ua','by','hy'];
+    b.classList.toggle('on',ls[i]===lang);
+  });
+  sendBot('lang_changed',{lang});
 }
 
 // ============================================================
 // PATENTS
 // ============================================================
 function renderPats(){
-  const ids=['pats-home','pats-cab'];
-  if(!S.patents.length){
-    const e=`<div class="empty"><span class="em">🪪</span>${t('add_patent')}</div>`;
-    ids.forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=e});
-    return;
-  }
-  let h='';
-  S.patents.forEach((p,i)=>{
-    const exp=new Date(p.exp),dl=Math.ceil((exp-new Date())/86400000);
-    let cls='g',btxt='✅',bcls='g';
-    if(dl<0){cls='r';btxt='❌';bcls='r';}
-    else if(dl<=14){cls='r';btxt=`🔴 ${dl}д`;bcls='r';}
-    else if(dl<=30){cls='o';btxt=`🟠 ${dl}д`;bcls='o';}
-    else btxt=`🟢 ${dl}д`;
-    h+=`<div class="pat-card" onclick="patDetail(${i})">
-      <div class="pat-hdr"><div class="pat-ico ${cls}">🪪</div><div class="pat-inf"><div class="pat-name">Патент</div><div class="pat-num">${p.s} ${p.n}</div></div><div class="badge ${bcls}">${btxt}</div></div>
-      <div class="pat-rows"><div class="pat-row"><span>${t('entry_date')||'Выдан'}</span><span>${fd(p.i)}</span></div><div class="pat-row"><span>До</span><span>${fd(p.exp)}</span></div><div class="pat-row"><span>Регион</span><span>${p.r||'—'}</span></div></div>
-    </div>`;
+  ['pats-home','pats-cab'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    if(!S.patents.length){
+      el.innerHTML='<div class="empty"><span class="em">🪪</span>Нет патентов</div>';
+      return;
+    }
+    let h='';
+    S.patents.forEach((p,i)=>{
+      const exp=new Date(p.exp),dl=Math.ceil((exp-new Date())/86400000);
+      let cls='g',btxt=`🟢 ${dl}д`,bcls='g';
+      if(dl<0){cls='r';btxt='❌ Просрочен';bcls='r';}
+      else if(dl<=14){cls='r';btxt=`🔴 ${dl}д`;bcls='r';}
+      else if(dl<=30){cls='o';btxt=`🟠 ${dl}д`;bcls='o';}
+      h+=`<div class="pat-card" onclick="patDetail(${i})">
+        <div class="pat-hdr"><div class="pat-ico ${cls}">🪪</div>
+        <div class="pat-inf"><div class="pat-name">Патент</div><div class="pat-num">${p.s} ${p.n}</div></div>
+        <div class="badge ${bcls}">${btxt}</div></div>
+        <div class="pat-rows">
+          <div class="pat-row"><span>Выдан</span><span>${fd(p.i)}</span></div>
+          <div class="pat-row"><span>До</span><span>${fd(p.exp)}</span></div>
+          <div class="pat-row"><span>Регион</span><span>${p.r||'—'}</span></div>
+        </div></div>`;
+    });
+    el.innerHTML=h;
   });
-  ids.forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=h});
 }
 
 function patDetail(i){
@@ -741,137 +933,231 @@ function patDetail(i){
 
 function savePat(){
   const s=v('ap-s'),n=v('ap-n'),bs=v('ap-bs'),bn=v('ap-bn'),i=v('ap-i'),exp=v('ap-e'),r=v('ap-r')||'—';
-  if(!s||!n||!i||!exp){toast(t('fill_required'));return;}
+  if(!n||!i||!exp){toast('⚠️ Введите номер и даты');return;}
   S.patents.push({s,n,bs,bn,i,exp,r});
   localStorage.setItem('mpro_pats',JSON.stringify(S.patents));
   renderPats();
   closeSheet2('sh-patent');
   ['ap-s','ap-n','ap-bs','ap-bn','ap-i','ap-e','ap-r'].forEach(id=>document.getElementById(id).value='');
-  toast(t('added_ok'));
+  toast('✅ Патент добавлен! Напоминания настроены.');
+  sendBot('patent_added',{s,n,i,exp,r});
 }
 
 // ============================================================
 // STAY
 // ============================================================
-function saveEntry(val){S.entry=val;localStorage.setItem('mpro_entry',val);updateStay(val);}
+function saveEntry(val){
+  S.entry=val;localStorage.setItem('mpro_entry',val);updateStay(val);
+}
 function updateStay(d){
   if(!d)return;
   const dIn=Math.ceil((new Date()-new Date(d))/86400000);
   const dL=90-dIn;
   const num=document.getElementById('stay-num');
+  if(!num)return;
   num.textContent=Math.max(0,dL);
-  document.getElementById('stay-dt').textContent='Въезд: '+fd(d);
+  const dt=document.getElementById('stay-dt');
+  if(dt)dt.textContent='Въезд: '+fd(d);
   const pct=Math.min(100,Math.max(0,(dL/90)*100));
-  document.getElementById('stay-bar').style.width=pct+'%';
+  const bar=document.getElementById('stay-bar');
+  if(bar){bar.style.width=pct+'%';bar.className='pbar-fill'+(dL<=30?' w':'');}
   num.className='days-num '+(dL<=0?'r':dL<=14?'r':dL<=30?'o':'g');
-  document.getElementById('stay-bar').className='pbar-fill'+(dL<=30?' w':'');
   const det=document.getElementById('stay-detail');
-  if(det){det.style.display='block';document.getElementById('cd-in').textContent=dIn;document.getElementById('cd-left').textContent=Math.max(0,dL);}
+  if(det){det.style.display='block';
+    const ci=document.getElementById('cd-in');const cl=document.getElementById('cd-left');
+    if(ci)ci.textContent=dIn;if(cl)cl.textContent=Math.max(0,dL);
+  }
 }
 
 // ============================================================
 // CHECKS
 // ============================================================
-function swTab(g,t_){
+function swTab(g,t){
   if(g==='p'){
-    document.getElementById('ptab1').style.display=t_===1?'block':'none';
-    document.getElementById('ptab2').style.display=t_===2?'block':'none';
-    document.getElementById('tb-p1').classList.toggle('on',t_===1);
-    document.getElementById('tb-p2').classList.toggle('on',t_===2);
+    document.getElementById('ptab1').style.display=t===1?'block':'none';
+    document.getElementById('ptab2').style.display=t===2?'block':'none';
+    document.getElementById('tb-p1').classList.toggle('on',t===1);
+    document.getElementById('tb-p2').classList.toggle('on',t===2);
   }
-}
-
-function showResult(elId){
-  const el=document.getElementById(elId);
-  el.innerHTML='<div class="spin"></div>';
-  setTimeout(()=>{
-    el.innerHTML=`<div class="res-card w"><div class="res-ico">✉️</div><div class="res-t">${t('result_sent')}</div><div class="res-s">${t('result_sent_s')}</div></div>`;
-  },1500);
 }
 
 function doPatent1(){
   const s=v('cp-s'),n=v('cp-n'),bs=v('cp-bs'),bn=v('cp-bn'),p=v('cp-p'),c=v('cp-c');
   if(!n){toast('Введите номер патента');return;}
   sendBot('check_patent',{type:'patent',s,n,bs,bn,p,c,lang:S.lang});
-  const resultEl = document.getElementById('cp-result');
-  resultEl.innerHTML = \`
-    <div class="res-card w" style="text-align:left">
-      <div class="res-ico" style="text-align:center">🪪</div>
-      <div class="res-t" style="text-align:center">Данные для проверки</div>
-      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.6">
-        Введите на сайте МВД:<br>
-        \${s ? '<b>Серия:</b> ' + s + '<br>' : ''}
-        <b>Номер:</b> \${n}<br>
-        \${bs ? '<b>Серия бланка:</b> ' + bs + '<br>' : ''}
-        \${bn ? '<b>Номер бланка:</b> ' + bn + '<br>' : ''}
-        \${p ? '<b>Паспорт:</b> ' + p : ''}
-      </div>
-    </div>
+  const el=document.getElementById('cp-result');
+  el.innerHTML=`<div class="res-card w" style="text-align:left">
+    <div class="res-ico" style="text-align:center">🪪</div>
+    <div class="res-t" style="text-align:center">Данные для проверки на МВД</div>
+    <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.8">
+      ${s?'<b>Серия:</b> '+s+'<br>':''}
+      <b>Номер:</b> ${n}<br>
+      ${bs?'<b>Серия бланка:</b> '+bs+'<br>':''}
+      ${bn?'<b>Номер бланка:</b> '+bn+'<br>':''}
+      ${p?'<b>Паспорт:</b> '+p:''}
+    </div></div>
     <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank">
-      <button class="btn g" style="margin-top:10px">🔍 Проверить патент на МВД.РФ</button>
-    </a>
-  \`;
+      <button class="btn g" style="margin-top:10px">🔍 Открыть МВД и проверить</button></a>`;
 }
+
 function doPatent2(){
   const s=v('cp2-s'),n=v('cp2-n'),c=v('cp2-c');
-  if(!s||!n){toast('Введите серию и номер паспорта');return;}
+  if(!n){toast('Введите номер паспорта');return;}
   sendBot('check_patent',{type:'passport',s,n,c,lang:S.lang});
-  showResult('cp-result');
+  const el=document.getElementById('cp-result');
+  el.innerHTML=`<div class="res-card w" style="text-align:left">
+    <div class="res-ico" style="text-align:center">🪪</div>
+    <div class="res-t" style="text-align:center">Данные для проверки</div>
+    <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.8">
+      ${s?'<b>Серия:</b> '+s+'<br>':''}
+      <b>Номер:</b> ${n}
+    </div></div>
+    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank">
+      <button class="btn g" style="margin-top:10px">🔍 Открыть МВД и проверить</button></a>`;
 }
+
 function doRegistry(){
   const l=v('rg-l'),f=v('rg-f'),m=v('rg-m'),b=v('rg-b'),ps=v('rg-ps'),pn=v('rg-pn'),pd=v('rg-pd'),c=v('rg-c');
   if(!l||!f||!b){toast('Заполните фамилию, имя и дату рождения');return;}
   if(!pn){toast('Введите номер паспорта');return;}
-  // Отправляем данные боту для записи
   sendBot('check_registry',{l,f,m,b,ps,pn,pd,c,lang:S.lang});
-  // Открываем официальный сайт МВД с инструкцией
-  const resultEl = document.getElementById('rg-result');
-  resultEl.innerHTML = \`
+  document.getElementById('rg-result').innerHTML=`
     <div class="res-card w" style="text-align:left">
       <div class="res-ico" style="text-align:center">📋</div>
-      <div class="res-t" style="text-align:center">Данные собраны</div>
-      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.6">
-        Введите на сайте МВД:<br>
-        <b>Фамилия:</b> \${l}<br>
-        <b>Имя:</b> \${f}<br>
-        \${m ? '<b>Отчество:</b> ' + m + '<br>' : ''}
-        <b>Дата рождения:</b> \${b}<br>
-        \${ps ? '<b>Серия:</b> ' + ps + '<br>' : ''}
-        <b>Номер:</b> \${pn}<br>
-        \${pd ? '<b>Дата выдачи:</b> ' + pd : ''}
-      </div>
-    </div>
+      <div class="res-t" style="text-align:center">Введите на сайте МВД:</div>
+      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.8">
+        <b>Фамилия:</b> ${l}<br><b>Имя:</b> ${f}<br>
+        ${m?'<b>Отчество:</b> '+m+'<br>':''}
+        <b>Дата рождения:</b> ${b}<br>
+        ${ps?'<b>Серия:</b> '+ps+'<br>':''}
+        <b>Номер:</b> ${pn}<br>
+        ${pd?'<b>Дата выдачи:</b> '+pd:''}
+      </div></div>
     <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank">
-      <button class="btn g" style="margin-top:10px">🔍 Открыть реестр на МВД.РФ</button>
-    </a>
-  \`;
+      <button class="btn g" style="margin-top:10px">🔍 Открыть реестр на МВД.РФ</button></a>`;
 }
+
 function doBan(){
   const l=v('bn-l'),f=v('bn-f'),m=v('bn-m'),b=v('bn-b'),ps=v('bn-ps'),pn=v('bn-pn'),pd=v('bn-pd'),pe=v('bn-pe'),c=v('bn-c');
   if(!l||!f||!b){toast('Заполните фамилию, имя и дату рождения');return;}
   if(!pn){toast('Введите номер паспорта');return;}
   sendBot('check_ban',{l,f,m,b,ps,pn,pd,pe,c,lang:S.lang});
-  const resultEl = document.getElementById('bn-result');
-  resultEl.innerHTML = \`
+  document.getElementById('bn-result').innerHTML=`
     <div class="res-card w" style="text-align:left">
       <div class="res-ico" style="text-align:center">📋</div>
-      <div class="res-t" style="text-align:center">Данные для проверки</div>
-      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.6">
-        Введите на сайте МВД:<br>
-        <b>Фамилия:</b> \${l}<br>
-        <b>Имя:</b> \${f}<br>
-        \${m ? '<b>Отчество:</b> ' + m + '<br>' : ''}
-        <b>Дата рождения:</b> \${b}<br>
-        \${ps ? '<b>Серия:</b> ' + ps + '<br>' : ''}
-        <b>Номер:</b> \${pn}<br>
-        \${pd ? '<b>Дата выдачи:</b> ' + pd + '<br>' : ''}
-        \${pe ? '<b>Действует до:</b> ' + pe : ''}
-      </div>
-    </div>
+      <div class="res-t" style="text-align:center">Введите на сайте МВД:</div>
+      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.8">
+        <b>Фамилия:</b> ${l}<br><b>Имя:</b> ${f}<br>
+        ${m?'<b>Отчество:</b> '+m+'<br>':''}
+        <b>Дата рождения:</b> ${b}<br>
+        ${ps?'<b>Серия:</b> '+ps+'<br>':''}
+        <b>Номер:</b> ${pn}<br>
+        ${pd?'<b>Дата выдачи:</b> '+pd+'<br>':''}
+        ${pe?'<b>Действует до:</b> '+pe:''}
+      </div></div>
     <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank">
-      <button class="btn r" style="margin-top:10px">🔍 Проверить запрет на МВД.РФ</button>
-    </a>
-  \`;
+      <button class="btn r" style="margin-top:10px">🔍 Проверить запрет на МВД.РФ</button></a>`;
+}
+
+// ============================================================
+// PAYMENT TRACKER
+// ============================================================
+function updatePaymentTracker(){ renderPaymentTracker(); }
+
+function renderPaymentTracker(){
+  const amount = parseInt(document.getElementById('pt-amount')?.value)||0;
+  const day = parseInt(document.getElementById('pt-day')?.value)||15;
+  const start = document.getElementById('pt-start')?.value;
+  const el = document.getElementById('payment-list');
+  const totalCard = document.getElementById('pt-total-card');
+  if(!el) return;
+  if(!start||!amount){
+    el.innerHTML='<div class="empty"><span class="em">💳</span>Заполните сумму и дату начала</div>';
+    return;
+  }
+  const startDate = new Date(start);
+  const today = new Date();
+  const months = [];
+  const cur = new Date(startDate);
+  for(let i=0;i<12;i++){
+    const payDate = new Date(cur.getFullYear(),cur.getMonth(),day);
+    const isPast = payDate < today;
+    const isCurrent = payDate.getMonth()===today.getMonth()&&payDate.getFullYear()===today.getFullYear();
+    const monthName = payDate.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
+    const isPaid = S.payments.includes(payDate.toISOString().slice(0,7));
+    let status='due',statusTxt='Ожидается';
+    if(isPaid){status='paid';statusTxt='✅ Оплачено';}
+    else if(isPast&&!isCurrent){status='late';statusTxt='⚠️ Просрочено';}
+    else if(isCurrent){status='due';statusTxt='📅 Текущий';}
+    months.push({monthName,payDate,status,statusTxt,isPaid,isCurrent});
+    cur.setMonth(cur.getMonth()+1);
+  }
+  let html='';
+  months.forEach(m=>{
+    html+=`<div class="pay-month-card" style="${m.isCurrent?'border-color:var(--blue)':''}">
+      <div class="pay-month-hdr">
+        <span class="pay-month-name">${m.monthName}</span>
+        <span class="pay-status ${m.status}">${m.statusTxt}</span>
+      </div>
+      <div class="pay-amount">До ${m.payDate.getDate()} числа · ${amount.toLocaleString('ru')} ₽</div>
+    </div>`;
+  });
+  el.innerHTML=html;
+  const paid=months.filter(m=>m.isPaid).length;
+  const next=months.find(m=>!m.isPaid&&m.status!=='late');
+  if(totalCard){
+    totalCard.style.display='block';
+    document.getElementById('pt-paid-count').textContent=paid;
+    document.getElementById('pt-paid-sum').textContent=(paid*amount).toLocaleString('ru')+' ₽';
+    document.getElementById('pt-next').textContent=next?next.monthName:'Все оплачены ✅';
+  }
+}
+
+function markPaid(){
+  const today=new Date();
+  const key=today.toISOString().slice(0,7);
+  if(!S.payments.includes(key)){
+    S.payments.push(key);
+    localStorage.setItem('mpro_payments',JSON.stringify(S.payments));
+    renderPaymentTracker();
+    toast('✅ Текущий месяц отмечен оплаченным!');
+  } else {
+    toast('Этот месяц уже отмечен как оплаченный');
+  }
+}
+
+// ============================================================
+// REFERRAL
+// ============================================================
+function renderRefPage(){
+  const uid = S.user.id;
+  const botName = 'migr_pomoshnik_bot';
+  const link = `https://t.me/${botName}?start=ref_${uid}`;
+  const el=document.getElementById('ref-link');
+  if(el) el.textContent=link;
+  // Load stats from bot
+  sendBot('get_ref_stats',{});
+}
+
+function copyRefLink(){
+  const uid=S.user.id;
+  const link=`https://t.me/migr_pomoshnik_bot?start=ref_${uid}`;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(link).then(()=>toast('📋 Ссылка скопирована!')).catch(()=>toast('Скопируйте ссылку вручную'));
+  } else {
+    toast('Скопируйте ссылку выше');
+  }
+}
+
+function shareRefLink(){
+  const uid=S.user.id;
+  const link=`https://t.me/migr_pomoshnik_bot?start=ref_${uid}`;
+  const text='Привет! Пользуюсь этим ботом — помогает с документами в России. Перейди по ссылке и получим оба по 7 дней бесплатно!';
+  if(tg?.openTelegramLink){
+    tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+  } else {
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`,'_blank');
+  }
 }
 
 // ============================================================
@@ -900,8 +1186,8 @@ function docAction(type){
 // ============================================================
 function sendBot(action,data){
   if(tg?.sendData){
-    try{tg.sendData(JSON.stringify({action,...data,userId:S.user?.id}));}
-    catch(e){console.log(e);}
+    try{tg.sendData(JSON.stringify({action,...data,userId:S.user?.id,lang:S.lang}));}
+    catch(e){console.log('sendData:',e);}
   }
 }
 
@@ -923,64 +1209,26 @@ function toast(msg){const o=document.querySelector('.toast');if(o)o.remove();con
 // ============================================================
 // INIT
 // ============================================================
-
-// ============================================================
-// PASSPORT FORMATS BY COUNTRY
-// ============================================================
-const PASSPORT_FORMATS = {
-    UZB: { label: "🇺🇿 Узбекистан", series: "2 буквы (AA, AB...)", num: "7 цифр (1234567)", example: "AA1234567", has_series: true },
-    TJK: { label: "🇹🇯 Таджикистан", series: "Серии нет", num: "8-9 цифр", example: "003456789", has_series: false },
-    KAZ: { label: "🇰🇿 Казахстан", series: "Буква N/S", num: "8 цифр", example: "N12345678", has_series: true },
-    KGZ: { label: "🇰🇬 Кыргызстан", series: "2 буквы (ID)", num: "7 цифр", example: "ID1234567", has_series: true },
-    AZE: { label: "🇦🇿 Азербайджан", series: "AA/AZE", num: "7 цифр", example: "AA1234567", has_series: true },
-    ARM: { label: "🇦🇲 Армения", series: "2 буквы (AF, AM)", num: "7 цифр", example: "AF1234567", has_series: true },
-    BLR: { label: "🇧🇾 Беларусь", series: "2 буквы (BM, MP)", num: "7 цифр", example: "BM1234567", has_series: true },
-    MDA: { label: "🇲🇩 Молдова", series: "Буква A/B", num: "6-7 цифр", example: "A123456", has_series: true },
-    UKR: { label: "🇺🇦 Украина", series: "2 буквы (PP, KA)", num: "6 цифр", example: "PP123456", has_series: true },
-    IND: { label: "🇮🇳 Индия", series: "Буква (J, L, P)", num: "7 цифр", example: "J1234567", has_series: true },
-    CHN: { label: "🇨🇳 Китай", series: "Нет серии", num: "9 символов (G12345678)", example: "G12345678", has_series: false },
-    OTHER: { label: "Другая страна", series: "Если есть", num: "Как в паспорте", example: "", has_series: false },
-};
-
-function updatePassportHints(countrySelectId, seriesId, numId, seriesLblId, numLblId) {
-    const cit = document.getElementById(countrySelectId)?.value;
-    const fmt = PASSPORT_FORMATS[cit] || PASSPORT_FORMATS.OTHER;
-    const seriesEl = document.getElementById(seriesId);
-    const numEl = document.getElementById(numId);
-    const seriesLblEl = document.getElementById(seriesLblId);
-    
-    if (!seriesEl || !numEl) return;
-    
-    if (fmt.has_series) {
-        if (seriesLblEl) seriesLblEl.textContent = "Серия паспорта (" + fmt.series + ")";
-        seriesEl.placeholder = fmt.example.replace(/[0-9]/g, '').slice(0, 4) || "Серия";
-        seriesEl.closest('.fg').style.display = 'block';
-    } else {
-        if (seriesLblEl) seriesLblEl.textContent = "Серия (необязательно для " + cit + ")";
-        seriesEl.placeholder = "Не требуется";
-        seriesEl.closest('.fg').style.display = 'block';
-    }
-    
-    numEl.placeholder = fmt.example || "Номер паспорта";
-    if (numLblId) {
-        const numLblEl = document.getElementById(numLblId);
-        if (numLblEl) numLblEl.textContent = "Номер паспорта (" + fmt.num + ")";
-    }
-}
-
 function init(){
   const av=S.user.first_name?.charAt(0).toUpperCase()||'М';
-  document.getElementById('av').textContent=av;
-  document.getElementById('cab-av').textContent=av;
-  document.getElementById('cab-name').textContent=S.user.first_name||'—';
-  document.getElementById('cab-id').textContent='TG ID: '+S.user.id;
-  if(S.entry){document.getElementById('entry-inp').value=S.entry;updateStay(S.entry);}
-  // Set lang buttons
+  ['av','cab-av'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=av;});
+  const nm=document.getElementById('cab-name');if(nm)nm.textContent=S.user.first_name||'—';
+  const cid=document.getElementById('cab-id');if(cid)cid.textContent='TG ID: '+S.user.id;
+  if(S.entry){const ei=document.getElementById('entry-inp');if(ei)ei.value=S.entry;updateStay(S.entry);}
   const langs=['ru','uz','tj','kz','ky','az','md','ua','by','hy'];
   document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('on',langs[i]===S.lang));
-  applyLang();
   renderPats();
-  checkConsent();
+
+  // Show onboarding or consent
+  if(!S.onbDone){
+    document.getElementById('onb-overlay').style.display='flex';
+  } else if(!S.consented){
+    document.getElementById('consent-overlay').style.display='flex';
+  }
+
+  // Activate home page
+  document.getElementById('pg-home').classList.add('active');
+  document.getElementById('nb-home').classList.add('on');
 }
 init();
 </script>
