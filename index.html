@@ -5,77 +5,9 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="version" content="1779285425">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>МигрантПро</title>
-<script src="https://telegram.org/js/telegram-web-app.js">
-// ============================================================
-// ИСПРАВЛЕНИЯ НЕДОСТАЮЩИХ ФУНКЦИЙ
-// ============================================================
-
-function onDocTypeChange() {
-  const t = v('ad-type');
-  const bl = document.getElementById('ad-blank-section');
-  if(bl) bl.style.display = (t === 'patent') ? 'block' : 'none';
-}
-
-function updatePassHint(citId, seriesId, numId) {
-  const NO_SERIES = ['TJK','CHN'];
-  const cit = document.getElementById(citId) && document.getElementById(citId).value;
-  const serEl = document.getElementById(seriesId);
-  if(!serEl) return;
-  if(NO_SERIES.includes(cit)) {
-    serEl.placeholder = 'Нет серии для этой страны';
-  } else {
-    serEl.placeholder = 'Серия (если нет — оставьте пустым)';
-  }
-}
-
-function saveEmployee() {
-  const name = v('em-name'), cit = v('em-cit'), pos = v('em-pos');
-  const ps = v('em-ps'), pn = v('em-pn'), hd = v('em-hd');
-  if(!name || !pn) { toast('Заполните ФИО и номер паспорта'); return; }
-  const emp = { id: Date.now(), name, cit, pos, ps, pn, hd, docs: [] };
-  S.emps.push(emp);
-  csSet('emps', JSON.stringify(S.emps));
-  localStorage.setItem('emps', JSON.stringify(S.emps));
-  clsOv2 && clsOv2('sh-add-emp');
-  renderB2BHome && renderB2BHome();
-  toast('✅ Сотрудник ' + name + ' добавлен!');
-  sendBot('emp_added', { name, cit, pos });
-}
-
-function copyRefLink() {
-  const uid = S.user && S.user.id || 'demo';
-  const link = 'https://t.me/migr_pomoshnik_bot?start=ref_' + uid;
-  if(navigator.clipboard) {
-    navigator.clipboard.writeText(link).then(() => toast('📋 Ссылка скопирована!')).catch(() => toast(link));
-  } else {
-    toast('Скопируйте: ' + link);
-  }
-}
-
-function shareRefLink() {
-  const uid = S.user && S.user.id || 'demo';
-  const link = 'https://t.me/migr_pomoshnik_bot?start=ref_' + uid;
-  const text = 'Помогает с документами в России. Получим оба +7 дней бесплатно!';
-  const url = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text);
-  if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
-    window.Telegram.WebApp.openTelegramLink(url);
-  } else {
-    window.open(url, '_blank');
-  }
-}
-
-
-  // Реферальная ссылка
-  const refEl = document.getElementById('ref-link-text');
-  if(refEl) {
-    const uid = (S.user && S.user.id) || 'demo';
-    refEl.textContent = 'https://t.me/migr_pomoshnik_bot?start=ref_' + uid;
-  }
-
-</script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -675,13 +607,20 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
 <div class="pg" id="pg-whatif">
   <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">🆘 Что делать если...</div></div>
   <div class="px">
-    <div class="li" onclick="wi('expired')"><div class="li-ico r">🔴</div><div class="li-txt"><div class="li-t">Просрочен патент</div></div><div class="arr">›</div></div>
-    <div class="li" onclick="wi('lost_mk')"><div class="li-ico o">📄</div><div class="li-txt"><div class="li-t">Потерял миграционную карту</div></div><div class="arr">›</div></div>
-    <div class="li" onclick="wi('no_pay')"><div class="li-ico o">💸</div><div class="li-txt"><div class="li-t">Не заплатил за патент</div></div><div class="arr">›</div></div>
-    <div class="li" onclick="wi('no_salary')"><div class="li-ico b">💼</div><div class="li-txt"><div class="li-t">Не выплатили зарплату</div></div><div class="arr">›</div></div>
-    <div class="li" onclick="wi('ban')"><div class="li-ico r">🚫</div><div class="li-txt"><div class="li-t">Нашёл запрет на въезд</div></div><div class="arr">›</div></div>
-    <div class="li" onclick="wi('moved')"><div class="li-ico p">🏠</div><div class="li-txt"><div class="li-t">Переехал в другой город</div></div><div class="arr">›</div></div>
-    <div class="li" onclick="wi('job_change')"><div class="li-ico g">💼</div><div class="li-txt"><div class="li-t">Сменил работодателя</div></div><div class="arr">›</div></div>
+    <div class="box r" style="margin-bottom:14px">⚡ Срочная ситуация? Нажмите на вашу проблему — дадим пошаговую инструкцию</div>
+    <div class="li" onclick="wi('police')"><div class="li-ico r">🚔</div><div class="li-txt"><div class="li-t">Остановила полиция / проверка</div><div class="li-s">Права при задержании</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('deportation')"><div class="li-ico r">✈️</div><div class="li-txt"><div class="li-t">Угроза депортации</div><div class="li-s">Как обжаловать, сроки</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('expired')"><div class="li-ico r">🔴</div><div class="li-txt"><div class="li-t">Просрочен патент</div><div class="li-s">Что делать немедленно</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('no_pay')"><div class="li-ico o">💸</div><div class="li-txt"><div class="li-t">Не заплатил за патент</div><div class="li-s">Аннулирование, что делать</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('ban')"><div class="li-ico r">🚫</div><div class="li-txt"><div class="li-t">Обнаружил запрет на въезд</div><div class="li-s">Обжалование — 10 дней!</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('no_salary')"><div class="li-ico b">💼</div><div class="li-txt"><div class="li-t">Не выплатили зарплату</div><div class="li-s">Права работника</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('lost_docs')"><div class="li-ico o">📋</div><div class="li-txt"><div class="li-t">Потерял документы</div><div class="li-s">Паспорт, патент, МК</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('lost_mk')"><div class="li-ico o">📄</div><div class="li-txt"><div class="li-t">Потерял миграционную карту</div><div class="li-s">Штраф и восстановление</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('moved')"><div class="li-ico b">📍</div><div class="li-txt"><div class="li-t">Переехал в другой город</div><div class="li-s">Учёт и документы</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('job_change')"><div class="li-ico t">💼</div><div class="li-txt"><div class="li-t">Сменил работодателя</div><div class="li-s">Уведомить МВД — 3 дня!</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('accident')"><div class="li-ico g">🏥</div><div class="li-txt"><div class="li-t">Травма / несчастный случай на работе</div><div class="li-s">Права, компенсация</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('housing')"><div class="li-ico p">🏠</div><div class="li-txt"><div class="li-t">Выселяют из жилья</div><div class="li-s">Права жильца</div></div><div class="arr">›</div></div>
+    <div style="margin-top:8px"><button class="btn pi" onclick="sendBot('consult',{topic:'Срочная помощь'})">⚖️ Срочная консультация юриста</button></div>
   </div>
 </div>
 <div class="pg" id="pg-wi-d">
@@ -747,29 +686,25 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
 
 <!-- MMC -->
 <div class="pg" id="pg-mmc">
-  <div class="hdr"><div class="hdr-title">🏛️ ММЦ Сахарово</div></div>
+  <div class="hdr"><div class="hdr-title">📍 Мой регион</div></div>
   <div class="px">
-    <div class="card" style="text-align:center;padding:18px">
-      <div style="font-size:13px;font-weight:700;margin-bottom:3px">Многофункциональный миграционный центр</div>
-      <div style="font-size:12px;color:var(--mu2)">Варшавское шоссе, 64-й км, д.1</div>
-      <div style="font-size:13px;color:var(--green);font-weight:700;margin-top:6px">Ежедневно 8:00–20:00</div>
+    <div class="card">
+      <div class="fg" style="margin-bottom:0">
+        <label class="flbl">Выберите ваш регион</label>
+        <select class="fi" id="region-sel" onchange="changeRegion(this.value)">
+          <option value="msk">🏙️ Москва и Московская область</option>
+          <option value="spb">🏙️ Санкт-Петербург</option>
+          <option value="ekb">🏙️ Екатеринбург и Свердловская обл.</option>
+          <option value="nsk">🏙️ Новосибирск</option>
+          <option value="krd">🏙️ Краснодар</option>
+          <option value="nnv">🏙️ Нижний Новгород</option>
+          <option value="other">🏙️ Другой регион</option>
+        </select>
+      </div>
     </div>
-    <div class="stitle">Записаться</div>
-    <a class="mmc-lnk" href="https://mmc.mos.ru/client-office" target="_blank"><div class="li-ico b" style="border-radius:10px;flex-shrink:0">📝</div><div><div class="li-t">РВП / ВНЖ / Гражданство</div><div class="li-s">mmc.mos.ru</div></div><div class="arr">›</div></a>
-    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/testing/" target="_blank"><div class="li-ico y" style="border-radius:10px;flex-shrink:0">📚</div><div><div class="li-t">Экзамен по русскому</div></div><div class="arr">›</div></a>
-    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/medical/" target="_blank"><div class="li-ico g" style="border-radius:10px;flex-shrink:0">🏥</div><div><div class="li-t">Медицинское освидетельствование</div></div><div class="arr">›</div></a>
-    <div class="stitle">Проверки</div>
-    <a class="mmc-lnk" href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank"><div class="li-ico r" style="border-radius:10px;flex-shrink:0">🔍</div><div><div class="li-t">Проверить патент</div></div><div class="arr">›</div></a>
-    <a class="mmc-lnk" href="https://service.nalog.ru/inn.do" target="_blank"><div class="li-ico o" style="border-radius:10px;flex-shrink:0">🔢</div><div><div class="li-t">Узнать ИНН — ФНС</div></div><div class="arr">›</div></a>
-    <a class="mmc-lnk" href="https://fssprus.ru/iss/ip" target="_blank"><div class="li-ico p" style="border-radius:10px;flex-shrink:0">⚖️</div><div><div class="li-t">Долги ФССП</div></div><div class="arr">›</div></a>
-    <div class="card" style="margin-top:4px">
-      <div class="irow"><span class="irow-l">Горячая линия</span><span class="irow-v"><a href="tel:+74952038820" style="color:var(--blue)">+7 (495) 203-88-20</a></span></div>
-      <div class="irow"><span class="irow-l">Справочная 24/7</span><span class="irow-v"><a href="tel:+74957777777" style="color:var(--blue)">+7 (495) 777-77-77</a></span></div>
-    </div>
+    <div id="region-content"><!-- заполняется JS --></div>
   </div>
 </div>
-
-<!-- SUB / PRO PAGE -->
 <div class="pg" id="pg-sub">
   <div class="hdr"><div class="hdr-title">⭐ Подписка PRO</div></div>
   <div class="px">
@@ -819,33 +754,6 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
 </div>
 
 <!-- NAV -->
-
-<div class="pg" id="pg-ref">
-  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">🎁 Пригласить друга</div></div>
-  <div class="px">
-    <div style="text-align:center;padding:20px 0">
-      <div style="font-size:48px;margin-bottom:10px">🎁</div>
-      <div style="font-size:18px;font-weight:900;margin-bottom:6px">+7 дней за каждого друга!</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.6">Пригласи друга — вы оба получите<br><b style="color:var(--green)">+7 дней подписки бесплатно</b></div>
-    </div>
-    <div class="card" style="cursor:pointer" onclick="copyRefLink()">
-      <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase">🔗 Ваша реферальная ссылка</div>
-      <div style="font-size:13px;font-weight:800;color:var(--blue);word-break:break-all" id="ref-link-text">Нажмите чтобы скопировать</div>
-    </div>
-    <button class="btn" onclick="shareRefLink()">📤 Поделиться ссылкой</button>
-    <button class="btn out" onclick="copyRefLink()">📋 Скопировать ссылку</button>
-    <div class="card" style="margin-top:12px">
-      <div style="font-size:13px;font-weight:800;margin-bottom:8px">Как работает:</div>
-      <div style="font-size:13px;line-height:2;color:var(--muted)">
-        1️⃣ Отправьте ссылку другу<br>
-        2️⃣ Друг переходит и запускает бота<br>
-        3️⃣ Оба получают +7 дней подписки<br>
-        ∞ Без ограничений!
-      </div>
-    </div>
-  </div>
-</div>
-
 <nav class="nav">
   <button class="nb on" id="nb-home" onclick="go('home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Главная
@@ -854,7 +762,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Документы
   </button>
   <button class="nb" id="nb-mmc" onclick="go('mmc')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Сахарово
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Мой регион
   </button>
   <button class="nb" id="nb-sub" onclick="go('sub')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>PRO
@@ -1012,6 +920,7 @@ function go(p){
   if(NM[p])document.getElementById(NM[p])?.classList.add('on');
   window.scrollTo(0,0);
   if(p==='b2b-risk')renderB2BRisk();
+  if(p==='mmc'){const sel=document.getElementById('region-sel');if(sel)changeRegion(sel.value);}
   if(p==='risk')renderRiskAnalysis();
 }
 function goBack(){if(hist.length>1){hist.pop();go(hist[hist.length-1]);}else{go('home');}}
@@ -1145,15 +1054,21 @@ function renderRiskAnalysis(){
 
 // ── WHAT IF ────────────────────────────────────────────────
 const WI={
+  police:{t:'🚔 Остановила полиция / проверка',h:`<div class="box r">❗ Сохраняйте спокойствие!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Предъявите документы: паспорт + патент/РВП/ВНЖ + регистрация</div></div><div class="sr"><div class="sn">2</div><div class="st">Вы имеете право знать причину задержания и на переводчика</div></div><div class="sr"><div class="sn">3</div><div class="st">НЕ подписывайте документы без перевода и понимания</div></div><div class="sr"><div class="sn">4</div><div class="st">Запомните имя и звание сотрудника</div></div></div>`},
+  deportation:{t:'✈️ Угроза депортации',h:`<div class="box r">❗ Каждый час важен — срочно юрист!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Основания: дети/супруг гражданин РФ, длительное законное проживание</div></div><div class="sr"><div class="sn">2</div><div class="st">Срок обжалования в суде — 10 дней</div></div><div class="sr"><div class="sn">3</div><div class="st">Подать жалобу в прокуратуру</div></div></div>`},
+  lost_docs:{t:'📋 Потерял документы',h:`<div class="box o">⚠️ Обратитесь в ГУВМ МВД в течение 3 дней!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Миграционная карта: ГУВМ МВД + заявление о потере, штраф до 5 000 ₽</div></div><div class="sr"><div class="sn">2</div><div class="st">Паспорт: консульство вашей страны + временный документ</div></div><div class="sr"><div class="sn">3</div><div class="st">Патент: ГУВМ МВД, заявление на восстановление + оплата</div></div></div>`},
   expired:{t:'🔴 Просрочен патент',h:`<div class="box r">❗ Срочно прекратите работу!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Немедленно прекратите работу — штраф до 5 000 ₽ + депортация</div></div><div class="sr"><div class="sn">2</div><div class="st">До 30 дней: выехать и въехать снова</div></div><div class="sr"><div class="sn">3</div><div class="st">Более 30 дней: возможен запрет — нужен юрист!</div></div></div>`},
   lost_mk:{t:'📄 Потерял миграционную карту',h:`<div class="box o">⚠️ Обратитесь в ГУВМ МВД в течение 3 дней!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">ГУВМ МВД по месту пребывания</div></div><div class="sr"><div class="sn">2</div><div class="st">Паспорт + заявление о потере</div></div><div class="sr"><div class="sn">3</div><div class="st">Штраф: до 5 000 ₽</div></div></div>`},
   no_pay:{t:'💸 Не заплатил за патент',h:`<div class="box r">❗ Пропуск = аннулирование патента!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Проверьте статус на сервисы.гувм.мвд.рф</div></div><div class="sr"><div class="sn">2</div><div class="st">Если активен — срочно оплатите</div></div><div class="sr"><div class="sn">3</div><div class="st">Если аннулирован — оформляйте новый</div></div></div>`},
-  no_salary:{t:'💼 Не выплатили зарплату',h:`<div class="box b">✅ Те же права, что у гражданина РФ!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Соберите доказательства: договор, расчётные листки</div></div><div class="sr"><div class="sn">2</div><div class="st">Трудовая инспекция (бесплатно) или прокуратура</div></div><div class="sr"><div class="sn">3</div><div class="st">Суд — срок подачи 1 год</div></div></div>`},
+  no_salary:{t:'💼 Не выплатили зарплату',h:`<div class="box b">✅ Те же права, что у гражданина РФ!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Соберите доказательства: договор, расчётные листки, переписка</div></div><div class="sr"><div class="sn">2</div><div class="st">Трудовая инспекция (бесплатно) или прокуратура</div></div><div class="sr"><div class="sn">3</div><div class="st">Суд — срок подачи 1 год. ВАЖНО: продолжайте платить за патент!</div></div></div>`},
   ban:{t:'🚫 Запрет на въезд',h:`<div class="box r">❗ Каждый день важен!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Узнайте причину: запрос в ГУВМ МВД</div></div><div class="sr"><div class="sn">2</div><div class="st">Ошибка → заявление об исправлении</div></div><div class="sr"><div class="sn">3</div><div class="st">Обжалование в суде — 10 дней!</div></div></div>`},
   moved:{t:'🏠 Переехал в другой город',h:`<div class="box o">⚠️ Встать на учёт — 7 рабочих дней!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Миграционный учёт по новому адресу</div></div><div class="sr"><div class="sn">2</div><div class="st">Патент: только в регионе выдачи!</div></div><div class="sr"><div class="sn">3</div><div class="st">РВП/ВНЖ: уведомить ГУВМ о смене адреса</div></div></div>`},
-  job_change:{t:'💼 Сменил работодателя',h:`<div class="box o">⚠️ Уведомить МВД — 3 рабочих дня!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Старый работодатель уведомляет — 3 дня</div></div><div class="sr"><div class="sn">2</div><div class="st">Новый работодатель уведомляет — 3 дня</div></div><div class="sr"><div class="sn">3</div><div class="st">Заключите официальный трудовой договор</div></div></div>`}
+  job_change:{t:'💼 Сменил работодателя',h:`<div class="box o">⚠️ Уведомить МВД — 3 рабочих дня!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Старый работодатель уведомляет — 3 дня</div></div><div class="sr"><div class="sn">2</div><div class="st">Новый работодатель уведомляет — 3 дня</div></div><div class="sr"><div class="sn">3</div><div class="st">Заключите официальный трудовой договор</div></div></div>`},
+  accident:{t:'🏥 Травма / несчастный случай на работе',h:`<div class="box b">✅ Вы имеете право на медпомощь!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Скорая помощь обязана помочь независимо от статуса</div></div><div class="sr"><div class="sn">2</div><div class="st">Работодатель обязан оформить акт о несчастном случае</div></div><div class="sr"><div class="sn">3</div><div class="st">Трудовая инспекция + юрист для компенсации</div></div></div>`},
+  housing:{t:'🏠 Выселяют из жилья',h:`<div class="box o">⚠️ Знайте свои права!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Договор аренды защищает ваши права как жильца</div></div><div class="sr"><div class="sn">2</div><div class="st">Без суда выселить нельзя — требуйте судебное решение</div></div><div class="sr"><div class="sn">3</div><div class="st">Участковый или прокуратура если нарушают права</div></div></div>`}
 };
-function wi(key){const d=WI[key];if(!d)return;document.getElementById('wi-title').textContent=d.t;document.getElementById('wi-body').innerHTML=d.h+`<button class="btn pi" onclick="go('lawyer')" style="margin-top:4px">⚖️ Консультация юриста</button><button class="btn out" onclick="go('whatif')">← Назад</button>`;go('wi-d');}
+function wi(key){const d=WI[key];if(!d)return;document.getElementById('wi-title').textContent=d.t;document.getElementById('wi-body').innerHTML=d.h+`<button class="btn pi" onclick="sendBot('consult',{topic:'${d.t}'})" style="margin-top:4px">⚖️ Срочная консультация юриста</button><button class="btn out" onclick="go('whatif')">← Назад</button>`;go('wi-d');}
+const d=WI[key];if(!d)return;document.getElementById('wi-title').textContent=d.t;document.getElementById('wi-body').innerHTML=d.h+`<button class="btn pi" onclick="go('lawyer')" style="margin-top:4px">⚖️ Консультация юриста</button><button class="btn out" onclick="go('whatif')">← Назад</button>`;go('wi-d');}
 
 // ── B2B ────────────────────────────────────────────────────
 function empDl(e){if(!e.docExp||e.docType==='none')return null;return Math.ceil((new Date(e.docExp)-new Date())/86400000);}
@@ -1240,6 +1155,70 @@ function submitReq(){
   toast('✅ Заявка отправлена!');
   ['rq-co','rq-ci','rq-cnt','rq-job','rq-sal','rq-ct'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   goBack();
+}
+
+
+// ── REGION ─────────────────────────────────────────────────
+const REGIONS = {
+  msk: {
+    name: 'Москва и Московская область',
+    mvd: {name:'ГУВМ МВД Москвы', addr:'ул. Большая Ордынка, 16/4', tel:'+7 (495) 332-28-50', url:'https://xn--b1aew.xn--p1ai/Deljatelnost/district/Moscow'},
+    mmc: {name:'Мой регион', addr:'Варшавское шоссе, 64-й км', tel:'+7 (495) 203-88-20', url:'https://mc.mos.ru', hours:'Ежедн. 8:00–20:00'},
+    patent_cost: '7500',
+    links: [
+      {ico:'📝',t:'Запись на РВП / ВНЖ / Гражданство', url:'https://mmc.mos.ru/client-office'},
+      {ico:'🏥',t:'Медкомиссия для патента', url:'https://mc.mos.ru/ru/services/medical/'},
+      {ico:'📚',t:'Экзамен по русскому языку', url:'https://mc.mos.ru/ru/services/testing/'},
+    ]
+  },
+  spb: {
+    name: 'Санкт-Петербург',
+    mvd: {name:'ГУВМ МВД СПб', addr:'ул. Красного Текстильщика, 10-12', tel:'+7 (812) 573-07-84', url:'https://78.мвд.рф/gumvd'},
+    mmc: {name:'МФЦ миграционные услуги', addr:'Многофункциональные центры СПб', tel:'phone: 004', url:'https://gu.spb.ru', hours:'Пн-Пт 9:00–18:00'},
+    patent_cost: '4000',
+    links: [
+      {ico:'📝',t:'Госуслуги Санкт-Петербурга', url:'https://gu.spb.ru'},
+      {ico:'🏥',t:'Медкомиссия СПб', url:'https://78.мвд.рф'},
+    ]
+  },
+  other: {
+    name: 'Другой регион',
+    mvd: {name:'МВД России', addr:'Найдите ваш региональный отдел ГУВМ МВД', tel:'102', url:'https://xn--b1aew.xn--p1ai'},
+    mmc: {name:'МФЦ вашего города', addr:'gosuslugi.ru — поиск МФЦ', tel:'8-800-100-70-10', url:'https://мфц.рф', hours:'Уточните на сайте'},
+    patent_cost: 'уточните в регионе',
+    links: [
+      {ico:'🔍',t:'Найти МФЦ в вашем городе', url:'https://мфц.рф'},
+      {ico:'🏛️',t:'Госуслуги', url:'https://gosuslugi.ru'},
+    ]
+  }
+};
+function changeRegion(val) {
+  const r = REGIONS[val] || REGIONS.other;
+  const el = document.getElementById('region-content');
+  if(!el) return;
+  el.innerHTML = `
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">🏛️ ${r.mvd.name}</div>
+      <div class="irow"><span class="irow-l">Адрес</span><span class="irow-v">${r.mvd.addr}</span></div>
+      <div class="irow"><span class="irow-l">Телефон</span><span class="irow-v"><a href="tel:${r.mvd.tel}" style="color:var(--blue)">${r.mvd.tel}</a></span></div>
+      <div class="irow"><span class="irow-l">Стоимость патента</span><span class="irow-v">${r.patent_cost} ₽/мес</span></div>
+      <a href="${r.mvd.url}" target="_blank"><button class="btn out" style="margin-top:10px;padding:10px">🌐 Открыть сайт МВД</button></a>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">📍 ${r.mmc.name}</div>
+      <div class="irow"><span class="irow-l">Адрес</span><span class="irow-v">${r.mmc.addr}</span></div>
+      <div class="irow"><span class="irow-l">Телефон</span><span class="irow-v"><a href="tel:${r.mmc.tel}" style="color:var(--blue)">${r.mmc.tel}</a></span></div>
+      <div class="irow"><span class="irow-l">Режим работы</span><span class="irow-v">${r.mmc.hours}</span></div>
+      <a href="${r.mmc.url}" target="_blank"><button class="btn out" style="margin-top:10px;padding:10px">🌐 Официальный сайт</button></a>
+    </div>
+    <div class="stitle">Полезные ссылки</div>
+    ${r.links.map(l=>`<a href="${l.url}" target="_blank" class="li"><div class="li-ico b">${l.ico}</div><div class="li-txt"><div class="li-t">${l.t}</div></div><div class="arr">›</div></a>`).join('')}
+    <a href="https://xn--b1aew.xn--p1ai/rkl" target="_blank" class="li"><div class="li-ico g">🛡️</div><div class="li-txt"><div class="li-t">Реестр контролируемых лиц</div><div class="li-s">мвд.рф/ркл</div></div><div class="arr">›</div></a>
+    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank" class="li"><div class="li-ico b">🪪</div><div class="li-txt"><div class="li-t">Проверить патент</div><div class="li-s">сервисы.гувм.мвд.рф</div></div><div class="arr">›</div></a>
+    <a href="https://www.gosuslugi.ru/329523" target="_blank" class="li"><div class="li-ico t">📬</div><div class="li-txt"><div class="li-t">Уведомить МВД о трудоустройстве</div><div class="li-s">Госуслуги — 3 рабочих дня!</div></div><div class="arr">›</div></a>
+    <a href="https://service.nalog.ru/inn.do" target="_blank" class="li"><div class="li-ico y">🔢</div><div class="li-txt"><div class="li-t">Узнать ИНН — ФНС России</div></div><div class="arr">›</div></a>
+    <a href="https://fssprus.ru/iss/ip" target="_blank" class="li"><div class="li-ico r">⚖️</div><div class="li-txt"><div class="li-t">Проверить долги ФССП</div></div><div class="arr">›</div></a>
+  `;
 }
 
 // ── BOT BRIDGE ─────────────────────────────────────────────
