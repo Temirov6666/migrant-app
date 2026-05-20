@@ -2,280 +2,463 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>МигрантПро</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js">
+// ============================================================
+// ИСПРАВЛЕНИЯ НЕДОСТАЮЩИХ ФУНКЦИЙ
+// ============================================================
+
+function onDocTypeChange() {
+  const t = v('ad-type');
+  const bl = document.getElementById('ad-blank-section');
+  if(bl) bl.style.display = (t === 'patent') ? 'block' : 'none';
+}
+
+function updatePassHint(citId, seriesId, numId) {
+  const NO_SERIES = ['TJK','CHN'];
+  const cit = document.getElementById(citId) && document.getElementById(citId).value;
+  const serEl = document.getElementById(seriesId);
+  if(!serEl) return;
+  if(NO_SERIES.includes(cit)) {
+    serEl.placeholder = 'Нет серии для этой страны';
+  } else {
+    serEl.placeholder = 'Серия (если нет — оставьте пустым)';
+  }
+}
+
+function saveEmployee() {
+  const name = v('em-name'), cit = v('em-cit'), pos = v('em-pos');
+  const ps = v('em-ps'), pn = v('em-pn'), hd = v('em-hd');
+  if(!name || !pn) { toast('Заполните ФИО и номер паспорта'); return; }
+  const emp = { id: Date.now(), name, cit, pos, ps, pn, hd, docs: [] };
+  S.emps.push(emp);
+  csSet('emps', JSON.stringify(S.emps));
+  localStorage.setItem('emps', JSON.stringify(S.emps));
+  clsOv2 && clsOv2('sh-add-emp');
+  renderB2BHome && renderB2BHome();
+  toast('✅ Сотрудник ' + name + ' добавлен!');
+  sendBot('emp_added', { name, cit, pos });
+}
+
+function copyRefLink() {
+  const uid = S.user && S.user.id || 'demo';
+  const link = 'https://t.me/migr_pomoshnik_bot?start=ref_' + uid;
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(() => toast('📋 Ссылка скопирована!')).catch(() => toast(link));
+  } else {
+    toast('Скопируйте: ' + link);
+  }
+}
+
+function shareRefLink() {
+  const uid = S.user && S.user.id || 'demo';
+  const link = 'https://t.me/migr_pomoshnik_bot?start=ref_' + uid;
+  const text = 'Помогает с документами в России. Получим оба +7 дней бесплатно!';
+  const url = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text);
+  if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
+    window.Telegram.WebApp.openTelegramLink(url);
+  } else {
+    window.open(url, '_blank');
+  }
+}
+
+
+  // Реферальная ссылка
+  const refEl = document.getElementById('ref-link-text');
+  if(refEl) {
+    const uid = (S.user && S.user.id) || 'demo';
+    refEl.textContent = 'https://t.me/migr_pomoshnik_bot?start=ref_' + uid;
+  }
+
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 :root{
-  --bg:#0f0f13;--card:#1a1a22;--card2:#22222e;--border:#2a2a38;
-  --blue:#2d7ef7;--blue2:#1a6de0;--green:#1db954;--red:#e53935;
-  --orange:#ff8c00;--yellow:#fbbf24;--purple:#7c3aed;
-  --text:#f0f0f5;--muted:#7a7a9a;--r:16px;
+  --bg:#07070d;--s1:#0f0f18;--s2:#161622;--s3:#1e1e2e;
+  --bd:rgba(255,255,255,.07);--bd2:rgba(255,255,255,.14);
+  --blue:#4f8ef7;--blue2:#3b7ef6;--green:#22c55e;--red:#ef4444;
+  --or:#f97316;--pu:#8b5cf6;--tl:#14b8a6;--ye:#eab308;--pi:#ec4899;
+  --tx:#f1f1f6;--mu:#6b7280;--mu2:#9ca3af;--r:16px;
+  --glass:rgba(255,255,255,.04);--glass2:rgba(255,255,255,.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-bottom:84px}
-
-/* PAGES */
-.page{display:none;animation:fi .22s ease}.page.active{display:block}
-@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* HEADER */
-.hdr{padding:14px 16px 8px;display:flex;align-items:center;gap:10px}
-.hdr-back{width:36px;height:36px;background:var(--card);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:var(--text);font-size:20px;flex-shrink:0}
-.hdr-title{font-size:17px;font-weight:900;flex:1}
-.hdr-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;color:#fff;flex-shrink:0}
+html,body{height:100%}
+body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;padding-bottom:76px}
+.pg{display:none}.pg.on{display:block;animation:fu .25s ease}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* NAV */
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.nb{flex:1;padding:10px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;transition:color .2s;position:relative}
-.nb.on{color:var(--blue)}.nb svg{width:22px;height:22px}
-.nb-badge{position:absolute;top:6px;right:calc(50% - 18px);background:var(--red);color:#fff;font-size:9px;font-weight:900;min-width:16px;height:16px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 3px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,18,.95);backdrop-filter:blur(20px);border-top:1px solid var(--bd);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nb{flex:1;padding:9px 4px 7px;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;color:var(--mu);font-family:'Golos Text',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;position:relative}
+.nb.on{color:var(--blue)}.nb svg{width:22px;height:22px;stroke-width:1.8}
+.nb .dot{position:absolute;top:6px;right:calc(50% - 14px);width:6px;height:6px;border-radius:50%;background:var(--red);display:none}
+.nb .dot.show{display:block}
 
-/* COMMON */
+/* LAYOUT */
 .px{padding:0 16px}
-.card{background:var(--card);border-radius:var(--r);padding:16px;border:1px solid var(--border);margin-bottom:12px}
-.ctitle{font-size:12px;color:var(--muted);font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px}
-.divider{height:1px;background:var(--border);margin:14px 0}
-.empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:14px;font-weight:700;line-height:1.6}
-.empty .em{font-size:44px;display:block;margin-bottom:10px}
+.hdr{padding:14px 16px 10px;display:flex;align-items:center;gap:10px}
+.hdr-title{font-size:18px;font-weight:700;flex:1}
+.hdr-back{width:36px;height:36px;background:var(--s2);border-radius:50%;border:none;color:var(--tx);font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--pu));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.pro-badge{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;letter-spacing:.5px}
+.free-badge{background:var(--s3);color:var(--mu2);font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;border:1px solid var(--bd2)}
 
-/* DAYS COUNTER */
-.days-wrap{background:var(--card);border-radius:var(--r);padding:20px 16px;margin-bottom:12px;border:1px solid var(--border)}
-.days-num{font-size:56px;font-weight:900;line-height:1;text-align:center}
-.days-num.g{color:var(--green)}.days-num.o{color:var(--orange)}.days-num.r{color:var(--red)}
-.days-lbl{font-size:13px;color:var(--muted);font-weight:700;text-align:center;margin-top:4px}
-.days-dt{font-size:12px;color:var(--muted);text-align:center;margin-top:2px}
-.pbar-wrap{margin-top:14px}
-.pbar-track{height:8px;background:var(--border);border-radius:99px;overflow:hidden}
-.pbar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .5s}
-.pbar-fill.w{background:linear-gradient(90deg,var(--orange),var(--red))}
-.pbar-lbls{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:3px;font-weight:700}
+/* CARDS */
+.card{background:var(--s1);border-radius:var(--r);padding:16px;border:1px solid var(--bd);margin-bottom:12px}
+.card.glass{background:var(--glass);backdrop-filter:blur(12px);border-color:var(--bd2)}
+.stitle{font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.8px;text-transform:uppercase;margin:18px 0 10px}
 
-/* PATENT CARD */
-.pat-card{background:var(--card);border-radius:var(--r);padding:15px;border:1px solid var(--border);margin-bottom:10px;cursor:pointer}
-.pat-card:active{border-color:var(--blue)}
-.pat-hdr{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.pat-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.pat-ico.g{background:linear-gradient(135deg,#1db954,#0d8c3c)}.pat-ico.o{background:linear-gradient(135deg,#ff8c00,#e65100)}.pat-ico.r{background:linear-gradient(135deg,#e53935,#b71c1c)}
-.pat-inf{flex:1}.pat-name{font-size:15px;font-weight:800;margin-bottom:2px}.pat-num{font-size:13px;color:var(--muted)}
-.badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800;color:#fff}
-.badge.g{background:var(--green)}.badge.o{background:var(--orange)}.badge.r{background:var(--red)}
-.pat-rows{display:flex;flex-direction:column;gap:5px}
-.pat-row{display:flex;justify-content:space-between;font-size:13px}
-.pat-row span:first-child{color:var(--muted)}.pat-row span:last-child{font-weight:700}
+/* LIST ITEMS */
+.li{display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--s1);border-radius:12px;border:1px solid var(--bd);margin-bottom:8px;cursor:pointer;text-decoration:none;color:var(--tx);transition:all .15s;position:relative;overflow:hidden}
+.li:active{border-color:var(--blue);background:var(--s2)}
+.li.locked{cursor:pointer;opacity:.85}
+.li.locked::after{content:'🔒 PRO';position:absolute;right:14px;font-size:10px;font-weight:800;color:var(--or);background:rgba(249,115,22,.12);padding:3px 8px;border-radius:99px;border:1px solid rgba(249,115,22,.3)}
+.li-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.li-ico.b{background:rgba(79,142,247,.15)}.li-ico.g{background:rgba(34,197,94,.15)}.li-ico.r{background:rgba(239,68,68,.15)}.li-ico.o{background:rgba(249,115,22,.15)}.li-ico.p{background:rgba(139,92,246,.15)}.li-ico.t{background:rgba(20,184,166,.15)}.li-ico.y{background:rgba(234,179,8,.15)}.li-ico.pi{background:rgba(236,72,153,.15)}
+.li-txt{flex:1;min-width:0}.li-t{font-size:14px;font-weight:600;margin-bottom:2px}.li-s{font-size:12px;color:var(--mu2)}
+.arr{color:var(--mu);font-size:18px;flex-shrink:0}
 
-/* CHECK ITEMS */
-.chk-list{display:flex;flex-direction:column;gap:10px}
-.chk-item{background:var(--card2);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;border:none;color:var(--text);font-family:'Nunito',sans-serif;text-align:left;border:1px solid transparent;transition:border-color .15s}
-.chk-item:active{border-color:var(--blue)}
-.chk-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.chk-ico.b{background:rgba(45,126,247,.18)}.chk-ico.g{background:rgba(29,185,84,.18)}
-.chk-ico.p{background:rgba(124,58,237,.18)}.chk-ico.o{background:rgba(255,140,0,.18)}
-.chk-ico.r{background:rgba(229,57,53,.18)}.chk-ico.y{background:rgba(251,191,36,.18)}
-.chk-ico.teal{background:rgba(20,184,166,.18)}
-.chk-txt{flex:1}.chk-t{font-size:14px;font-weight:800;margin-bottom:2px}.chk-s{font-size:12px;color:var(--muted);font-weight:600}
+/* HEALTH SCORE */
+.health-card{background:linear-gradient(135deg,rgba(79,142,247,.08),rgba(139,92,246,.08));border:1px solid rgba(79,142,247,.2);border-radius:var(--r);padding:20px 16px;margin-bottom:12px;cursor:pointer}
+.ring-wrap{position:relative;width:100px;height:100px}
+.ring-wrap svg{width:100px;height:100px;transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:9}
+.ring-fill{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1)}
+.ring-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-n{font-size:24px;font-weight:900;line-height:1}.ring-l{font-size:9px;color:var(--mu);font-weight:600}
+.issue-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--mu2);padding:5px 0}
+.issue-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
-/* SUB BANNER */
-.sub-ban{background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:var(--r);padding:16px;margin-bottom:12px;position:relative;overflow:hidden;cursor:pointer}
-.sub-ban::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1)}
-.sub-ban-t{font-size:15px;font-weight:900;margin-bottom:3px;color:#fff}
-.sub-ban-s{font-size:12px;color:rgba(255,255,255,.85);font-weight:600;margin-bottom:10px}
-.sub-ban-fs{display:flex;flex-direction:column;gap:3px;margin-bottom:12px}
-.sub-ban-f{font-size:12px;color:rgba(255,255,255,.92);font-weight:700}
-.btn-sub{background:rgba(0,0,0,.22);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;width:100%}
-
-/* REF BANNER */
-.ref-ban{background:linear-gradient(135deg,#7c3aed,#2d7ef7);border-radius:var(--r);padding:16px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden}
-.ref-ban::before{content:'';position:absolute;bottom:-15px;left:-15px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08)}
-.ref-ban-t{font-size:15px;font-weight:900;color:#fff;margin-bottom:4px}
-.ref-ban-s{font-size:12px;color:rgba(255,255,255,.8);font-weight:600;margin-bottom:10px}
-.ref-ban-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:10px;padding:9px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;width:100%}
+/* PBAR */
+.pbar{height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:99px;transition:width .6s ease}
+.pbar-fill.ok{background:linear-gradient(90deg,var(--green),var(--tl))}
+.pbar-fill.warn{background:linear-gradient(90deg,var(--or),var(--red))}
 
 /* BUTTONS */
-.btn{background:var(--blue);color:#fff;border:none;border-radius:14px;padding:14px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;width:100%;transition:background .15s}
-.btn:active{background:var(--blue2)}.btn.out{background:transparent;border:2px solid var(--border);color:var(--text)}.btn.g{background:var(--green)}.btn.r{background:var(--red)}.btn.or{background:var(--orange)}.btn.pur{background:var(--purple)}
+.btn{background:var(--blue);color:#fff;border:none;border-radius:13px;padding:14px 16px;font-family:'Golos Text',sans-serif;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-bottom:10px;transition:all .15s;position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.1);opacity:0;transition:opacity .15s}
+.btn:active::after{opacity:1}
+.btn:last-child{margin-bottom:0}
+.btn.out{background:transparent;border:1.5px solid var(--bd2);color:var(--tx)}
+.btn.g{background:var(--green)}.btn.r{background:var(--red)}.btn.or{background:var(--or)}.btn.p{background:var(--pu)}.btn.t{background:var(--tl)}
+.btn.pro{background:linear-gradient(135deg,#f59e0b,#f97316)}
+.btn.glass{background:var(--glass2);backdrop-filter:blur(12px);border:1px solid var(--bd2);color:var(--tx)}
 
-/* FORMS */
+/* FORM */
 .fg{margin-bottom:14px}
-.flbl{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px;display:block;letter-spacing:.4px;text-transform:uppercase}
-.fi{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;outline:none;transition:border-color .2s}
-.fi:focus{border-color:var(--blue)}.fi::placeholder{color:var(--muted)}
-select.fi{-webkit-appearance:none;appearance:none}
+.flbl{font-size:11px;font-weight:700;color:var(--mu2);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.fi{width:100%;background:var(--s2);border:1.5px solid var(--bd);border-radius:12px;padding:12px 14px;color:var(--tx);font-family:'Golos Text',sans-serif;font-size:15px;font-weight:500;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none}
+.fi:focus{border-color:var(--blue)}.fi::placeholder{color:var(--mu)}
 
-/* RESULT */
-.res-card{border-radius:var(--r);padding:20px;text-align:center;margin-bottom:14px}
-.res-card.ok{background:rgba(29,185,84,.1);border:2px solid var(--green)}
-.res-card.err{background:rgba(229,57,53,.1);border:2px solid var(--red)}
-.res-card.w{background:rgba(255,140,0,.1);border:2px solid var(--orange)}
-.res-ico{font-size:44px;margin-bottom:8px}.res-t{font-size:17px;font-weight:900;margin-bottom:5px}.res-s{font-size:13px;color:var(--muted);font-weight:600;line-height:1.5}
+/* INFO BOXES */
+.box{border-radius:12px;padding:11px 13px;font-size:13px;font-weight:500;line-height:1.5;margin-bottom:14px}
+.box.b{background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);color:#93c5fd}
+.box.g{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#86efac}
+.box.r{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+.box.o{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:#fdba74}
 
-/* INFO ROWS */
-.irows{display:flex;flex-direction:column}
-.irow{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px}
-.irow:last-child{border-bottom:none}.irow-l{color:var(--muted);font-weight:700}.irow-v{font-weight:800;max-width:58%;text-align:right;word-break:break-word}
+/* STEPS */
+.sr{display:flex;gap:10px;margin-bottom:10px}
+.sn{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.st{font-size:13px;font-weight:500;line-height:1.5;color:var(--mu2)}
 
-/* PLANS */
-.plans{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
-.plan-it{background:var(--card2);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;border:2px solid transparent;cursor:pointer;transition:border-color .15s}
-.plan-it.sel{border-color:var(--blue);background:rgba(45,126,247,.08)}
-.plan-radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.plan-it.sel .plan-radio{border-color:var(--blue);background:var(--blue)}
-.plan-it.sel .plan-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff}
-.plan-inf{flex:1}.plan-n{font-size:14px;font-weight:800}.plan-p{font-size:12px;color:var(--muted);font-weight:600}
-.plan-pr{text-align:right}.plan-am{font-size:16px;font-weight:900}.plan-sv{font-size:11px;color:var(--green);font-weight:800}
+/* IROW */
+.irow{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.irow:last-child{border-bottom:none}.irow-l{color:var(--mu2);font-weight:500}.irow-v{font-weight:600;text-align:right}
 
-/* COMPARE */
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.cmp-col{border-radius:14px;padding:13px;border:2px solid var(--border)}
-.cmp-col.bad{border-color:var(--red)}.cmp-col.gd{border-color:var(--green)}
-.cmp-t{font-size:13px;font-weight:900;margin-bottom:7px}
-.cmp-col.bad .cmp-t{color:var(--red)}.cmp-col.gd .cmp-t{color:var(--green)}
-.cmp-s{font-size:11px;color:var(--muted);line-height:1.5;font-weight:600}
-
-/* MMC LINK */
-.mmc-lnk{display:flex;align-items:center;gap:14px;padding:14px;background:var(--card2);border-radius:14px;cursor:pointer;text-decoration:none;color:var(--text);margin-bottom:10px;border:1px solid var(--border);transition:border-color .15s}
-.mmc-lnk:active{border-color:var(--blue)}
-.mmc-lnk-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.mmc-lnk-inf{flex:1}.mmc-lnk-t{font-size:14px;font-weight:800;margin-bottom:2px}.mmc-lnk-s{font-size:12px;color:var(--muted);font-weight:600}
-
-/* STAY GRID */
-.st-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.st-cell{background:var(--card2);border-radius:14px;padding:14px;text-align:center;border:1px solid var(--border)}
-.st-n{font-size:26px;font-weight:900;color:var(--blue)}.st-l{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}
-
-/* OVERLAY / SHEET */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end}
-.overlay.open{display:flex}
-.sheet{background:var(--card);border-radius:24px 24px 0 0;padding:20px 16px 40px;width:100%;max-height:92vh;overflow-y:auto}
-.sheet-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px}
-
-/* TOAST */
-.toast{position:fixed;bottom:92px;left:16px;right:16px;background:#1e293b;color:#fff;border-radius:14px;padding:13px 18px;font-size:14px;font-weight:700;text-align:center;z-index:999;animation:tin .3s ease,tout .3s ease 2.7s forwards;box-shadow:0 8px 32px rgba(0,0,0,.4)}
-@keyframes tin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes tout{from{opacity:1}to{opacity:0}}
-.spin{width:36px;height:36px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--blue);animation:sp .8s linear infinite;margin:28px auto}
-@keyframes sp{to{transform:rotate(360deg)}}
-
-/* WARN BOXES */
-.warn-box{background:rgba(229,57,53,.1);border:1.5px solid var(--red);border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;color:var(--red);line-height:1.5;margin-bottom:14px}
-.info-box{background:rgba(45,126,247,.1);border:1.5px solid var(--blue);border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;color:var(--blue);line-height:1.5;margin-bottom:14px}
-.ok-box{background:rgba(29,185,84,.1);border:1.5px solid var(--green);border-radius:12px;padding:12px 14px;font-size:13px;font-weight:700;color:var(--green);line-height:1.5;margin-bottom:14px}
-
-/* CONSENT */
-.consent-overlay{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:500;display:flex;align-items:flex-end}
-.consent-sheet{background:var(--card);border-radius:24px 24px 0 0;padding:24px 16px 40px;width:100%;max-height:88vh;overflow-y:auto}
-.cb-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;cursor:pointer}
-.cb{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px}
-.cb.on{background:var(--blue);border-color:var(--blue)}
-.cb-txt{font-size:13px;font-weight:600;line-height:1.5;color:var(--muted)}
-.cb-txt a{color:var(--blue);text-decoration:none}
+/* SHEET */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end;backdrop-filter:blur(4px)}
+.ov.open{display:flex}
+.sheet{background:var(--s1);border-radius:20px 20px 0 0;padding:20px 16px 36px;width:100%;max-height:92vh;overflow-y:auto;border-top:1px solid var(--bd2)}
+.sh-handle{width:36px;height:4px;background:var(--s3);border-radius:99px;margin:0 auto 16px}
 
 /* LANG BAR */
 .lang-bar{display:flex;gap:6px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none}
 .lang-bar::-webkit-scrollbar{display:none}
-.lang-btn{flex-shrink:0;padding:6px 12px;border-radius:99px;border:1.5px solid var(--border);background:var(--card2);color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:all .15s;white-space:nowrap}
-.lang-btn.on{border-color:var(--blue);background:rgba(45,126,247,.15);color:var(--blue)}
+.lang-btn{flex-shrink:0;padding:5px 12px;border-radius:99px;border:1.5px solid var(--bd);background:var(--s2);color:var(--mu2);font-family:'Golos Text',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s}
+.lang-btn.on{border-color:var(--blue);background:rgba(79,142,247,.12);color:var(--blue)}
 
-/* TABS */
-.tab-row{display:flex;gap:8px;margin-bottom:16px}
-.tab-btn{flex:1;padding:10px;border-radius:12px;border:2px solid var(--border);background:var(--card2);color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;transition:all .15s}
-.tab-btn.on{border-color:var(--blue);background:rgba(45,126,247,.15);color:var(--blue)}
+/* ROLE SWITCHER */
+.role-sw{display:flex;gap:6px;margin:0 16px 12px;background:var(--s2);border-radius:12px;padding:4px}
+.role-btn{flex:1;padding:9px 8px;border-radius:9px;border:none;background:transparent;color:var(--mu2);font-family:'Golos Text',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center}
+.role-btn.on{background:var(--s1);color:var(--tx);box-shadow:0 2px 8px rgba(0,0,0,.3)}
 
-/* SVC CARD */
-.svc-card{background:linear-gradient(135deg,var(--card2),var(--card));border-radius:var(--r);padding:18px;margin-bottom:12px;border:1px solid var(--border)}
-.svc-card-t{font-size:16px;font-weight:900;margin-bottom:4px}
-.svc-card-s{font-size:13px;color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:12px}
-.svc-steps{display:flex;flex-direction:column;gap:6px}
-.svc-step{display:flex;gap:10px;font-size:13px;align-items:flex-start}
-.svc-step-n{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.svc-step-t{font-weight:700;line-height:1.4}
+/* SUB BANNER */
+.sub-ban{border-radius:var(--r);padding:18px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden;background:linear-gradient(135deg,#d97706,#dc2626)}
+.sub-ban::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08)}
+.sub-ban-t{font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;position:relative}
+.sub-ban-s{font-size:12px;color:rgba(255,255,255,.85);margin-bottom:10px;position:relative}
+.sub-ban-f{font-size:12px;color:rgba(255,255,255,.92);font-weight:600;margin-bottom:4px;position:relative}
+.sub-ban-cta{background:rgba(0,0,0,.25);color:#fff;border:none;border-radius:10px;padding:10px;font-family:'Golos Text',sans-serif;font-size:13px;font-weight:800;cursor:pointer;width:100%;margin-top:10px;position:relative}
 
-/* PAYMENT TRACKER */
-.pay-month-card{background:var(--card2);border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid var(--border)}
-.pay-month-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.pay-month-name{font-size:14px;font-weight:800}
-.pay-status{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800}
-.pay-status.paid{background:rgba(29,185,84,.2);color:var(--green)}
-.pay-status.due{background:rgba(255,140,0,.2);color:var(--orange)}
-.pay-status.late{background:rgba(229,57,53,.2);color:var(--red)}
-.pay-amount{font-size:13px;color:var(--muted);font-weight:700}
+/* PLAN */
+.plan{display:flex;align-items:center;gap:12px;padding:14px;background:var(--s1);border:2px solid var(--bd);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.plan.sel{border-color:var(--blue);background:rgba(79,142,247,.07)}
+.plan.popular{border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.05)}
+.plan.popular.sel{border-color:var(--or)}
+.plan-r{width:18px;height:18px;border-radius:50%;border:2px solid var(--mu);flex-shrink:0}
+.plan.sel .plan-r{border-color:var(--blue);background:var(--blue);display:flex;align-items:center;justify-content:center}
+.plan.sel .plan-r::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff}
+.plan-inf{flex:1}.plan-n{font-size:14px;font-weight:700}.plan-p{font-size:12px;color:var(--mu2)}
+.plan-am{text-align:right}.plan-am-n{font-size:15px;font-weight:800}.plan-sv{font-size:11px;color:var(--green);font-weight:700}
+.popular-tag{background:linear-gradient(135deg,var(--or),var(--red));color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px}
+
+/* TOAST */
+.toast{position:fixed;bottom:84px;left:16px;right:16px;background:#1f2937;color:#fff;border-radius:13px;padding:12px 16px;font-size:13px;font-weight:600;text-align:center;z-index:999;animation:tin .25s ease,tout .3s ease 2.7s forwards}
+@keyframes tin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes tout{to{opacity:0}}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:32px 16px;color:var(--mu2)}
+.empty-i{font-size:44px;margin-bottom:10px}
+.empty-t{font-size:15px;font-weight:700;margin-bottom:6px;color:var(--tx)}
+.empty-s{font-size:13px;line-height:1.6}
+
+/* CONSENT */
+.co-ov{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:600;display:none;align-items:flex-end}
+.co-ov.show{display:flex}
+.co-sh{background:var(--s1);border-radius:20px 20px 0 0;padding:24px 16px 44px;width:100%;max-height:88vh;overflow-y:auto;border-top:1px solid var(--bd2)}
+.cb-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;cursor:pointer;user-select:none}
+.cb{width:22px;height:22px;border-radius:6px;border:2px solid var(--bd2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px}
+.cb.on{background:var(--blue);border-color:var(--blue)}
+.cb.on::after{content:'✓';color:#fff;font-size:13px;font-weight:700}
+.cb-txt{font-size:13px;line-height:1.5;color:var(--mu2)}
+.cb-txt a{color:var(--blue);text-decoration:none}
 
 /* ONBOARDING */
-.onb-overlay{position:fixed;inset:0;background:var(--bg);z-index:600;display:flex;flex-direction:column}
-.onb-header{padding:20px 20px 0;display:flex;justify-content:flex-end}
-.onb-skip{font-size:13px;color:var(--muted);font-weight:700;cursor:pointer;padding:8px}
-.onb-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
-.onb-emoji{font-size:72px;margin-bottom:20px;display:block}
-.onb-title{font-size:24px;font-weight:900;margin-bottom:10px;line-height:1.2}
-.onb-sub{font-size:15px;color:var(--muted);font-weight:600;line-height:1.6;max-width:300px}
-.onb-footer{padding:20px}
-.onb-dots{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
-.onb-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s}
-.onb-dot.on{background:var(--blue);width:24px;border-radius:99px}
+.ob-ov{position:fixed;inset:0;background:var(--bg);z-index:500;display:none;flex-direction:column}
+.ob-ov.show{display:flex}
+.ob-progress{display:flex;gap:4px;padding:16px;padding-top:calc(16px + env(safe-area-inset-top))}
+.ob-dot{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.12);transition:background .3s}
+.ob-dot.done{background:var(--blue)}
+.ob-slide{display:none;flex:1;flex-direction:column;padding:20px 24px 32px;animation:fu .3s ease}
+.ob-slide.on{display:flex}
+.ob-emoji{font-size:56px;margin-bottom:20px}
+.ob-title{font-size:26px;font-weight:900;margin-bottom:12px;line-height:1.2}
+.ob-sub{font-size:15px;color:var(--mu2);line-height:1.6;margin-bottom:28px}
+.ob-choices{display:flex;flex-direction:column;gap:10px;flex:1}
+.ob-choice{display:flex;align-items:center;gap:14px;padding:16px;background:var(--s1);border-radius:14px;border:2px solid var(--bd);cursor:pointer;transition:all .15s;font-size:15px;font-weight:600}
+.ob-choice:active,.ob-choice.sel{border-color:var(--blue);background:rgba(79,142,247,.08);color:var(--blue)}
+.ob-choice-ico{font-size:24px}
+.ob-choice-sub{font-size:12px;color:var(--mu2);font-weight:500;margin-top:2px}
+.ob-actions{margin-top:20px}
 
-/* REFERRAL PAGE */
-.ref-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.ref-stat{background:var(--card2);border-radius:14px;padding:14px;text-align:center;border:1px solid var(--border)}
-.ref-stat-n{font-size:28px;font-weight:900;color:var(--purple)}
-.ref-stat-l{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}
-.ref-link-box{background:var(--card2);border-radius:14px;padding:14px;border:1.5px solid var(--border);margin-bottom:14px;cursor:pointer;transition:border-color .2s}
-.ref-link-box:active{border-color:var(--purple)}
-.ref-link-label{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
-.ref-link-text{font-size:13px;font-weight:800;color:var(--blue);word-break:break-all}
+/* PAYWALL */
+.pw-ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:400;display:none;align-items:flex-end;backdrop-filter:blur(8px)}
+.pw-ov.show{display:flex}
+.pw-sh{background:linear-gradient(180deg,#0d0d1a,#0a0a12);border-radius:24px 24px 0 0;padding:28px 20px 48px;width:100%;max-height:90vh;overflow-y:auto;border-top:1px solid var(--bd2)}
+.pw-top{text-align:center;margin-bottom:24px}
+.pw-icon{font-size:48px;margin-bottom:12px}
+.pw-title{font-size:22px;font-weight:900;margin-bottom:8px}
+.pw-sub{font-size:14px;color:var(--mu2);line-height:1.6}
+.pw-features{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.pw-feat{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500}
+.pw-feat-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.pw-feat-ico.b{background:rgba(79,142,247,.15)}.pw-feat-ico.g{background:rgba(34,197,94,.15)}.pw-feat-ico.or{background:rgba(249,115,22,.15)}.pw-feat-ico.p{background:rgba(139,92,246,.15)}.pw-feat-ico.pi{background:rgba(236,72,153,.15)}
+.pw-feat-t{font-size:14px;font-weight:600;margin-bottom:1px}
+.pw-feat-s{font-size:11px;color:var(--mu2)}
+.pw-compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.pw-col{background:var(--s1);padding:14px 12px}
+.pw-col-title{font-size:12px;font-weight:700;margin-bottom:10px}
+.pw-col.free .pw-col-title{color:var(--mu2)}
+.pw-col.pro .pw-col-title{color:var(--or)}
+.pw-row{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 0;color:var(--mu2)}
+.pw-row span:first-child{font-size:11px;flex-shrink:0}
+.pw-plans{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.pw-plan{display:flex;align-items:center;gap:12px;padding:14px;background:var(--s2);border-radius:12px;border:2px solid var(--bd);cursor:pointer;transition:all .15s}
+.pw-plan.sel{border-color:var(--blue);background:rgba(79,142,247,.07)}
+.pw-plan.hot{border-color:rgba(249,115,22,.4)}
+.pw-plan.hot.sel{border-color:var(--or)}
+.pw-plan-r{width:18px;height:18px;border-radius:50%;border:2px solid var(--mu);flex-shrink:0}
+.pw-plan.sel .pw-plan-r{border-color:var(--blue);background:var(--blue);position:relative}
+.pw-plan.sel .pw-plan-r::after{content:'';position:absolute;inset:3px;border-radius:50%;background:#fff}
+.pw-plan-inf{flex:1}
+.pw-plan-n{font-size:14px;font-weight:700}
+.pw-plan-p{font-size:11px;color:var(--mu2)}
+.pw-plan-am{font-size:15px;font-weight:800;text-align:right}
+.pw-plan-sv{font-size:10px;color:var(--green);font-weight:700}
+
+/* EMPLOYEE CARD */
+.emp-card{background:var(--s1);border-radius:12px;padding:14px;border:1px solid var(--bd);margin-bottom:10px;cursor:pointer;transition:all .15s}
+.emp-card:active{border-color:var(--pu)}
+.emp-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--pu),var(--blue));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* BADGE */
+.badge{padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;color:#fff}
+.badge.g{background:var(--green)}.badge.o{background:var(--or)}.badge.r{background:var(--red)}.badge.b{background:var(--blue)}.badge.mu{background:var(--mu)}
+
+/* STAT */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.stat-cell{background:var(--s2);border-radius:12px;padding:12px 8px;text-align:center;border:1px solid var(--bd)}
+.stat-n{font-size:22px;font-weight:900}.stat-l{font-size:10px;color:var(--mu2);font-weight:600;margin-top:2px}
+
+.mmc-lnk{display:flex;align-items:center;gap:12px;padding:13px;background:var(--s1);border:1px solid var(--bd);border-radius:12px;text-decoration:none;color:var(--tx);margin-bottom:8px;transition:border-color .15s}
+.mmc-lnk:active{border-color:var(--blue)}
+
+.divider{height:1px;background:var(--bd);margin:14px 0}
+
+/* LOCK BLUR */
+.lock-wrap{position:relative;overflow:hidden;border-radius:12px}
+.lock-wrap .blur-cover{position:absolute;inset:0;backdrop-filter:blur(6px);background:rgba(7,7,13,.6);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:10}
+.lock-wrap .blur-cover .lock-icon{font-size:28px}
+.lock-wrap .blur-cover .lock-text{font-size:13px;font-weight:700;color:var(--tx)}
+.lock-wrap .blur-cover .lock-sub{font-size:11px;color:var(--mu2)}
 </style>
 </head>
 <body>
 
-<!-- ===== ONBOARDING ===== -->
-<div class="onb-overlay" id="onb-overlay">
-  <div class="onb-header">
-    <span class="onb-skip" onclick="skipOnb()">Пропустить</span>
-  </div>
-  <div class="onb-body" id="onb-body">
-    <span class="onb-emoji" id="onb-emoji">🇷🇺</span>
-    <div class="onb-title" id="onb-title">Добро пожаловать!</div>
-    <div class="onb-sub" id="onb-sub">МигрантПро — ваш личный помощник для жизни и работы в России</div>
-  </div>
-  <div class="onb-footer">
-    <div class="onb-dots" id="onb-dots">
-      <div class="onb-dot on"></div>
-      <div class="onb-dot"></div>
-      <div class="onb-dot"></div>
-      <div class="onb-dot"></div>
+<!-- CONSENT -->
+<div class="co-ov" id="co">
+  <div class="co-sh">
+    <div style="font-size:22px;font-weight:900;margin-bottom:6px">Добро пожаловать 👋</div>
+    <div style="font-size:13px;color:var(--mu2);margin-bottom:16px;line-height:1.6">Ознакомьтесь с условиями перед использованием</div>
+    <div class="card" style="font-size:13px;line-height:1.7;color:var(--mu2);max-height:130px;overflow-y:auto;margin-bottom:4px">
+      Используя приложение, вы соглашаетесь с обработкой персональных данных (ФИО, паспортные данные, гражданство) для проверки через официальные сервисы МВД РФ. Данные хранятся только на вашем устройстве.
     </div>
-    <button class="btn" id="onb-next-btn" onclick="onbNext()">Далее →</button>
+    <div class="cb-row" onclick="tcb('c1')"><div class="cb" id="c1"></div><div class="cb-txt">Согласен на обработку персональных данных (ФЗ-152)</div></div>
+    <div class="cb-row" onclick="tcb('c2')"><div class="cb" id="c2"></div><div class="cb-txt">Проверки выполняются через официальные сервисы МВД РФ</div></div>
+    <div class="cb-row" onclick="tcb('c3')"><div class="cb" id="c3"></div><div class="cb-txt">Принимаю <a href="https://telegram.org/tos/mini-apps" target="_blank">условия Telegram Mini Apps</a></div></div>
+    <button class="btn" id="cbtn" onclick="acceptConsent()" style="opacity:.35;pointer-events:none;margin-top:14px">Принять и продолжить</button>
   </div>
 </div>
 
-<!-- ===== CONSENT ===== -->
-<div class="consent-overlay" id="consent-overlay" style="display:none">
-  <div class="consent-sheet">
-    <div style="font-size:20px;font-weight:900;margin-bottom:6px">Добро пожаловать 👋</div>
-    <div style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:20px;line-height:1.6">Перед использованием ознакомьтесь с условиями</div>
-    <div class="card" style="font-size:13px;line-height:1.7;color:var(--muted);font-weight:600;max-height:180px;overflow-y:auto">
-      <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px">Обработка персональных данных</div>
-      Используя данное приложение, вы соглашаетесь с обработкой ваших персональных данных (ФИО, паспортные данные, дата рождения, гражданство) в целях проверки документов через официальные сервисы МВД РФ. Данные хранятся только на вашем устройстве. Мы не передаём данные третьим лицам.
+<!-- ONBOARDING -->
+<div class="ob-ov" id="ob">
+  <div class="ob-progress" id="ob-prog"></div>
+  <!-- STEP 1: кто вы -->
+  <div class="ob-slide on" id="ob-1">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="ob-emoji">🇷🇺</div>
+      <div class="ob-title">Кто вы?</div>
+      <div class="ob-sub">Настроим приложение под вас</div>
+      <div class="ob-choices">
+        <div class="ob-choice" onclick="obChoose('role','migrant',2)">
+          <div class="ob-choice-ico">👷</div>
+          <div>
+            <div>Мигрант / Иностранный гражданин</div>
+            <div class="ob-choice-sub">Работаю или планирую работать в России</div>
+          </div>
+        </div>
+        <div class="ob-choice" onclick="obChoose('role','employer',2)">
+          <div class="ob-choice-ico">🏢</div>
+          <div>
+            <div>Работодатель / HR</div>
+            <div class="ob-choice-sub">Нанимаю иностранных сотрудников</div>
+          </div>
+        </div>
+        <div class="ob-choice" onclick="obChoose('role','lawyer',2)">
+          <div class="ob-choice-ico">⚖️</div>
+          <div>
+            <div>Миграционный юрист / Агент</div>
+            <div class="ob-choice-sub">Помогаю клиентам с документами</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="cb-row" onclick="toggleCb('cb1')">
-      <div class="cb" id="cb1"></div>
-      <div class="cb-txt">Я согласен на обработку персональных данных (ФЗ-152)</div>
+  </div>
+  <!-- STEP 2: документы -->
+  <div class="ob-slide" id="ob-2">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="ob-emoji">📄</div>
+      <div class="ob-title">Ваши документы</div>
+      <div class="ob-sub">Какой документ у вас есть для работы?</div>
+      <div class="ob-choices">
+        <div class="ob-choice" onclick="obChoose('doc','patent',3)"><div class="ob-choice-ico">🪪</div><div><div>Патент на работу</div><div class="ob-choice-sub">Ежемесячный платёж НДФЛ</div></div></div>
+        <div class="ob-choice" onclick="obChoose('doc','rvp',3)"><div class="ob-choice-ico">📘</div><div><div>РВП</div><div class="ob-choice-sub">Разрешение на временное проживание</div></div></div>
+        <div class="ob-choice" onclick="obChoose('doc','vnj',3)"><div class="ob-choice-ico">🏠</div><div><div>ВНЖ</div><div class="ob-choice-sub">Вид на жительство</div></div></div>
+        <div class="ob-choice" onclick="obChoose('doc','none',3)"><div class="ob-choice-ico">❓</div><div><div>Нет / только приехал</div><div class="ob-choice-sub">Нужна помощь с оформлением</div></div></div>
+      </div>
     </div>
-    <div class="cb-row" onclick="toggleCb('cb2')">
-      <div class="cb" id="cb2"></div>
-      <div class="cb-txt">Я понимаю, что проверки через официальные сервисы МВД РФ</div>
+  </div>
+  <!-- STEP 3: цели -->
+  <div class="ob-slide" id="ob-3">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="ob-emoji">🎯</div>
+      <div class="ob-title">Главная цель</div>
+      <div class="ob-sub">Что для вас сейчас важнее всего?</div>
+      <div class="ob-choices">
+        <div class="ob-choice" onclick="obChoose('goal','patent',4)"><div class="ob-choice-ico">🪪</div><div><div>Оформить / продлить патент</div></div></div>
+        <div class="ob-choice" onclick="obChoose('goal','rvp',4)"><div class="ob-choice-ico">📘</div><div><div>Получить РВП или ВНЖ</div></div></div>
+        <div class="ob-choice" onclick="obChoose('goal','citizen',4)"><div class="ob-choice-ico">🇷🇺</div><div><div>Гражданство РФ</div></div></div>
+        <div class="ob-choice" onclick="obChoose('goal','work',4)"><div class="ob-choice-ico">💼</div><div><div>Найти официальную работу</div></div></div>
+        <div class="ob-choice" onclick="obChoose('goal','control',4)"><div class="ob-choice-ico">📊</div><div><div>Контролировать сроки документов</div></div></div>
+      </div>
     </div>
-    <div class="cb-row" onclick="toggleCb('cb3')">
-      <div class="cb" id="cb3"></div>
-      <div class="cb-txt">Я принимаю <a href="https://telegram.org/tos/mini-apps" target="_blank">Условия Telegram Mini Apps</a></div>
+  </div>
+  <!-- STEP 4: PRO presentation -->
+  <div class="ob-slide" id="ob-4">
+    <div style="flex:1;display:flex;flex-direction:column">
+      <div style="text-align:center;padding:16px 0 20px">
+        <div style="font-size:52px;margin-bottom:12px">✨</div>
+        <div style="font-size:24px;font-weight:900;margin-bottom:8px">Ваш профиль создан!</div>
+        <div style="font-size:14px;color:var(--mu2);line-height:1.6">Бесплатно вам доступно <b style="color:var(--tx)">3 вопроса в день</b>.<br>PRO снимает все ограничения.</div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+        <div class="pw-feat"><div class="pw-feat-ico b">🤖</div><div><div class="pw-feat-t">Безлимитный AI-юрист</div><div class="pw-feat-s">FREE: 3 вопроса/день · PRO: без ограничений</div></div></div>
+        <div class="pw-feat"><div class="pw-feat-ico g">📄</div><div><div class="pw-feat-t">Трекер документов</div><div class="pw-feat-s">Напоминания и статусы 24/7</div></div></div>
+        <div class="pw-feat"><div class="pw-feat-ico or">📸</div><div><div class="pw-feat-t">Фото-анализ документов</div><div class="pw-feat-s">Пришли фото — AI проверит</div></div></div>
+        <div class="pw-feat"><div class="pw-feat-ico p">⚡</div><div><div class="pw-feat-t">Анализ рисков</div><div class="pw-feat-s">Предупредит до штрафа</div></div></div>
+        <div class="pw-feat"><div class="pw-feat-ico pi">🆘</div><div><div class="pw-feat-t">Срочная консультация юриста</div><div class="pw-feat-s">Отдельная платная услуга</div></div></div>
+      </div>
+      <div class="ob-actions">
+        <button class="btn pro" onclick="obFinish(true)">⭐ Оформить PRO — от 100 Stars</button>
+        <button class="btn out" onclick="obFinish(false)" style="margin-top:8px">Начать бесплатно</button>
+      </div>
     </div>
-    <button class="btn" id="consent-btn" onclick="acceptConsent()" style="margin-top:16px;opacity:.4;pointer-events:none">Принять и продолжить</button>
   </div>
 </div>
 
-<!-- ===== HOME ===== -->
-<div class="page" id="pg-home">
-  <div class="lang-bar" id="lang-bar">
+<!-- PAYWALL OVERLAY -->
+<div class="pw-ov" id="pw">
+  <div class="pw-sh">
+    <div class="pw-top">
+      <div class="pw-icon">⭐</div>
+      <div class="pw-title">МигрантПро <span style="color:var(--or)">PRO</span></div>
+      <div class="pw-sub" id="pw-reason">Разблокируйте полный доступ к сервису</div>
+    </div>
+
+    <div class="pw-compare">
+      <div class="pw-col free">
+        <div class="pw-col-title">FREE</div>
+        <div class="pw-row"><span>✅</span>3 вопроса/день</div>
+        <div class="pw-row"><span>✅</span>Проверки МВД</div>
+        <div class="pw-row"><span>✅</span>База знаний</div>
+        <div class="pw-row"><span style="color:var(--red)">❌</span>Без лимита AI</div>
+        <div class="pw-row"><span style="color:var(--red)">❌</span>Напоминания</div>
+        <div class="pw-row"><span style="color:var(--red)">❌</span>Анализ рисков</div>
+        <div class="pw-row"><span style="color:var(--red)">❌</span>Фото-анализ</div>
+        <div class="pw-row"><span style="color:var(--red)">❌</span>История</div>
+      </div>
+      <div class="pw-col pro">
+        <div class="pw-col-title">⭐ PRO</div>
+        <div class="pw-row"><span>✅</span>Безлимит AI</div>
+        <div class="pw-row"><span>✅</span>Проверки МВД</div>
+        <div class="pw-row"><span>✅</span>База знаний</div>
+        <div class="pw-row"><span>✅</span>Без лимита AI</div>
+        <div class="pw-row"><span>✅</span>Напоминания</div>
+        <div class="pw-row"><span>✅</span>Анализ рисков</div>
+        <div class="pw-row"><span>✅</span>Фото-анализ</div>
+        <div class="pw-row"><span>✅</span>История</div>
+      </div>
+    </div>
+
+    <div class="pw-plans">
+      <div class="pw-plan" onclick="pwPlan(this,'1m',100)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">1 месяц</div></div><div class="pw-plan-am">100 ⭐</div></div>
+      <div class="pw-plan hot sel" onclick="pwPlan(this,'3m',270)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">3 месяца <span class="popular-tag">🔥 Популярно</span></div><div class="pw-plan-p">90 ⭐/мес</div></div><div class="pw-plan-am"><div class="pw-plan-am-n">270 ⭐</div><div class="pw-plan-sv">−16%</div></div></div>
+      <div class="pw-plan" onclick="pwPlan(this,'12m',850)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">12 месяцев</div><div class="pw-plan-p">71 ⭐/мес</div></div><div class="pw-plan-am"><div class="pw-plan-am-n">850 ⭐</div><div class="pw-plan-sv">−35%</div></div></div>
+    </div>
+
+    <button class="btn pro" id="pw-pay-btn" onclick="pwPay()">⭐ Оформить PRO — 270 Stars</button>
+    <button class="btn out" onclick="closePW()" style="margin-top:8px">Продолжить бесплатно</button>
+    <div style="font-size:11px;color:var(--mu);text-align:center;margin-top:10px">Консультация юриста — отдельная платная услуга</div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="pg on" id="pg-home">
+  <div class="lang-bar">
     <button class="lang-btn on" onclick="setLang('ru')">🇷🇺 Рус</button>
     <button class="lang-btn" onclick="setLang('uz')">🇺🇿 O'zbek</button>
     <button class="lang-btn" onclick="setLang('tj')">🇹🇯 Тоҷик</button>
@@ -284,953 +467,825 @@ select.fi{-webkit-appearance:none;appearance:none}
     <button class="lang-btn" onclick="setLang('az')">🇦🇿 Azərb.</button>
     <button class="lang-btn" onclick="setLang('md')">🇲🇩 Română</button>
     <button class="lang-btn" onclick="setLang('ua')">🇺🇦 Укр</button>
-    <button class="lang-btn" onclick="setLang('by')">🇧🇾 Бел</button>
     <button class="lang-btn" onclick="setLang('hy')">🇦🇲 Հայ</button>
   </div>
-  <div class="hdr">
-    <div class="hdr-av" id="av">М</div>
-    <div class="hdr-title" id="t-app-name">МигрантПро 🇷🇺</div>
-    <div id="sub-chip" style="font-size:11px;color:var(--muted);font-weight:800;background:var(--card2);padding:4px 10px;border-radius:99px;">Бесплатно</div>
+  <div class="role-sw">
+    <button class="role-btn on" id="role-m" onclick="setRole('migrant')">👷 Мигрант</button>
+    <button class="role-btn" id="role-e" onclick="setRole('employer')">🏢 Работодатель</button>
   </div>
-  <div class="px">
-    <div class="days-wrap">
-      <div class="days-num g" id="stay-num">—</div>
-      <div class="days-lbl" id="t-stay-lbl">дней до окончания пребывания</div>
-      <div class="days-dt" id="stay-dt">Укажите дату въезда в кабинете</div>
-      <div class="pbar-wrap">
-        <div class="pbar-track"><div class="pbar-fill" id="stay-bar" style="width:100%"></div></div>
-        <div class="pbar-lbls"><span>0</span><span>45</span><span>90 дней</span></div>
+  <div class="hdr">
+    <div class="av" id="av">М</div>
+    <div style="flex:1"><div style="font-size:15px;font-weight:700" id="hname">МигрантПро</div><div style="font-size:11px;color:var(--mu2)" id="hsub">Загрузка...</div></div>
+    <div id="hbadge"></div>
+  </div>
+
+  <!-- MIGRANT VIEW -->
+  <div id="vm">
+    <div class="px">
+      <!-- Health Score -->
+      <div class="health-card" onclick="go('docs')">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div class="ring-wrap">
+            <svg viewBox="0 0 100 100"><circle class="ring-bg" cx="50" cy="50" r="42"/><circle class="ring-fill" id="rf" cx="50" cy="50" r="42" stroke="var(--green)" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg>
+            <div class="ring-num"><div class="ring-n" id="snum">—</div><div class="ring-l">/100</div></div>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:16px;font-weight:800;margin-bottom:3px" id="slbl">Загрузка...</div>
+            <div style="font-size:12px;color:var(--mu2);margin-bottom:8px" id="stip">Добавьте документы</div>
+            <div id="ilist"></div>
+          </div>
+        </div>
+        <div id="stay-card" style="display:none;margin-top:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:12px;color:var(--mu2)">До окончания 90 дней</span>
+            <span style="font-size:14px;font-weight:800" id="snum2">—</span>
+          </div>
+          <div class="pbar"><div id="sbar" class="pbar-fill ok" style="width:100%"></div></div>
+          <div style="font-size:10px;color:var(--mu);margin-top:4px" id="sdt"></div>
+        </div>
       </div>
-    </div>
 
-    <div class="ctitle" id="t-my-patents">Мои патенты</div>
-    <div id="pats-home"></div>
-    <button class="btn out" style="margin-bottom:14px" onclick="openSheet('sh-patent')" id="t-add-patent">➕ Добавить патент</button>
-
-    <!-- Реферальный баннер -->
-    <div class="ref-ban" onclick="go('ref')">
-      <div class="ref-ban-t">🎁 Пригласи друга — получи 7 дней бесплатно!</div>
-      <div class="ref-ban-s">Ты и твой друг получите бонус. Без ограничений!</div>
-      <button class="ref-ban-btn">Получить реферальную ссылку →</button>
-    </div>
-
-    <div class="sub-ban" onclick="go('profile')">
-      <div class="sub-ban-t">🛡️ Автоматическая защита</div>
-      <div class="sub-ban-s">Бот следит за вашими документами 24/7</div>
-      <div class="sub-ban-fs">
-        <div class="sub-ban-f">⭐ Ежедневная проверка патента на МВД.РФ</div>
-        <div class="sub-ban-f">🔍 Реестр контролируемых лиц — каждый день</div>
-        <div class="sub-ban-f">⏰ Напоминания о сроках оплаты патента</div>
+      <!-- AI запросы FREE лимит -->
+      <div id="ai-limit-bar" style="display:none;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+          <span style="color:var(--mu2)">AI вопросы сегодня</span>
+          <span style="font-weight:700" id="ai-limit-text">0 / 3</span>
+        </div>
+        <div class="pbar"><div id="ai-limit-fill" class="pbar-fill ok" style="width:0%"></div></div>
+        <div style="font-size:11px;color:var(--mu);margin-top:4px">Для безлимитного доступа — <span style="color:var(--or);cursor:pointer" onclick="showPW('Безлимитный AI-юрист')">оформите PRO</span></div>
       </div>
-      <button class="btn-sub">Подключить от 190 ₽/мес →</button>
-    </div>
 
-    <div class="ctitle" style="margin-top:4px">Проверки в госбазах</div>
-    <div class="chk-list">
-      <button class="chk-item" onclick="go('check-patent')">
-        <div class="chk-ico b">🪪</div>
-        <div class="chk-txt"><div class="chk-t">Проверить патент / разрешение</div><div class="chk-s">Действительность — МВД.РФ</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
-      <button class="chk-item" onclick="go('check-registry')">
-        <div class="chk-ico g">🛡️</div>
-        <div class="chk-txt"><div class="chk-t">Реестр контролируемых лиц</div><div class="chk-s">Проверка по базе МВД РФ</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
-      <button class="chk-item" onclick="go('check-ban')">
-        <div class="chk-ico r">🚫</div>
-        <div class="chk-txt"><div class="chk-t">Запрет на въезд в Россию</div><div class="chk-s">Проверка по базе ГУВМ МВД РФ</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
-      <button class="chk-item" onclick="go('check-ready')">
-        <div class="chk-ico o">📋</div>
-        <div class="chk-txt"><div class="chk-t">Готовность патента в ММЦ</div><div class="chk-s">Уведомление о готовности</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
-    </div>
+      <div class="stitle">Проверки МВД</div>
+      <div class="li" onclick="go('chk-patent')"><div class="li-ico b">🪪</div><div class="li-txt"><div class="li-t">Патент / разрешение</div><div class="li-s">сервисы.гувм.мвд.рф</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('chk-registry')"><div class="li-ico g">🛡️</div><div class="li-txt"><div class="li-t">Реестр контролируемых лиц</div><div class="li-s">мвд.рф/ркл</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('chk-ban')"><div class="li-ico r">🚫</div><div class="li-txt"><div class="li-t">Запрет на въезд</div><div class="li-s">ГУВМ МВД РФ</div></div><div class="arr">›</div></div>
 
-    <div class="ctitle" style="margin-top:16px">Услуги</div>
-    <div class="chk-list">
-      <button class="chk-item" onclick="go('payment-tracker')">
-        <div class="chk-ico teal">💳</div>
-        <div class="chk-txt"><div class="chk-t">Трекер оплаты патента</div><div class="chk-s">Контроль платежей, напоминания</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
-      <button class="chk-item" onclick="go('snils')">
-        <div class="chk-ico p">🪪</div>
-        <div class="chk-txt"><div class="chk-t">Как получить СНИЛС</div><div class="chk-s">Пошаговая инструкция</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
-      <button class="chk-item" onclick="go('inn')">
-        <div class="chk-ico y">🔢</div>
-        <div class="chk-txt"><div class="chk-t">Как получить ИНН</div><div class="chk-s">Постановка на учёт в налоговой</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
+      <!-- PRO баннер для free -->
+      <div id="pro-banner" class="sub-ban" onclick="showPW('Все преимущества PRO')">
+        <div class="sub-ban-t">⭐ Разблокировать PRO</div>
+        <div class="sub-ban-s">Безлимит AI · Напоминания · Анализ рисков</div>
+        <div class="sub-ban-f">✅ Безлимитный AI-юрист</div>
+        <div class="sub-ban-f">✅ Трекер сроков 24/7</div>
+        <div class="sub-ban-f">✅ Фото-анализ документов</div>
+        <button class="sub-ban-cta">Оформить PRO — от 100 Stars →</button>
+      </div>
+      <div id="pro-ok-card" class="card" style="display:none;border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:28px">✅</span>
+          <div><div style="font-size:14px;font-weight:700;color:var(--green)">PRO активен</div><div style="font-size:12px;color:var(--mu2)" id="pro-until">Безлимитный доступ</div></div>
+        </div>
+      </div>
+
+      <div class="stitle">Услуги</div>
+      <div class="li" onclick="go('notify')"><div class="li-ico t">📬</div><div class="li-txt"><div class="li-t">Уведомить МВД о работе</div><div class="li-s">Через Госуслуги — 3 дня!</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="proCheck('risk')"><div class="li-ico or">⚠️</div><div class="li-txt"><div class="li-t">Анализ рисков</div><div class="li-s">Оцениваем ваши документы на риски</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('whatif')"><div class="li-ico r">🆘</div><div class="li-txt"><div class="li-t">Что делать если...</div><div class="li-s">Инструкции по ситуациям</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('lawyer')"><div class="li-ico pi">⚖️</div><div class="li-txt"><div class="li-t">Консультация юриста</div><div class="li-s">Платная личная консультация</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('snils')"><div class="li-ico p">🪪</div><div class="li-txt"><div class="li-t">СНИЛС / ИНН</div><div class="li-s">Пошаговые инструкции</div></div><div class="arr">›</div></div>
+    </div>
+  </div>
+
+  <!-- EMPLOYER VIEW -->
+  <div id="ve" style="display:none">
+    <div class="px">
+      <div class="card" id="b2b-stat">
+        <div style="font-size:14px;font-weight:700;margin-bottom:10px">📊 Статус сотрудников</div>
+        <div class="stat-grid">
+          <div class="stat-cell"><div class="stat-n" id="b2b-t">0</div><div class="stat-l">Всего</div></div>
+          <div class="stat-cell"><div class="stat-n" id="b2b-o" style="color:var(--green)">0</div><div class="stat-l">В порядке</div></div>
+          <div class="stat-cell"><div class="stat-n" id="b2b-w" style="color:var(--red)">0</div><div class="stat-l">⚠ Риски</div></div>
+        </div>
+      </div>
+      <button class="btn p" onclick="go('b2b-add')">➕ Добавить сотрудника</button>
+      <button class="btn t" onclick="go('b2b-req')">📋 Заявка на подбор сотрудников</button>
+      <button class="btn or" onclick="go('b2b-risk')">⚠️ Калькулятор рисков и штрафов</button>
+      <div class="stitle">Сотрудники</div>
+      <div id="emp-list-h"></div>
+      <div class="stitle">Полезное</div>
+      <div class="li" onclick="go('notify')"><div class="li-ico t">📬</div><div class="li-txt"><div class="li-t">Уведомить МВД о трудоустройстве</div><div class="li-s">Госуслуги — обязательно!</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('chk-patent')"><div class="li-ico b">🪪</div><div class="li-txt"><div class="li-t">Проверить патент сотрудника</div><div class="li-s">сервисы.гувм.мвд.рф</div></div><div class="arr">›</div></div>
     </div>
   </div>
 </div>
 
-<!-- ===== CABINET ===== -->
-<div class="page" id="pg-cabinet">
-  <div class="hdr"><div class="hdr-title">Личный кабинет</div></div>
+<!-- DOCS PAGE -->
+<div class="pg" id="pg-docs">
+  <div class="hdr"><div class="hdr-title">📄 Мои документы</div></div>
   <div class="px">
-    <div class="card" style="display:flex;align-items:center;gap:14px;">
-      <div class="hdr-av" style="width:54px;height:54px;font-size:21px;" id="cab-av">М</div>
-      <div>
-        <div style="font-size:16px;font-weight:900;" id="cab-name">—</div>
-        <div style="font-size:12px;color:var(--muted);font-weight:600;" id="cab-id">TG ID: —</div>
-        <div id="cab-badge" style="display:inline-block;margin-top:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800;background:var(--card2);color:var(--muted)">Бесплатный план</div>
-      </div>
-    </div>
-    <div class="ctitle">Мои патенты</div>
-    <div id="pats-cab"></div>
-    <button class="btn" style="margin-bottom:14px" onclick="openSheet('sh-patent')">➕ Добавить патент</button>
-    <div class="ctitle">Срок пребывания (90 дней)</div>
+    <div id="docs-list"></div>
+    <button class="btn" onclick="openOv('sh-doc')">➕ Добавить документ</button>
+    <div class="stitle">Срок пребывания (90 дней)</div>
     <div class="card">
-      <div class="fg">
+      <div class="fg" style="margin-bottom:0">
         <label class="flbl">Дата въезда в Россию</label>
         <input type="date" class="fi" id="entry-inp" oninput="saveEntry(this.value)">
       </div>
-      <div id="stay-detail" style="display:none">
-        <div class="st-grid">
-          <div class="st-cell"><div class="st-n" id="cd-in">—</div><div class="st-l">дней в России</div></div>
-          <div class="st-cell"><div class="st-n" id="cd-left">—</div><div class="st-l">дней осталось</div></div>
-        </div>
+      <div id="stay-grid" style="display:none;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <div style="background:var(--s2);border-radius:12px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:900;color:var(--blue)" id="cd-in">—</div><div style="font-size:11px;color:var(--mu2)">дней в России</div></div>
+        <div style="background:var(--s2);border-radius:12px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:900;color:var(--blue)" id="cd-left">—</div><div style="font-size:11px;color:var(--mu2)">осталось</div></div>
       </div>
     </div>
-    <div class="ctitle">Мои документы</div>
-    <div class="chk-list">
-      <button class="chk-item" onclick="docAction('contract')">
-        <div class="chk-ico b">📄</div>
-        <div class="chk-txt"><div class="chk-t">Трудовой договор</div><div class="chk-s">Загрузить и поделиться с работодателем</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
-      <button class="chk-item" onclick="docAction('notify')">
-        <div class="chk-ico g">📬</div>
-        <div class="chk-txt"><div class="chk-t">Уведомление о трудоустройстве</div><div class="chk-s">Отправка уведомления в МВД</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
-      <button class="chk-item" onclick="docAction('receipt')">
-        <div class="chk-ico o">🧾</div>
-        <div class="chk-txt"><div class="chk-t">Чеки об оплате патента</div><div class="chk-s">Архив всех платежей</div></div>
-        <span style="color:var(--muted);font-size:20px">›</span>
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== PAYMENT TRACKER ===== -->
-<div class="page" id="pg-payment-tracker">
-  <div class="hdr">
-    <button class="hdr-back" onclick="go('home')">‹</button>
-    <div class="hdr-title">💳 Трекер оплаты патента</div>
-  </div>
-  <div class="px">
-    <div class="ok-box">✅ Оплачивайте патент ежемесячно до указанной даты. Просрочка — аннулирование патента!</div>
-    <div class="card">
-      <div class="fg">
-        <label class="flbl">Ежемесячная сумма (руб.)</label>
-        <input type="number" class="fi" id="pt-amount" placeholder="Например: 7500" oninput="updatePaymentTracker()">
-      </div>
-      <div class="fg">
-        <label class="flbl">Дата оплаты (каждый месяц)</label>
-        <input type="number" class="fi" id="pt-day" placeholder="Число месяца: 15" min="1" max="28" oninput="updatePaymentTracker()">
-      </div>
-      <div class="fg">
-        <label class="flbl">Начало действия патента</label>
-        <input type="date" class="fi" id="pt-start" oninput="updatePaymentTracker()">
-      </div>
-    </div>
-
-    <div class="ctitle">История платежей</div>
-    <div id="payment-list"></div>
-
-    <div class="card" id="pt-total-card" style="display:none">
-      <div class="irows">
-        <div class="irow"><span class="irow-l">Оплачено месяцев</span><span class="irow-v" id="pt-paid-count" style="color:var(--green)">0</span></div>
-        <div class="irow"><span class="irow-l">Сумма оплачено</span><span class="irow-v" id="pt-paid-sum">0 ₽</span></div>
-        <div class="irow"><span class="irow-l">Следующий платёж</span><span class="irow-v" id="pt-next" style="color:var(--orange)">—</span></div>
-      </div>
-    </div>
-
-    <button class="btn" onclick="markPaid()" style="margin-bottom:10px">✅ Отметить текущий месяц оплаченным</button>
-    <button class="btn out" onclick="sendBot('payment_reminder',{})">🔔 Включить напоминания в боте</button>
-  </div>
-</div>
-
-<!-- ===== REFERRAL PAGE ===== -->
-<div class="page" id="pg-ref">
-  <div class="hdr">
-    <button class="hdr-back" onclick="go('home')">‹</button>
-    <div class="hdr-title">🎁 Пригласить друга</div>
-  </div>
-  <div class="px">
-    <div style="text-align:center;padding:20px 0 10px">
-      <div style="font-size:48px;margin-bottom:10px">🎁</div>
-      <div style="font-size:18px;font-weight:900;margin-bottom:6px">Зарабатывай бонусы!</div>
-      <div style="font-size:13px;color:var(--muted);font-weight:600;line-height:1.6">Пригласи друга — вы оба получите<br><b style="color:var(--green)">+7 дней подписки бесплатно</b></div>
-    </div>
-
-    <div class="ref-stat-grid">
-      <div class="ref-stat">
-        <div class="ref-stat-n" id="ref-invited">0</div>
-        <div class="ref-stat-l">Друзей приглашено</div>
-      </div>
-      <div class="ref-stat">
-        <div class="ref-stat-n" id="ref-days">0</div>
-        <div class="ref-stat-l">Дней заработано</div>
-      </div>
-    </div>
-
-    <div class="ref-link-box" onclick="copyRefLink()">
-      <div class="ref-link-label">🔗 Ваша реферальная ссылка</div>
-      <div class="ref-link-text" id="ref-link">Загрузка...</div>
-    </div>
-
-    <button class="btn pur" onclick="shareRefLink()" style="margin-bottom:10px">📤 Поделиться ссылкой</button>
-    <button class="btn out" onclick="copyRefLink()">📋 Скопировать ссылку</button>
-
-    <div class="card" style="margin-top:16px">
-      <div style="font-size:13px;font-weight:800;margin-bottom:10px">💡 Как это работает:</div>
-      <div class="svc-steps">
-        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t">Отправьте ссылку другу-мигранту</div></div>
-        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t">Друг переходит по ссылке и запускает бота</div></div>
-        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t">Вы оба получаете +7 дней подписки</div></div>
-        <div class="svc-step"><div class="svc-step-n">∞</div><div class="svc-step-t">Без ограничений — приглашайте сколько угодно!</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== CHECK PATENT ===== -->
-<div class="page" id="pg-check-patent">
-  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">🪪 Проверка патента</div></div>
-  <div class="px">
-    <div class="info-box">📌 После заполнения — откроем сайт МВД с вашими данными. Останется только ввести капчу.</div>
-    <div class="tab-row">
-      <button class="tab-btn on" id="tb-p1" onclick="swTab('p',1)">По патенту</button>
-      <button class="tab-btn" id="tb-p2" onclick="swTab('p',2)">По паспорту</button>
-    </div>
-    <div id="ptab1">
-      <div class="fg"><label class="flbl">Серия документа (лицевая)</label><input class="fi" id="cp-s" placeholder="50, 77, МСК..." maxlength="10"></div>
-      <div class="fg"><label class="flbl">Номер документа (лицевая)</label><input class="fi" id="cp-n" placeholder="2500433815" maxlength="15" inputmode="numeric"></div>
-      <div class="fg"><label class="flbl">Серия бланка (оборотная, если есть)</label><input class="fi" id="cp-bs" placeholder="ПР, МФЦ..." maxlength="10"></div>
-      <div class="fg"><label class="flbl">Номер бланка (оборотная, если есть)</label><input class="fi" id="cp-bn" placeholder="6892529" maxlength="15" inputmode="numeric"></div>
-      <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="cp-p" placeholder="Номер паспорта" maxlength="20"></div>
-      <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="cp-c"><option value="">Выберите страну</option></select></div>
-      <button class="btn g" onclick="doPatent1()">🔍 Проверить на МВД.РФ</button>
-    </div>
-    <div id="ptab2" style="display:none">
-      <div class="fg"><label class="flbl">Серия паспорта (если есть)</label><input class="fi" id="cp2-s" placeholder="Серия" maxlength="15"></div>
-      <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="cp2-n" placeholder="Номер" maxlength="20"></div>
-      <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="cp2-c"><option value="">Выберите страну</option></select></div>
-      <button class="btn g" onclick="doPatent2()">🔍 Проверить на МВД.РФ</button>
-    </div>
-    <div id="cp-result" style="margin-top:14px"></div>
     <div class="divider"></div>
-    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank"><button class="btn out">🌐 Открыть сервисы.гувм.мвд.рф</button></a>
+    <button class="btn r" onclick="clearData()">🗑️ Удалить мои данные</button>
   </div>
 </div>
 
-<!-- ===== CHECK REGISTRY ===== -->
-<div class="page" id="pg-check-registry">
-  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">🛡️ Реестр контролируемых лиц</div></div>
+<!-- CHECK PAGES -->
+<div class="pg" id="pg-chk-patent">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">🪪 Проверка патента</div></div>
   <div class="px">
-    <div class="info-box">📌 Реестр контролируемых лиц МВД РФ. Заполните данные — откроем сайт МВД.</div>
-    <div class="fg"><label class="flbl">Фамилия</label><input class="fi" id="rg-l" placeholder="Фамилия (как в паспорте)"></div>
+    <div class="box b">📌 Заполните данные — откроем МВД. Капчу вводите самостоятельно.</div>
+    <div class="fg"><label class="flbl">Серия (или «-»)</label><input class="fi" id="cp-s" placeholder="50, 77, МСК..."></div>
+    <div class="fg"><label class="flbl">Номер</label><input class="fi" id="cp-n" placeholder="2500433815" inputmode="numeric"></div>
+    <div class="fg"><label class="flbl">Серия бланка (оборотная)</label><input class="fi" id="cp-bs" placeholder="-"></div>
+    <div class="fg"><label class="flbl">Номер бланка (оборотная)</label><input class="fi" id="cp-bn" placeholder="-" inputmode="numeric"></div>
+    <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="cp-p" placeholder="Номер паспорта"></div>
+    <div id="cp-d" style="display:none;margin-bottom:14px"></div>
+    <button class="btn g" onclick="showPatData()">📋 Показать данные для ввода</button>
+    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank"><button class="btn">🔍 Открыть МВД.РФ</button></a>
+    <button class="btn out" onclick="goBack()">← Назад</button>
+  </div>
+</div>
+<div class="pg" id="pg-chk-registry">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">🛡️ Реестр контролируемых</div></div>
+  <div class="px">
+    <div class="box b">📌 Реестр МВД. Заполните данные — откроем сайт.</div>
+    <div class="fg"><label class="flbl">Фамилия</label><input class="fi" id="rg-l" placeholder="Как в паспорте"></div>
     <div class="fg"><label class="flbl">Имя</label><input class="fi" id="rg-f" placeholder="Имя"></div>
-    <div class="fg"><label class="flbl">Отчество (если есть)</label><input class="fi" id="rg-m" placeholder="Оставьте пустым если нет"></div>
     <div class="fg"><label class="flbl">Дата рождения</label><input type="date" class="fi" id="rg-b"></div>
-    <div class="fg"><label class="flbl">Серия паспорта (если есть)</label><input class="fi" id="rg-ps" placeholder="Серия (необязательно)" maxlength="15"></div>
-    <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="rg-pn" placeholder="Номер паспорта" maxlength="20" inputmode="numeric"></div>
-    <div class="fg"><label class="flbl">Дата выдачи паспорта (если есть)</label><input type="date" class="fi" id="rg-pd"></div>
-    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="rg-c" onchange="updatePassHints('rg-c','rg-ps','rg-pn')"><option value="">Выберите страну</option></select></div>
-    <button class="btn" onclick="doRegistry()">🔍 Проверить в реестре</button>
-    <div id="rg-result" style="margin-top:14px"></div>
-    <div class="divider"></div>
-    <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank"><button class="btn out">🌐 Открыть на МВД.РФ</button></a>
+    <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="rg-pn" placeholder="Номер" inputmode="numeric"></div>
+    <div id="rg-d" style="display:none;margin-bottom:14px"></div>
+    <button class="btn g" onclick="showRgData()">📋 Показать данные</button>
+    <a href="https://xn--b1aew.xn--p1ai/rkl" target="_blank"><button class="btn">🔍 Открыть реестр МВД.РФ</button></a>
+    <button class="btn out" onclick="goBack()">← Назад</button>
   </div>
 </div>
-
-<!-- ===== CHECK BAN ===== -->
-<div class="page" id="pg-check-ban">
-  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">🚫 Запрет на въезд</div></div>
+<div class="pg" id="pg-chk-ban">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">🚫 Запрет на въезд</div></div>
   <div class="px">
-    <div class="warn-box">⚠️ Для точной проверки нужны данные точно как в паспорте.</div>
-    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="bn-c" onchange="updatePassHints('bn-c','bn-ps','bn-pn')"><option value="">Выберите страну</option></select></div>
-    <div class="fg"><label class="flbl">Фамилия (как в паспорте)</label><input class="fi" id="bn-l" placeholder="Латиницей или кириллицей"></div>
+    <div class="box r">⚠️ Вводите ТОЧНО как в паспорте!</div>
+    <div class="fg"><label class="flbl">Фамилия</label><input class="fi" id="bn-l" placeholder="Латиницей как в паспорте"></div>
     <div class="fg"><label class="flbl">Имя</label><input class="fi" id="bn-f" placeholder="Имя"></div>
-    <div class="fg"><label class="flbl">Отчество (если есть)</label><input class="fi" id="bn-m" placeholder="Оставьте пустым если нет"></div>
     <div class="fg"><label class="flbl">Дата рождения</label><input type="date" class="fi" id="bn-b"></div>
-    <div class="fg"><label class="flbl" id="bn-ser-lbl">Серия паспорта (если есть)</label><input class="fi" id="bn-ps" placeholder="Серия (необязательно)" maxlength="15"></div>
-    <div class="fg"><label class="flbl" id="bn-num-lbl">Номер паспорта</label><input class="fi" id="bn-pn" placeholder="Номер паспорта" maxlength="20" inputmode="numeric"></div>
-    <div class="fg"><label class="flbl">Дата выдачи паспорта</label><input type="date" class="fi" id="bn-pd"></div>
-    <div class="fg"><label class="flbl">Срок действия (если есть)</label><input type="date" class="fi" id="bn-pe"></div>
-    <button class="btn r" onclick="doBan()">🔍 Проверить запрет на въезд</button>
-    <div id="bn-result" style="margin-top:14px"></div>
-    <div class="divider"></div>
-    <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank"><button class="btn out">🌐 Открыть на МВД.РФ</button></a>
+    <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="bn-pn" placeholder="Номер" inputmode="numeric"></div>
+    <div id="bn-d" style="display:none;margin-bottom:14px"></div>
+    <button class="btn g" onclick="showBanData()">📋 Показать данные</button>
+    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/services/1697527" target="_blank"><button class="btn r">🔍 Проверить на МВД.РФ</button></a>
+    <button class="btn out" onclick="goBack()">← Назад</button>
   </div>
 </div>
 
-<!-- ===== CHECK READY ===== -->
-<div class="page" id="pg-check-ready">
-  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">📋 Готовность патента</div></div>
+<!-- RISK ANALYSIS (PRO) -->
+<div class="pg" id="pg-risk">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">⚠️ Анализ рисков</div></div>
+  <div class="px" id="risk-body"></div>
+</div>
+
+<!-- LAWYER (платные услуги) -->
+<div class="pg" id="pg-lawyer">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">⚖️ Юридические услуги</div></div>
   <div class="px">
-    <div class="res-card w"><div class="res-ico">📋</div><div class="res-t">Готовность в ММЦ Сахарово</div><div class="res-s">Проверьте статус на официальном сайте ММЦ или позвоните по телефону</div></div>
-    <a href="https://mc.mos.ru" target="_blank" style="display:block;margin-bottom:10px"><button class="btn">🌐 mc.mos.ru — Сайт ММЦ</button></a>
-    <div class="card"><div class="irows">
-      <div class="irow"><span class="irow-l">Горячая линия</span><span class="irow-v"><a href="tel:+74952038820" style="color:var(--blue);text-decoration:none;font-weight:800">+7 (495) 203-88-20</a></span></div>
-      <div class="irow"><span class="irow-l">Справочная</span><span class="irow-v"><a href="tel:+74957777777" style="color:var(--blue);text-decoration:none;font-weight:800">+7 (495) 777-77-77</a></span></div>
-      <div class="irow"><span class="irow-l">Режим работы</span><span class="irow-v">Ежедн. 8:00–20:00</span></div>
-    </div></div>
+    <div class="box b">💡 Консультация юриста — это <b>отдельная платная услуга</b>, не входящая в PRO подписку.</div>
+    <div class="li" onclick="sendBot('lawyer_consult',{type:'consult'})"><div class="li-ico pi">💬</div><div class="li-txt"><div class="li-t">Личная консультация</div><div class="li-s">1 500 ₽ · 30 минут · юрист онлайн</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="sendBot('lawyer_consult',{type:'doc_check'})"><div class="li-ico b">🔍</div><div class="li-txt"><div class="li-t">Проверка документов юристом</div><div class="li-s">2 000 ₽ · анализ + заключение</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="sendBot('lawyer_consult',{type:'urgent'})"><div class="li-ico r">⚡</div><div class="li-txt"><div class="li-t">Срочная помощь</div><div class="li-s">5 000 ₽ · в течение 2 часов</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="sendBot('lawyer_consult',{type:'deport'})"><div class="li-ico or">🚨</div><div class="li-txt"><div class="li-t">Помощь при депортации / запрете</div><div class="li-s">от 10 000 ₽ · сопровождение</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="sendBot('lawyer_consult',{type:'doc_prep'})"><div class="li-ico g">📝</div><div class="li-txt"><div class="li-t">Подготовка документов</div><div class="li-s">от 3 000 ₽ · заявления, жалобы, ходатайства</div></div><div class="arr">›</div></div>
+    <div class="box o" style="margin-top:4px">После выбора услуги — юрист свяжется с вами в Telegram в течение 30 минут.</div>
   </div>
 </div>
 
-<!-- ===== SNILS ===== -->
-<div class="page" id="pg-snils">
-  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">Получение СНИЛС 🪪</div></div>
+<!-- NOTIFY -->
+<div class="pg" id="pg-notify">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">📬 Уведомление МВД</div></div>
   <div class="px">
-    <div class="ok-box">✅ СНИЛС нужен для официального трудоустройства. Выдаётся бесплатно.</div>
-    <div class="svc-card">
-      <div class="svc-card-t">Способ 1: Через работодателя</div>
-      <div class="svc-card-s">Самый простой — работодатель оформляет сам.</div>
-      <div class="svc-steps">
-        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t">Предоставьте паспорт и миграционные документы</div></div>
-        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t">Работодатель подаёт заявку в СФР</div></div>
-        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t">СНИЛС готов через 5 рабочих дней</div></div>
-      </div>
-    </div>
-    <div class="svc-card">
-      <div class="svc-card-t">Способ 2: Через МФЦ</div>
-      <div class="svc-steps">
-        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t">Паспорт + нотариальный перевод</div></div>
-        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t">РВП, ВНЖ или патент</div></div>
-        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t">МФЦ → заявление АДВ-1</div></div>
-        <div class="svc-step"><div class="svc-step-n">4</div><div class="svc-step-t">Получите СНИЛС через 5 дней</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div style="font-size:13px;font-weight:800;margin-bottom:10px">📋 Документы</div>
-      <div class="irows">
-        <div class="irow"><span class="irow-l">1</span><span class="irow-v">Паспорт + нотариальный перевод</span></div>
-        <div class="irow"><span class="irow-l">2</span><span class="irow-v">Патент / РВП / ВНЖ</span></div>
-        <div class="irow"><span class="irow-l">3</span><span class="irow-v">Регистрация по месту жительства</span></div>
-        <div class="irow"><span class="irow-l">Стоимость</span><span class="irow-v" style="color:var(--green)">Бесплатно</span></div>
-      </div>
-    </div>
-    <a href="https://gosuslugi.ru/situation/workForForeign" target="_blank"><button class="btn" style="margin-bottom:10px">🏛️ Оформить через Госуслуги</button></a>
-    <button class="btn out" onclick="go('home')">← Главное меню</button>
+    <div class="box r">⚠️ <b>3 рабочих дня</b> после трудоустройства. Штраф до 1 000 000 ₽!</div>
+    <div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">Как подать:</div><div class="sr"><div class="sn">1</div><div class="st">Нажмите кнопку — откроется Госуслуги</div></div><div class="sr"><div class="sn">2</div><div class="st">Войдите в аккаунт работодателя</div></div><div class="sr"><div class="sn">3</div><div class="st">Заполните данные и отправьте</div></div></div>
+    <div class="card"><div class="irow"><span class="irow-l">Срок уведомления</span><span class="irow-v">3 рабочих дня</span></div><div class="irow"><span class="irow-l">Штраф ЮЛ</span><span class="irow-v" style="color:var(--red)">до 1 000 000 ₽</span></div></div>
+    <a href="https://www.gosuslugi.ru/329523" target="_blank"><button class="btn">🏛️ Подать на Госуслугах</button></a>
+    <button class="btn out" onclick="goBack()">← Назад</button>
   </div>
 </div>
 
-<!-- ===== INN ===== -->
-<div class="page" id="pg-inn">
-  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">Получение ИНН 🔢</div></div>
+<!-- WHAT IF -->
+<div class="pg" id="pg-whatif">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">🆘 Что делать если...</div></div>
   <div class="px">
-    <div class="ok-box">✅ ИНН нужен для уплаты налогов. Выдаётся бесплатно.</div>
-    <div class="svc-card">
-      <div class="svc-card-t">Онлайн через ФНС</div>
-      <div class="svc-steps">
-        <div class="svc-step"><div class="svc-step-n">1</div><div class="svc-step-t">nalog.ru → «Узнать ИНН»</div></div>
-        <div class="svc-step"><div class="svc-step-n">2</div><div class="svc-step-t">ФИО + дата рождения + данные паспорта</div></div>
-        <div class="svc-step"><div class="svc-step-n">3</div><div class="svc-step-t">Если нет — подайте заявление онлайн</div></div>
-        <div class="svc-step"><div class="svc-step-n">4</div><div class="svc-step-t">ИНН присваивается в течение 5 дней</div></div>
-      </div>
-    </div>
-    <a href="https://service.nalog.ru/inn.do" target="_blank"><button class="btn" style="margin-bottom:10px">🔍 Узнать ИНН на сайте ФНС</button></a>
-    <a href="https://gosuslugi.ru" target="_blank"><button class="btn out" style="margin-bottom:10px">🏛️ Подать заявку на Госуслугах</button></a>
-    <button class="btn out" onclick="go('home')">← Главное меню</button>
+    <div class="li" onclick="wi('expired')"><div class="li-ico r">🔴</div><div class="li-txt"><div class="li-t">Просрочен патент</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('lost_mk')"><div class="li-ico o">📄</div><div class="li-txt"><div class="li-t">Потерял миграционную карту</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('no_pay')"><div class="li-ico o">💸</div><div class="li-txt"><div class="li-t">Не заплатил за патент</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('no_salary')"><div class="li-ico b">💼</div><div class="li-txt"><div class="li-t">Не выплатили зарплату</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('ban')"><div class="li-ico r">🚫</div><div class="li-txt"><div class="li-t">Нашёл запрет на въезд</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('moved')"><div class="li-ico p">🏠</div><div class="li-txt"><div class="li-t">Переехал в другой город</div></div><div class="arr">›</div></div>
+    <div class="li" onclick="wi('job_change')"><div class="li-ico g">💼</div><div class="li-txt"><div class="li-t">Сменил работодателя</div></div><div class="arr">›</div></div>
+  </div>
+</div>
+<div class="pg" id="pg-wi-d">
+  <div class="hdr"><button class="hdr-back" onclick="go('whatif')">‹</button><div class="hdr-title" id="wi-title">Ситуация</div></div>
+  <div class="px" id="wi-body"></div>
+</div>
+
+<!-- SNILS -->
+<div class="pg" id="pg-snils">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">🪪 СНИЛС / ИНН</div></div>
+  <div class="px">
+    <div class="li" style="cursor:default"><div class="li-ico p">🪪</div><div class="li-txt"><div class="li-t">СНИЛС через работодателя</div><div class="li-s">5 рабочих дней · бесплатно</div></div></div>
+    <div class="li" style="cursor:default"><div class="li-ico y">🔢</div><div class="li-txt"><div class="li-t">ИНН онлайн</div><div class="li-s">nalog.ru → Узнать ИНН</div></div></div>
+    <a href="https://gosuslugi.ru/situation/workForForeign" target="_blank"><button class="btn">🏛️ Оформить СНИЛС через Госуслуги</button></a>
+    <a href="https://service.nalog.ru/inn.do" target="_blank"><button class="btn out">🔍 Узнать ИНН — ФНС России</button></a>
   </div>
 </div>
 
-<!-- ===== MMC ===== -->
-<div class="page" id="pg-mmc">
-  <div class="hdr"><div class="hdr-title">ММЦ Сахарово 🏛️</div></div>
+<!-- B2B PAGES -->
+<div class="pg" id="pg-b2b-add">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">➕ Новый сотрудник</div></div>
+  <div class="px">
+    <div class="fg"><label class="flbl">ФИО сотрудника</label><input class="fi" id="em-name" placeholder="Фамилия Имя Отчество"></div>
+    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="em-cit"><option value="UZB">🇺🇿 Узбекистан</option><option value="TJK">🇹🇯 Таджикистан</option><option value="KAZ">🇰🇿 Казахстан</option><option value="KGZ">🇰🇬 Кыргызстан</option><option value="AZE">🇦🇿 Азербайджан</option><option value="ARM">🇦🇲 Армения</option><option value="BLR">🇧🇾 Беларусь</option><option value="MDA">🇲🇩 Молдова</option><option value="UKR">🇺🇦 Украина</option><option value="OTHER">Другая</option></select></div>
+    <div class="fg"><label class="flbl">Должность</label><input class="fi" id="em-pos" placeholder="Профессия / должность"></div>
+    <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="em-pn" placeholder="Номер паспорта" inputmode="numeric"></div>
+    <div class="fg"><label class="flbl">Дата трудоустройства</label><input type="date" class="fi" id="em-hd"></div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--mu2);text-transform:uppercase;font-size:11px;letter-spacing:.5px">Документ сотрудника</div>
+    <div class="fg"><label class="flbl">Тип документа</label><select class="fi" id="em-dtype"><option value="patent">🪪 Патент на работу</option><option value="rvp">📘 РВП</option><option value="vnj">🏠 ВНЖ</option><option value="mk">📄 Миграционная карта</option><option value="none">— Нет документов</option></select></div>
+    <div class="fg"><label class="flbl">Серия и номер</label><input class="fi" id="em-dn" placeholder="Серия/номер документа" inputmode="numeric"></div>
+    <div class="fg"><label class="flbl">Действует до</label><input type="date" class="fi" id="em-de"></div>
+    <button class="btn g" onclick="saveEmp()">✅ Добавить сотрудника</button>
+    <button class="btn out" onclick="goBack()">Отмена</button>
+  </div>
+</div>
+
+<div class="pg" id="pg-b2b-detail">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title" id="emp-dtitle">Сотрудник</div></div>
+  <div class="px" id="emp-dbody"></div>
+</div>
+
+<div class="pg" id="pg-b2b-req">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">📋 Заявка на подбор</div></div>
+  <div class="px">
+    <div class="box b">💡 Подберём проверенных сотрудников с документами.</div>
+    <div class="fg"><label class="flbl">Компания</label><input class="fi" id="rq-co" placeholder="ООО Название..."></div>
+    <div class="fg"><label class="flbl">Город</label><input class="fi" id="rq-ci" placeholder="Москва, МО..."></div>
+    <div class="fg"><label class="flbl">Количество</label><input class="fi" id="rq-cnt" placeholder="5, 10-15..." inputmode="numeric"></div>
+    <div class="fg"><label class="flbl">Тип работы</label><input class="fi" id="rq-job" placeholder="Склад, стройка, ритейл..."></div>
+    <div class="fg"><label class="flbl">Зарплата</label><input class="fi" id="rq-sal" placeholder="60000-80000 ₽/мес"></div>
+    <div class="fg"><label class="flbl">Документы</label><select class="fi" id="rq-doc"><option value="patent">🪪 Патент</option><option value="rvp">📘 РВП/ВНЖ</option><option value="eaes">🇰🇿 ЕАЭС</option><option value="any">📋 Любые легальные</option></select></div>
+    <div class="fg"><label class="flbl">Жильё</label><select class="fi" id="rq-h"><option value="yes">🏠 Предоставляем</option><option value="no">❌ Без жилья</option></select></div>
+    <div class="fg"><label class="flbl">Контакт</label><input class="fi" id="rq-ct" placeholder="+7 999 ... или @username"></div>
+    <button class="btn p" onclick="submitReq()">📤 Отправить заявку</button>
+    <button class="btn out" onclick="goBack()">Отмена</button>
+  </div>
+</div>
+
+<div class="pg" id="pg-b2b-risk">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">⚠️ Калькулятор рисков</div></div>
+  <div class="px" id="b2b-risk-body"></div>
+</div>
+
+<!-- MMC -->
+<div class="pg" id="pg-mmc">
+  <div class="hdr"><div class="hdr-title">🏛️ ММЦ Сахарово</div></div>
   <div class="px">
     <div class="card" style="text-align:center;padding:18px">
-      <div style="font-size:32px;margin-bottom:8px">🏛️</div>
-      <div style="font-size:15px;font-weight:900;margin-bottom:3px">Многофункциональный миграционный центр</div>
-      <div style="font-size:12px;color:var(--muted);font-weight:600">Варшавское шоссе, 64-й км, д.1 стр.47</div>
-      <div style="font-size:13px;color:var(--green);font-weight:800;margin-top:6px">Ежедневно 8:00–20:00</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:3px">Многофункциональный миграционный центр</div>
+      <div style="font-size:12px;color:var(--mu2)">Варшавское шоссе, 64-й км, д.1</div>
+      <div style="font-size:13px;color:var(--green);font-weight:700;margin-top:6px">Ежедневно 8:00–20:00</div>
     </div>
-    <div class="ctitle">Запись и сервисы</div>
-    <a class="mmc-lnk" href="https://mmc.mos.ru/client-office" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(45,126,247,.18)">📝</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Запись на РВП / ВНЖ / Гражданство</div><div class="mmc-lnk-s">mmc.mos.ru — личный кабинет ММЦ</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://mc.mos.ru" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(29,185,84,.18)">🏛️</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Официальный сайт ММЦ</div><div class="mmc-lnk-s">mc.mos.ru — новости, расписание</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/testing/" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(251,191,36,.18)">📚</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Экзамен по русскому языку</div><div class="mmc-lnk-s">Запись на тестирование в ММЦ</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/medical/" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(29,185,84,.18)">🏥</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Медицинское освидетельствование</div><div class="mmc-lnk-s">Запись на медкомиссию для патента</div></div><span style="color:var(--muted)">›</span></a>
-    <div class="ctitle" style="margin-top:4px">Проверки МВД.РФ</div>
-    <a class="mmc-lnk" href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(229,57,53,.18)">🔍</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Проверить патент — МВД.РФ</div><div class="mmc-lnk-s">сервисы.гувм.мвд.рф</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(124,58,237,.18)">🚫</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Реестр контролируемых лиц</div><div class="mmc-lnk-s">Проверка запрета — МВД.РФ</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://service.nalog.ru/inn.do" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(255,140,0,.18)">🔢</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Узнать ИНН — ФНС России</div><div class="mmc-lnk-s">service.nalog.ru</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://gosuslugi.ru" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(45,126,247,.18)">🏛️</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Госуслуги</div><div class="mmc-lnk-s">Электронные госуслуги</div></div><span style="color:var(--muted)">›</span></a>
-    <a class="mmc-lnk" href="https://fssprus.ru/iss/ip" target="_blank"><div class="mmc-lnk-ico" style="background:rgba(229,57,53,.18)">⚖️</div><div class="mmc-lnk-inf"><div class="mmc-lnk-t">Исполнительные производства ФССП</div><div class="mmc-lnk-s">Проверка долгов</div></div><span style="color:var(--muted)">›</span></a>
-    <div class="card" style="margin-top:4px"><div style="font-size:13px;font-weight:800;margin-bottom:10px">📞 Контакты ММЦ</div>
-      <div class="irows">
-        <div class="irow"><span class="irow-l">Горячая линия</span><span class="irow-v"><a href="tel:+74952038820" style="color:var(--blue);text-decoration:none;font-weight:800">+7 (495) 203-88-20</a></span></div>
-        <div class="irow"><span class="irow-l">Справочная 24/7</span><span class="irow-v"><a href="tel:+74957777777" style="color:var(--blue);text-decoration:none;font-weight:800">+7 (495) 777-77-77</a></span></div>
-        <div class="irow"><span class="irow-l">Запись РВП/ВНЖ</span><span class="irow-v"><a href="tel:+74952057543" style="color:var(--blue);text-decoration:none;font-weight:800">+7 (495) 205-75-43</a></span></div>
-      </div>
+    <div class="stitle">Записаться</div>
+    <a class="mmc-lnk" href="https://mmc.mos.ru/client-office" target="_blank"><div class="li-ico b" style="border-radius:10px;flex-shrink:0">📝</div><div><div class="li-t">РВП / ВНЖ / Гражданство</div><div class="li-s">mmc.mos.ru</div></div><div class="arr">›</div></a>
+    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/testing/" target="_blank"><div class="li-ico y" style="border-radius:10px;flex-shrink:0">📚</div><div><div class="li-t">Экзамен по русскому</div></div><div class="arr">›</div></a>
+    <a class="mmc-lnk" href="https://mc.mos.ru/ru/services/medical/" target="_blank"><div class="li-ico g" style="border-radius:10px;flex-shrink:0">🏥</div><div><div class="li-t">Медицинское освидетельствование</div></div><div class="arr">›</div></a>
+    <div class="stitle">Проверки</div>
+    <a class="mmc-lnk" href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank"><div class="li-ico r" style="border-radius:10px;flex-shrink:0">🔍</div><div><div class="li-t">Проверить патент</div></div><div class="arr">›</div></a>
+    <a class="mmc-lnk" href="https://service.nalog.ru/inn.do" target="_blank"><div class="li-ico o" style="border-radius:10px;flex-shrink:0">🔢</div><div><div class="li-t">Узнать ИНН — ФНС</div></div><div class="arr">›</div></a>
+    <a class="mmc-lnk" href="https://fssprus.ru/iss/ip" target="_blank"><div class="li-ico p" style="border-radius:10px;flex-shrink:0">⚖️</div><div><div class="li-t">Долги ФССП</div></div><div class="arr">›</div></a>
+    <div class="card" style="margin-top:4px">
+      <div class="irow"><span class="irow-l">Горячая линия</span><span class="irow-v"><a href="tel:+74952038820" style="color:var(--blue)">+7 (495) 203-88-20</a></span></div>
+      <div class="irow"><span class="irow-l">Справочная 24/7</span><span class="irow-v"><a href="tel:+74957777777" style="color:var(--blue)">+7 (495) 777-77-77</a></span></div>
     </div>
   </div>
 </div>
 
-<!-- ===== PROFILE / SUB ===== -->
-<div class="page" id="pg-profile">
-  <div class="hdr"><div class="hdr-title">Подписка 🛡️</div></div>
+<!-- SUB / PRO PAGE -->
+<div class="pg" id="pg-sub">
+  <div class="hdr"><div class="hdr-title">⭐ Подписка PRO</div></div>
   <div class="px">
-    <div style="font-size:14px;color:var(--muted);font-weight:600;margin-bottom:16px;line-height:1.5">Работаете в России? Мы позаботимся о ваших документах.</div>
-    <div style="font-size:13px;font-weight:900;margin-bottom:10px">Почему это важно?</div>
-    <div class="cmp">
-      <div class="cmp-col bad"><div class="cmp-t">❌ Без подписки</div><div class="cmp-s">Пропущенный платёж → аннулированный патент → штраф или депортация</div></div>
-      <div class="cmp-col gd"><div class="cmp-t">✅ С подпиской</div><div class="cmp-s">Спокойная работа, все документы под контролем</div></div>
+    <div class="pw-top" style="margin-bottom:20px">
+      <div class="pw-icon">⭐</div>
+      <div class="pw-title">МигрантПро <span style="color:var(--or)">PRO</span></div>
+      <div class="pw-sub">Ваш цифровой миграционный помощник без ограничений</div>
     </div>
-    <div class="plans">
-      <div class="plan-it" onclick="pickPlan(this,'1m',190)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">1 месяц</div></div><div class="plan-pr"><div class="plan-am">190 ₽</div></div></div>
-      <div class="plan-it" onclick="pickPlan(this,'2m',370)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">2 месяца</div><div class="plan-p">185 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">370 ₽</div></div></div>
-      <div class="plan-it sel" onclick="pickPlan(this,'3m',480)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">3 месяца</div><div class="plan-p">160 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">480 ₽</div><div class="plan-sv">выгода 16%</div></div></div>
-      <div class="plan-it" onclick="pickPlan(this,'6m',900)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">6 месяцев</div><div class="plan-p">150 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">900 ₽</div><div class="plan-sv">выгода 22%</div></div></div>
-      <div class="plan-it" onclick="pickPlan(this,'12m',1500)"><div class="plan-radio"></div><div class="plan-inf"><div class="plan-n">12 месяцев</div><div class="plan-p">125 ₽/мес</div></div><div class="plan-pr"><div class="plan-am">1 500 ₽</div><div class="plan-sv">выгода 35%</div></div></div>
+    <div class="pw-features">
+      <div class="pw-feat"><div class="pw-feat-ico b">🤖</div><div><div class="pw-feat-t">Безлимитный AI-юрист</div><div class="pw-feat-s">FREE: 3 вопроса/день → PRO: без ограничений</div></div></div>
+      <div class="pw-feat"><div class="pw-feat-ico g">📄</div><div><div class="pw-feat-t">Трекер документов 24/7</div><div class="pw-feat-s">Автонапоминания за 30, 14, 7 дней</div></div></div>
+      <div class="pw-feat"><div class="pw-feat-ico or">📸</div><div><div class="pw-feat-t">Фото-анализ документов</div><div class="pw-feat-s">Пришли фото — AI проверит и предупредит</div></div></div>
+      <div class="pw-feat"><div class="pw-feat-ico p">⚠️</div><div><div class="pw-feat-t">Анализ рисков</div><div class="pw-feat-s">AI оценивает вашу ситуацию</div></div></div>
+      <div class="pw-feat"><div class="pw-feat-ico pi">⭐</div><div><div class="pw-feat-t">Реестр МВД — автоматически</div><div class="pw-feat-s">Проверяется каждый день</div></div></div>
     </div>
-    <button class="btn" id="pay-btn" onclick="pay()">Оплатить 480 ₽</button>
-    <div style="margin-top:20px;">
-      <div style="font-size:13px;font-weight:900;margin-bottom:12px">✅ Что вы получаете:</div>
-      <div class="chk-list">
-        <div class="chk-item" style="cursor:default"><div class="chk-ico y">⭐</div><div class="chk-txt"><div class="chk-t">Автопроверка документов каждый день</div><div class="chk-s">24/7 мониторинг</div></div></div>
-        <div class="chk-item" style="cursor:default"><div class="chk-ico g">🔍</div><div class="chk-txt"><div class="chk-t">Реестр контролируемых лиц</div><div class="chk-s">Проверяется каждый день</div></div></div>
-        <div class="chk-item" style="cursor:default"><div class="chk-ico b">🪪</div><div class="chk-txt"><div class="chk-t">Патент — проверяется ежедневно</div><div class="chk-s">Сразу узнаете если патент аннулирован</div></div></div>
-        <div class="chk-item" style="cursor:default"><div class="chk-ico r">⏰</div><div class="chk-txt"><div class="chk-t">Умные напоминания</div><div class="chk-s">Никогда не пропустите срок оплаты</div></div></div>
-        <div class="chk-item" style="cursor:default"><div class="chk-ico teal">💳</div><div class="chk-txt"><div class="chk-t">Трекер оплаты патента</div><div class="chk-s">Контроль всех ежемесячных платежей</div></div></div>
+    <div class="box o" style="font-size:12px">⚖️ <b>Консультация юриста не входит в PRO</b> — это отдельная платная услуга.</div>
+    <div class="pw-plans">
+      <div class="pw-plan" onclick="subPlan(this,'1m',100)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">1 месяц</div></div><div class="pw-plan-am">100 ⭐</div></div>
+      <div class="pw-plan hot sel" onclick="subPlan(this,'3m',270)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">3 месяца <span class="popular-tag">🔥</span></div><div class="pw-plan-p">90 ⭐/мес · выгода 16%</div></div><div class="pw-plan-am"><div class="pw-plan-am-n">270 ⭐</div></div></div>
+      <div class="pw-plan" onclick="subPlan(this,'6m',490)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">6 месяцев</div><div class="pw-plan-p">82 ⭐/мес · выгода 22%</div></div><div class="pw-plan-am"><div class="pw-plan-am-n">490 ⭐</div></div></div>
+      <div class="pw-plan" onclick="subPlan(this,'12m',850)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">12 месяцев</div><div class="pw-plan-p">71 ⭐/мес · выгода 35%</div></div><div class="pw-plan-am"><div class="pw-plan-am-n">850 ⭐</div></div></div>
+    </div>
+    <button class="btn pro" id="sub-pay-btn" onclick="pay()">⭐ Оформить PRO — 270 Stars</button>
+    <div style="font-size:11px;color:var(--mu);text-align:center;margin-top:10px">Оплата через Telegram Stars · Безопасно · Официально</div>
+    <div class="stitle">Для работодателей</div>
+    <div class="pw-plan" onclick="subPlan(this,'b2b_10',500)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">До 10 сотрудников</div></div><div class="pw-plan-am">500 ⭐</div></div>
+    <div class="pw-plan" onclick="subPlan(this,'b2b_30',1200)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">До 30 сотрудников</div></div><div class="pw-plan-am">1 200 ⭐</div></div>
+    <div class="pw-plan" onclick="subPlan(this,'b2b_100',3000)"><div class="pw-plan-r"></div><div class="pw-plan-inf"><div class="pw-plan-n">До 100 сотрудников</div></div><div class="pw-plan-am">3 000 ⭐</div></div>
+  </div>
+</div>
+
+<!-- SHEET: ADD DOC -->
+<div class="ov" id="sh-doc" onclick="clsOv(event,'sh-doc')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sh-handle"></div>
+    <div style="font-size:17px;font-weight:700;margin-bottom:16px">➕ Добавить документ</div>
+    <div class="fg"><label class="flbl">Тип</label><select class="fi" id="ad-type" onchange="adtc()"><option value="patent">🪪 Патент</option><option value="rvp">📘 РВП</option><option value="rvpo">📗 РВПО</option><option value="vnj">🏠 ВНЖ</option><option value="mk">📄 Миг. карта</option><option value="other">📋 Другой</option></select></div>
+    <div class="fg"><label class="flbl">Серия (или «-»)</label><input class="fi" id="ad-s" placeholder="-"></div>
+    <div class="fg"><label class="flbl">Номер</label><input class="fi" id="ad-n" placeholder="Номер" inputmode="numeric"></div>
+    <div id="ad-blank" style="display:none"><div class="fg"><label class="flbl">Серия бланка</label><input class="fi" id="ad-bs" placeholder="-"></div><div class="fg"><label class="flbl">Номер бланка</label><input class="fi" id="ad-bn" placeholder="-" inputmode="numeric"></div></div>
+    <div class="fg"><label class="flbl">Дата выдачи</label><input type="date" class="fi" id="ad-i"></div>
+    <div class="fg"><label class="flbl">Дата окончания</label><input type="date" class="fi" id="ad-e"></div>
+    <div class="fg"><label class="flbl">Регион</label><input class="fi" id="ad-r" placeholder="Москва, или «-»"></div>
+    <button class="btn g" onclick="saveDoc()">✅ Сохранить</button>
+    <button class="btn out" onclick="clsOv2('sh-doc')">Отмена</button>
+  </div>
+</div>
+
+<!-- NAV -->
+
+<div class="pg" id="pg-ref">
+  <div class="hdr"><button class="hdr-back" onclick="go('home')">‹</button><div class="hdr-title">🎁 Пригласить друга</div></div>
+  <div class="px">
+    <div style="text-align:center;padding:20px 0">
+      <div style="font-size:48px;margin-bottom:10px">🎁</div>
+      <div style="font-size:18px;font-weight:900;margin-bottom:6px">+7 дней за каждого друга!</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6">Пригласи друга — вы оба получите<br><b style="color:var(--green)">+7 дней подписки бесплатно</b></div>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="copyRefLink()">
+      <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase">🔗 Ваша реферальная ссылка</div>
+      <div style="font-size:13px;font-weight:800;color:var(--blue);word-break:break-all" id="ref-link-text">Нажмите чтобы скопировать</div>
+    </div>
+    <button class="btn" onclick="shareRefLink()">📤 Поделиться ссылкой</button>
+    <button class="btn out" onclick="copyRefLink()">📋 Скопировать ссылку</button>
+    <div class="card" style="margin-top:12px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:8px">Как работает:</div>
+      <div style="font-size:13px;line-height:2;color:var(--muted)">
+        1️⃣ Отправьте ссылку другу<br>
+        2️⃣ Друг переходит и запускает бота<br>
+        3️⃣ Оба получают +7 дней подписки<br>
+        ∞ Без ограничений!
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== SHEET: ADD PATENT ===== -->
-<div class="overlay" id="sh-patent" onclick="closeSheet(event,'sh-patent')">
-  <div class="sheet" onclick="stopProp(event)">
-    <div class="sheet-handle"></div>
-    <div style="font-size:17px;font-weight:900;margin-bottom:18px">🪪 Добавить патент</div>
-    <div class="fg"><label class="flbl">Серия (лицевая сторона)</label><input class="fi" id="ap-s" placeholder="50, 77, МСК..." maxlength="10"></div>
-    <div class="fg"><label class="flbl">Номер (лицевая сторона)</label><input class="fi" id="ap-n" placeholder="2500433815" maxlength="15" inputmode="numeric"></div>
-    <div class="fg"><label class="flbl">Серия бланка (оборотная, если есть)</label><input class="fi" id="ap-bs" placeholder="ПР, МФЦ..." maxlength="10"></div>
-    <div class="fg"><label class="flbl">Номер бланка (оборотная, если есть)</label><input class="fi" id="ap-bn" placeholder="6892529" maxlength="15" inputmode="numeric"></div>
-    <div class="fg"><label class="flbl">Дата выдачи</label><input type="date" class="fi" id="ap-i"></div>
-    <div class="fg"><label class="flbl">Действует до</label><input type="date" class="fi" id="ap-e"></div>
-    <div class="fg"><label class="flbl">Регион действия</label><input class="fi" id="ap-r" placeholder="Москва, Московская обл..."></div>
-    <button class="btn" onclick="savePat()" style="margin-bottom:10px">Сохранить патент</button>
-    <button class="btn out" onclick="closeSheet2('sh-patent')">Отмена</button>
-  </div>
-</div>
-
-<!-- ===== NAV ===== -->
 <nav class="nav">
   <button class="nb on" id="nb-home" onclick="go('home')">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Главная
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Главная
   </button>
-  <button class="nb" id="nb-cabinet" onclick="go('cabinet')">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Кабинет
+  <button class="nb" id="nb-docs" onclick="go('docs')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Документы
   </button>
   <button class="nb" id="nb-mmc" onclick="go('mmc')">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>Сахарово
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Сахарово
   </button>
-  <button class="nb" id="nb-profile" onclick="go('profile')">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>Подписка
+  <button class="nb" id="nb-sub" onclick="go('sub')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>PRO
   </button>
 </nav>
 
 <script>
-const tg = window.Telegram?.WebApp;
+const tg=window.Telegram?.WebApp;
 if(tg){tg.ready();tg.expand();}
+const CS=tg?.CloudStorage;
+function csGet(k,cb){if(CS){CS.getItem(k,(e,v)=>cb(v||null));}else{try{cb(localStorage.getItem(k));}catch{cb(null);}}}
+function csSet(k,v){if(CS){CS.setItem(k,String(v));}else{try{localStorage.setItem(k,String(v));}catch{}}}
 
-// ============================================================
-// PASSPORT FORMATS
-// ============================================================
-const PASS_FMT = {
-  UZB:{series:"AA (2 буквы)",num:"1234567 (7 цифр)",has_series:true,example:"AA1234567"},
-  TJK:{series:"Серии нет",num:"003456789 (8-9 цифр)",has_series:false,example:"003456789"},
-  KAZ:{series:"N или S",num:"12345678 (8 цифр)",has_series:true,example:"N12345678"},
-  KGZ:{series:"ID (2 буквы)",num:"1234567 (7 цифр)",has_series:true,example:"ID1234567"},
-  AZE:{series:"AA",num:"1234567 (7 цифр)",has_series:true,example:"AA1234567"},
-  ARM:{series:"AF, AM (2 буквы)",num:"1234567 (7 цифр)",has_series:true,example:"AF1234567"},
-  BLR:{series:"BM, MP (2 буквы)",num:"1234567 (7 цифр)",has_series:true,example:"BM1234567"},
-  MDA:{series:"A или B",num:"123456 (6-7 цифр)",has_series:true,example:"A123456"},
-  UKR:{series:"PP, КА (2 буквы)",num:"123456 (6 цифр)",has_series:true,example:"PP123456"},
-  IND:{series:"Буква J, L, P",num:"1234567 (7 цифр)",has_series:true,example:"J1234567"},
-  CHN:{series:"Нет серии",num:"G12345678 (9 симв.)",has_series:false,example:"G12345678"},
-  OTHER:{series:"Если есть",num:"Как в паспорте",has_series:false,example:""},
+const DT={patent:{name:'Патент',emoji:'🪪',warn:30},rvp:{name:'РВП',emoji:'📘',warn:60},rvpo:{name:'РВПО',emoji:'📗',warn:60},vnj:{name:'ВНЖ',emoji:'🏠',warn:90},mk:{name:'Миг. карта',emoji:'📄',warn:14},other:{name:'Документ',emoji:'📋',warn:30},none:{name:'Нет',emoji:'❓',warn:0}};
+const CITS={UZB:'🇺🇿 Узбекистан',TJK:'🇹🇯 Таджикистан',KAZ:'🇰🇿 Казахстан',KGZ:'🇰🇬 Кыргызстан',AZE:'🇦🇿 Азербайджан',ARM:'🇦🇲 Армения',BLR:'🇧🇾 Беларусь',MDA:'🇲🇩 Молдова',UKR:'🇺🇦 Украина',OTHER:'Другая'};
+
+const S={
+  user:tg?.initDataUnsafe?.user||{first_name:'Пользователь',id:'demo'},
+  lang:localStorage.getItem('ml')||'ru',
+  role:localStorage.getItem('role')||'migrant',
+  docs:JSON.parse(localStorage.getItem('md')||'[]'),
+  emps:JSON.parse(localStorage.getItem('emps')||'[]'),
+  entry:localStorage.getItem('me')||'',
+  isPro:false,
+  proUntil:null,
+  aiUsed:parseInt(localStorage.getItem('ai_used')||'0'),
+  aiDate:localStorage.getItem('ai_date')||'',
+  obDone:localStorage.getItem('ob_done')==='1',
+  obData:{},
+  pwPlan:'3m',pwStars:270,
+  subPlan:'3m',subStars:270,
 };
+const FREE_LIMIT=3;
 
-const COUNTRIES_HTML = `<option value="">-- Выберите --</option>
-<option value="UZB">🇺🇿 Узбекистан</option>
-<option value="TJK">🇹🇯 Таджикистан</option>
-<option value="KAZ">🇰🇿 Казахстан</option>
-<option value="AZE">🇦🇿 Азербайджан</option>
-<option value="ARM">🇦🇲 Армения</option>
-<option value="BLR">🇧🇾 Беларусь</option>
-<option value="MDA">🇲🇩 Молдова</option>
-<option value="KGZ">🇰🇬 Кыргызстан</option>
-<option value="UKR">🇺🇦 Украина</option>
-<option value="IND">🇮🇳 Индия</option>
-<option value="CHN">🇨🇳 Китай</option>
-<option value="OTHER">Другая страна</option>`;
+// ── CONSENT ────────────────────────────────────────────────
+function checkConsent(){
+  const ls=localStorage.getItem('consented');
+  if(ls==='1'){startApp();return;}
+  csGet('consented',v=>{if(v==='1'){localStorage.setItem('consented','1');startApp();}else{document.getElementById('co').classList.add('show');}});
+}
+const cbS={c1:false,c2:false,c3:false};
+function tcb(id){cbS[id]=!cbS[id];document.getElementById(id).classList.toggle('on',cbS[id]);const ok=cbS.c1&&cbS.c2&&cbS.c3;const b=document.getElementById('cbtn');b.style.opacity=ok?'1':'0.35';b.style.pointerEvents=ok?'auto':'none';}
+function acceptConsent(){csSet('consented','1');localStorage.setItem('consented','1');document.getElementById('co').classList.remove('show');startApp();}
 
-document.querySelectorAll('select.fi').forEach(s=>{
-  if(!s.innerHTML.includes('option value="UZB"')) s.innerHTML += COUNTRIES_HTML;
-  else s.innerHTML = COUNTRIES_HTML;
-});
+// ── ONBOARDING ─────────────────────────────────────────────
+function startApp(){
+  if(!S.obDone){showOnboarding();}
+  else{initMain();}
+}
+let obStep=1;const OB_STEPS=4;
+function showOnboarding(){
+  document.getElementById('ob').classList.add('show');
+  renderObProgress();
+  showObSlide(1);
+}
+function renderObProgress(){
+  const el=document.getElementById('ob-prog');
+  el.innerHTML=Array.from({length:OB_STEPS},(_,i)=>`<div class="ob-dot${i<obStep?' done':''}"></div>`).join('');
+}
+function showObSlide(n){
+  document.querySelectorAll('.ob-slide').forEach(s=>s.classList.remove('on'));
+  document.getElementById(`ob-${n}`)?.classList.add('on');
+  obStep=n;renderObProgress();
+}
+function obChoose(key,val,next){
+  S.obData[key]=val;
+  if(key==='role')S.role=val;
+  // Пропускаем шаги в зависимости от роли
+  if(key==='role'&&(val==='employer'||val==='lawyer')){showObSlide(4);return;}
+  showObSlide(next);
+}
+function obFinish(wantPro){
+  localStorage.setItem('ob_done','1');localStorage.setItem('role',S.role);S.obDone=true;
+  document.getElementById('ob').classList.remove('show');
+  initMain();
+  if(wantPro){go('sub');}
+}
 
-function updatePassHints(citId, seriesId, numId){
-  const cit = document.getElementById(citId)?.value;
-  const fmt = PASS_FMT[cit] || PASS_FMT.OTHER;
-  const serEl = document.getElementById(seriesId);
-  const numEl = document.getElementById(numId);
-  const serLbl = document.querySelector(`[for="${seriesId}"], label[id="${seriesId}-lbl"]`);
-  if(serEl){
-    serEl.placeholder = fmt.has_series ? fmt.series : 'Не требуется';
-    if(serLbl) serLbl.textContent = fmt.has_series ? `Серия паспорта (${fmt.series})` : 'Серия (не требуется)';
+// ── PRO CHECK ──────────────────────────────────────────────
+function checkPro(){
+  // Проверяем sub_until из данных бота (через Telegram init data)
+  const initData=tg?.initDataUnsafe;
+  // Простая проверка через localStorage (бот обновляет через sendData)
+  const subUntil=localStorage.getItem('sub_until');
+  if(subUntil){
+    try{
+      const exp=new Date(subUntil);
+      S.isPro=exp>new Date();
+      S.proUntil=subUntil;
+    }catch{}
   }
-  if(numEl) numEl.placeholder = fmt.example || 'Номер паспорта';
 }
 
-// ============================================================
-// STATE
-// ============================================================
-const S = {
-  user: tg?.initDataUnsafe?.user || {first_name:'Пользователь',id:'demo'},
-  lang: localStorage.getItem('mpro_lang')||'ru',
-  patents: JSON.parse(localStorage.getItem('mpro_pats')||'[]'),
-  entry: localStorage.getItem('mpro_entry')||'',
-  plan:'3m', price:480,
-  consented: localStorage.getItem('mpro_consented')==='1',
-  onbDone: localStorage.getItem('mpro_onb')==='1',
-  cbs:{cb1:false,cb2:false,cb3:false},
-  payments: JSON.parse(localStorage.getItem('mpro_payments')||'[]'),
-  refStats: {invited:0, days:0},
-};
-
-// ============================================================
-// ONBOARDING
-// ============================================================
-const ONB_STEPS = [
-  {emoji:'🇷🇺',title:'Добро пожаловать!',sub:'МигрантПро — ваш личный помощник для жизни и работы в России'},
-  {emoji:'🪪',title:'Контролируй патент',sub:'Добавь патент — бот напомнит об оплате и проверит действительность на МВД.РФ'},
-  {emoji:'🛡️',title:'Проверки за секунды',sub:'Реестр контролируемых лиц, запрет въезда — всё в одном месте'},
-  {emoji:'🎁',title:'Приглашай — получай!',sub:'Пригласи друга по реферальной ссылке — вы оба получите 7 дней подписки бесплатно'},
-];
-let onbStep = 0;
-
-function onbNext(){
-  onbStep++;
-  if(onbStep >= ONB_STEPS.length){ skipOnb(); return; }
-  const s = ONB_STEPS[onbStep];
-  document.getElementById('onb-emoji').textContent = s.emoji;
-  document.getElementById('onb-title').textContent = s.title;
-  document.getElementById('onb-sub').textContent = s.sub;
-  document.querySelectorAll('.onb-dot').forEach((d,i)=>d.classList.toggle('on',i===onbStep));
-  if(onbStep === ONB_STEPS.length-1) document.getElementById('onb-next-btn').textContent = 'Начать →';
+// ── AI LIMIT (local counter) ───────────────────────────────
+function checkAiLimit(){
+  const today=new Date().toLocaleDateString('ru-RU');
+  if(S.aiDate!==today){S.aiUsed=0;S.aiDate=today;localStorage.setItem('ai_used','0');localStorage.setItem('ai_date',today);}
+  return S.isPro||S.aiUsed<FREE_LIMIT;
+}
+function incrementAi(){S.aiUsed++;localStorage.setItem('ai_used',String(S.aiUsed));}
+function updateAiBar(){
+  const bar=document.getElementById('ai-limit-bar');
+  const txt=document.getElementById('ai-limit-text');
+  const fill=document.getElementById('ai-limit-fill');
+  if(!bar)return;
+  if(S.isPro){bar.style.display='none';return;}
+  const today=new Date().toLocaleDateString('ru-RU');
+  const used=S.aiDate===today?S.aiUsed:0;
+  bar.style.display='block';
+  txt.textContent=`${used} / ${FREE_LIMIT}`;
+  const pct=(used/FREE_LIMIT)*100;
+  fill.style.width=pct+'%';
+  fill.className='pbar-fill '+(pct>=100?'warn':'ok');
 }
 
-function skipOnb(){
-  localStorage.setItem('mpro_onb','1');
-  document.getElementById('onb-overlay').style.display='none';
-  if(!S.consented) document.getElementById('consent-overlay').style.display='flex';
+// ── PRO GATE ───────────────────────────────────────────────
+function proCheck(feature){
+  if(S.isPro){go(feature);return;}
+  const reasons={risk:'Анализ рисков доступен в PRO'};
+  showPW(reasons[feature]||'Эта функция доступна в PRO подписке');
 }
 
-// ============================================================
-// CONSENT
-// ============================================================
-function toggleCb(id){
-  S.cbs[id]=!S.cbs[id];
-  document.getElementById(id).classList.toggle('on',S.cbs[id]);
-  const all=S.cbs.cb1&&S.cbs.cb2&&S.cbs.cb3;
-  const btn=document.getElementById('consent-btn');
-  btn.style.opacity=all?'1':'0.4';
-  btn.style.pointerEvents=all?'auto':'none';
+// ── PAYWALL ────────────────────────────────────────────────
+let pwCurPlan='3m',pwCurStars=270;
+function showPW(reason){
+  document.getElementById('pw-reason').textContent=reason||'Разблокируйте полный доступ';
+  document.getElementById('pw').classList.add('show');
+  tg?.BackButton?.show();
 }
-function acceptConsent(){
-  localStorage.setItem('mpro_consented','1');
-  S.consented=true;
-  document.getElementById('consent-overlay').style.display='none';
+function closePW(){document.getElementById('pw').classList.remove('show');}
+function pwPlan(el,plan,stars){
+  document.querySelectorAll('.pw-plan').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');pwCurPlan=plan;pwCurStars=stars;
+  document.getElementById('pw-pay-btn').textContent=`⭐ Оформить PRO — ${stars} Stars`;
 }
+function pwPay(){sendBot('subscribe',{plan:pwCurPlan,stars:pwCurStars});closePW();toast('⏳ Переходим к оплате...');}
 
-// ============================================================
-// ROUTING
-// ============================================================
-const PM={
-  home:'pg-home',cabinet:'pg-cabinet',mmc:'pg-mmc',profile:'pg-profile',
-  ref:'pg-ref','payment-tracker':'pg-payment-tracker',
-  'check-patent':'pg-check-patent','check-registry':'pg-check-registry',
-  'check-ban':'pg-check-ban','check-ready':'pg-check-ready',
-  snils:'pg-snils',inn:'pg-inn'
-};
-const NM={home:'nb-home',cabinet:'nb-cabinet',mmc:'nb-mmc',profile:'nb-profile'};
+// ── SUB PAGE ───────────────────────────────────────────────
+function subPlan(el,plan,stars){
+  document.querySelectorAll('.pw-plan').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');S.subPlan=plan;S.subStars=stars;
+  document.getElementById('sub-pay-btn').textContent=`⭐ Оформить PRO — ${stars} Stars`;
+}
+function pay(){sendBot('subscribe',{plan:S.subPlan,stars:S.subStars});toast('⏳ Переходим к оплате...');}
 
-function go(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const pid=PM[page]||'pg-home';
-  document.getElementById(pid)?.classList.add('active');
-  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
-  if(NM[page]) document.getElementById(NM[page])?.classList.add('on');
+// ── ROUTING ────────────────────────────────────────────────
+const PM={home:'pg-home',docs:'pg-docs',mmc:'pg-mmc',sub:'pg-sub','chk-patent':'pg-chk-patent','chk-registry':'pg-chk-registry','chk-ban':'pg-chk-ban',notify:'pg-notify',snils:'pg-snils',whatif:'pg-whatif','wi-d':'pg-wi-d',risk:'pg-risk',lawyer:'pg-lawyer','b2b-add':'pg-b2b-add','b2b-detail':'pg-b2b-detail','b2b-req':'pg-b2b-req','b2b-risk':'pg-b2b-risk'};
+const NM={home:'nb-home',docs:'nb-docs',mmc:'nb-mmc',sub:'nb-sub'};
+let hist=[];
+function go(p){
+  if(!hist.length){hist=[p];}else if(hist[hist.length-1]!==p){hist.push(p);}
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  document.getElementById(PM[p]||'pg-home')?.classList.add('on');
+  document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
+  if(NM[p])document.getElementById(NM[p])?.classList.add('on');
   window.scrollTo(0,0);
-  if(page==='payment-tracker') renderPaymentTracker();
-  if(page==='ref') renderRefPage();
+  if(p==='b2b-risk')renderB2BRisk();
+  if(p==='risk')renderRiskAnalysis();
+}
+function goBack(){if(hist.length>1){hist.pop();go(hist[hist.length-1]);}else{go('home');}}
+
+function setLang(l){S.lang=l;localStorage.setItem('ml',l);document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('on',['ru','uz','tj','kz','ky','az','md','ua','hy'][i]===l);});sendBot('lang',{lang:l});}
+
+// ── ROLE ───────────────────────────────────────────────────
+function setRole(r){
+  S.role=r;localStorage.setItem('role',r);
+  document.getElementById('vm').style.display=r==='migrant'?'block':'none';
+  document.getElementById('ve').style.display=r!=='migrant'?'block':'none';
+  document.getElementById('role-m').classList.toggle('on',r==='migrant');
+  document.getElementById('role-e').classList.toggle('on',r!=='migrant');
+  if(r!=='migrant')renderB2BHome();
 }
 
-// ============================================================
-// LANG
-// ============================================================
-function setLang(lang){
-  S.lang=lang;
-  localStorage.setItem('mpro_lang',lang);
-  document.querySelectorAll('.lang-btn').forEach((b,i)=>{
-    const ls=['ru','uz','tj','kz','ky','az','md','ua','by','hy'];
-    b.classList.toggle('on',ls[i]===lang);
+// ── HEALTH SCORE ───────────────────────────────────────────
+function calcHealth(){
+  if(!S.docs.length)return{score:50,c:'var(--or)',label:'Нет документов',tip:'Добавьте документы',issues:[]};
+  let sc=100,iss=[];
+  S.docs.forEach(d=>{
+    try{
+      const dl=Math.ceil((new Date(d.exp)-new Date())/86400000);
+      const dt=DT[d.type]||DT.other;
+      if(dl<0){sc-=40;iss.push({c:'var(--red)',t:`${dt.emoji} ${dt.name} просрочен!`});}
+      else if(dl<=7){sc-=35;iss.push({c:'var(--red)',t:`${dt.emoji} ${dt.name} — ${dl} дней!`});}
+      else if(dl<=dt.warn){sc-=12;iss.push({c:'var(--or)',t:`${dt.emoji} ${dt.name} — ${dl} дней`});}
+    }catch{}
   });
-  sendBot('lang_changed',{lang});
+  sc=Math.max(0,Math.min(100,sc));
+  let c,l,t;
+  if(sc>=80){c='var(--green)';l='✅ Всё в порядке';t='Документы действительны';}
+  else if(sc>=60){c='var(--or)';l='⚠️ Требует внимания';t='Проверьте сроки';}
+  else{c='var(--red)';l='🚨 Критическая ситуация';t='Срочно продлите документы!';}
+  if(!iss.length)iss=[{c:'var(--green)',t:'Все документы в порядке'}];
+  return{score:sc,c,label:l,tip:t,issues:iss};
+}
+function renderHealth(){
+  const h=calcHealth();const C=2*Math.PI*42;
+  const rf=document.getElementById('rf');if(!rf)return;
+  rf.style.stroke=h.c;rf.style.strokeDashoffset=C-(C*h.score/100);
+  document.getElementById('snum').textContent=h.score;document.getElementById('snum').style.color=h.c;
+  document.getElementById('slbl').textContent=h.label;document.getElementById('slbl').style.color=h.c;
+  document.getElementById('stip').textContent=h.tip;
+  document.getElementById('ilist').innerHTML=h.issues.map(i=>`<div class="issue-item"><div class="issue-dot" style="background:${i.c}"></div>${i.t}</div>`).join('');
 }
 
-// ============================================================
-// PATENTS
-// ============================================================
-function renderPats(){
-  ['pats-home','pats-cab'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el) return;
-    if(!S.patents.length){
-      el.innerHTML='<div class="empty"><span class="em">🪪</span>Нет патентов</div>';
-      return;
-    }
-    let h='';
-    S.patents.forEach((p,i)=>{
-      const exp=new Date(p.exp),dl=Math.ceil((exp-new Date())/86400000);
-      let cls='g',btxt=`🟢 ${dl}д`,bcls='g';
-      if(dl<0){cls='r';btxt='❌ Просрочен';bcls='r';}
-      else if(dl<=14){cls='r';btxt=`🔴 ${dl}д`;bcls='r';}
-      else if(dl<=30){cls='o';btxt=`🟠 ${dl}д`;bcls='o';}
-      h+=`<div class="pat-card" onclick="patDetail(${i})">
-        <div class="pat-hdr"><div class="pat-ico ${cls}">🪪</div>
-        <div class="pat-inf"><div class="pat-name">Патент</div><div class="pat-num">${p.s} ${p.n}</div></div>
-        <div class="badge ${bcls}">${btxt}</div></div>
-        <div class="pat-rows">
-          <div class="pat-row"><span>Выдан</span><span>${fd(p.i)}</span></div>
-          <div class="pat-row"><span>До</span><span>${fd(p.exp)}</span></div>
-          <div class="pat-row"><span>Регион</span><span>${p.r||'—'}</span></div>
-        </div></div>`;
-    });
-    el.innerHTML=h;
-  });
+// ── DOCS ───────────────────────────────────────────────────
+function renderDocs(){
+  const el=document.getElementById('docs-list');if(!el)return;
+  if(!S.docs.length){el.innerHTML='<div class="empty"><div class="empty-i">📄</div><div class="empty-t">Нет документов</div><div class="empty-s">Добавьте патент, РВП или ВНЖ<br>для отслеживания сроков</div></div>';renderHealth();return;}
+  el.innerHTML=S.docs.map((d,i)=>{
+    const dt=DT[d.type]||DT.other;
+    const dl=Math.ceil((new Date(d.exp)-new Date())/86400000);
+    let cls='g',bt=`🟢 ${dl}д`;
+    if(dl<0){cls='r';bt='🔴 Просрочен';}else if(dl<=14){cls='r';bt=`🔴 ${dl}д`;}else if(dl<=30){cls='o';bt=`🟠 ${dl}д`;}
+    return`<div class="card" style="cursor:default">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,${cls==='g'?'#16a34a,#15803d':cls==='r'?'#dc2626,#b91c1c':'#ea580c,#c2410c'});display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">${dt.emoji}</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:700">${dt.name}</div><div style="font-size:12px;color:var(--mu2)">${d.s||''} ${d.n}</div></div>
+        <div class="badge ${cls}">${bt}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--mu2)">Выдан</span><span style="font-weight:600">${fd(d.i)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--mu2)">До</span><span style="font-weight:600">${fd(d.exp)}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--mu2)">Регион</span><span style="font-weight:600">${d.r||'—'}</span></div>
+      </div>
+      <button class="btn r" onclick="delDoc(${i})" style="margin-top:10px;padding:8px;font-size:12px">🗑️ Удалить</button>
+    </div>`;
+  }).join('');
+  renderHealth();
 }
-
-function patDetail(i){
-  const p=S.patents[i];
-  document.getElementById('cp-s').value=p.s||'';
-  document.getElementById('cp-n').value=p.n||'';
-  if(p.bs) document.getElementById('cp-bs').value=p.bs;
-  if(p.bn) document.getElementById('cp-bn').value=p.bn;
-  go('check-patent');
-}
-
-function savePat(){
-  const s=v('ap-s'),n=v('ap-n'),bs=v('ap-bs'),bn=v('ap-bn'),i=v('ap-i'),exp=v('ap-e'),r=v('ap-r')||'—';
+function delDoc(i){if(!confirm('Удалить?'))return;S.docs.splice(i,1);localStorage.setItem('md',JSON.stringify(S.docs));renderDocs();}
+function adtc(){document.getElementById('ad-blank').style.display=g('ad-type')==='patent'?'block':'none';}
+function saveDoc(){
+  const type=g('ad-type'),s=g('ad-s'),n=g('ad-n'),bs=g('ad-bs'),bn=g('ad-bn'),i=g('ad-i'),exp=g('ad-e'),r=g('ad-r')||'—';
   if(!n||!i||!exp){toast('⚠️ Введите номер и даты');return;}
-  S.patents.push({s,n,bs,bn,i,exp,r});
-  localStorage.setItem('mpro_pats',JSON.stringify(S.patents));
-  renderPats();
-  closeSheet2('sh-patent');
-  ['ap-s','ap-n','ap-bs','ap-bn','ap-i','ap-e','ap-r'].forEach(id=>document.getElementById(id).value='');
-  toast('✅ Патент добавлен! Напоминания настроены.');
-  sendBot('patent_added',{s,n,i,exp,r});
+  S.docs.push({type,s,n,bs,bn,i,exp,r});
+  localStorage.setItem('md',JSON.stringify(S.docs));
+  renderDocs();clsOv2('sh-doc');
+  ['ad-s','ad-n','ad-bs','ad-bn','ad-i','ad-e','ad-r'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  toast('✅ Документ добавлен!');sendBot('doc_added',{type,n,exp});
 }
 
-// ============================================================
-// STAY
-// ============================================================
-function saveEntry(val){
-  S.entry=val;localStorage.setItem('mpro_entry',val);updateStay(val);
-}
+// ── STAY ───────────────────────────────────────────────────
+function saveEntry(val){S.entry=val;localStorage.setItem('me',val);updateStay(val);}
 function updateStay(d){
   if(!d)return;
-  const dIn=Math.ceil((new Date()-new Date(d))/86400000);
-  const dL=90-dIn;
-  const num=document.getElementById('stay-num');
-  if(!num)return;
-  num.textContent=Math.max(0,dL);
-  const dt=document.getElementById('stay-dt');
-  if(dt)dt.textContent='Въезд: '+fd(d);
-  const pct=Math.min(100,Math.max(0,(dL/90)*100));
-  const bar=document.getElementById('stay-bar');
-  if(bar){bar.style.width=pct+'%';bar.className='pbar-fill'+(dL<=30?' w':'');}
-  num.className='days-num '+(dL<=0?'r':dL<=14?'r':dL<=30?'o':'g');
-  const det=document.getElementById('stay-detail');
-  if(det){det.style.display='block';
-    const ci=document.getElementById('cd-in');const cl=document.getElementById('cd-left');
-    if(ci)ci.textContent=dIn;if(cl)cl.textContent=Math.max(0,dL);
-  }
+  const dI=Math.ceil((new Date()-new Date(d))/86400000);
+  const dL=90-dI;
+  const sc=document.getElementById('stay-card');if(sc)sc.style.display='block';
+  const sn=document.getElementById('snum2');if(sn)sn.textContent=Math.max(0,dL);
+  const sb=document.getElementById('sbar');if(sb){sb.style.width=Math.min(100,Math.max(0,(dL/90)*100))+'%';sb.className='pbar-fill '+(dL<=30?'warn':'ok');}
+  const sd=document.getElementById('sdt');if(sd)sd.textContent='Въезд: '+fd(d);
+  const sg=document.getElementById('stay-grid');if(sg){sg.style.display='grid';document.getElementById('cd-in').textContent=dI;document.getElementById('cd-left').textContent=Math.max(0,dL);}
 }
 
-// ============================================================
-// CHECKS
-// ============================================================
-function swTab(g,t){
-  if(g==='p'){
-    document.getElementById('ptab1').style.display=t===1?'block':'none';
-    document.getElementById('ptab2').style.display=t===2?'block':'none';
-    document.getElementById('tb-p1').classList.toggle('on',t===1);
-    document.getElementById('tb-p2').classList.toggle('on',t===2);
-  }
-}
+// ── CHECK DATA ─────────────────────────────────────────────
+function showPatData(){const s=g('cp-s'),n=g('cp-n'),bs=g('cp-bs'),bn=g('cp-bn'),p=g('cp-p');if(!n){toast('Введите номер патента');return;}const e=document.getElementById('cp-d');e.style.display='block';e.innerHTML=`<div class="box b"><b>Введите на сайте МВД:</b><br>${s&&s!=='-'?`Серия: ${s}<br>`:''}Номер: ${n}<br>${bs&&bs!=='-'?`Серия бланка: ${bs}<br>`:''}${bn&&bn!=='-'?`Номер бланка: ${bn}<br>`:''}${p?`Паспорт: ${p}`:''}</div>`;}
+function showRgData(){const l=g('rg-l'),f=g('rg-f'),b=g('rg-b'),pn=g('rg-pn');if(!l||!f||!b||!pn){toast('Заполните все поля');return;}const e=document.getElementById('rg-d');e.style.display='block';e.innerHTML=`<div class="box b"><b>Введите на сайте МВД:</b><br>Фамилия: ${l}<br>Имя: ${f}<br>Дата рождения: ${b}<br>Паспорт: ${pn}</div>`;}
+function showBanData(){const l=g('bn-l'),f=g('bn-f'),b=g('bn-b'),pn=g('bn-pn');if(!l||!f||!b||!pn){toast('Заполните все поля');return;}const e=document.getElementById('bn-d');e.style.display='block';e.innerHTML=`<div class="box b"><b>Введите на сайте МВД:</b><br>Фамилия: ${l}<br>Имя: ${f}<br>Дата рождения: ${b}<br>Паспорт: ${pn}</div>`;}
 
-function doPatent1(){
-  const s=v('cp-s'),n=v('cp-n'),bs=v('cp-bs'),bn=v('cp-bn'),p=v('cp-p'),c=v('cp-c');
-  if(!n){toast('Введите номер патента');return;}
-  sendBot('check_patent',{type:'patent',s,n,bs,bn,p,c,lang:S.lang});
-  const el=document.getElementById('cp-result');
-  el.innerHTML=`<div class="res-card w" style="text-align:left">
-    <div class="res-ico" style="text-align:center">🪪</div>
-    <div class="res-t" style="text-align:center">Данные для проверки на МВД</div>
-    <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.8">
-      ${s?'<b>Серия:</b> '+s+'<br>':''}
-      <b>Номер:</b> ${n}<br>
-      ${bs?'<b>Серия бланка:</b> '+bs+'<br>':''}
-      ${bn?'<b>Номер бланка:</b> '+bn+'<br>':''}
-      ${p?'<b>Паспорт:</b> '+p:''}
-    </div></div>
-    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank">
-      <button class="btn g" style="margin-top:10px">🔍 Открыть МВД и проверить</button></a>`;
-}
-
-function doPatent2(){
-  const s=v('cp2-s'),n=v('cp2-n'),c=v('cp2-c');
-  if(!n){toast('Введите номер паспорта');return;}
-  sendBot('check_patent',{type:'passport',s,n,c,lang:S.lang});
-  const el=document.getElementById('cp-result');
-  el.innerHTML=`<div class="res-card w" style="text-align:left">
-    <div class="res-ico" style="text-align:center">🪪</div>
-    <div class="res-t" style="text-align:center">Данные для проверки</div>
-    <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.8">
-      ${s?'<b>Серия:</b> '+s+'<br>':''}
-      <b>Номер:</b> ${n}
-    </div></div>
-    <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank">
-      <button class="btn g" style="margin-top:10px">🔍 Открыть МВД и проверить</button></a>`;
-}
-
-function doRegistry(){
-  const l=v('rg-l'),f=v('rg-f'),m=v('rg-m'),b=v('rg-b'),ps=v('rg-ps'),pn=v('rg-pn'),pd=v('rg-pd'),c=v('rg-c');
-  if(!l||!f||!b){toast('Заполните фамилию, имя и дату рождения');return;}
-  if(!pn){toast('Введите номер паспорта');return;}
-  sendBot('check_registry',{l,f,m,b,ps,pn,pd,c,lang:S.lang});
-  document.getElementById('rg-result').innerHTML=`
-    <div class="res-card w" style="text-align:left">
-      <div class="res-ico" style="text-align:center">📋</div>
-      <div class="res-t" style="text-align:center">Введите на сайте МВД:</div>
-      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.8">
-        <b>Фамилия:</b> ${l}<br><b>Имя:</b> ${f}<br>
-        ${m?'<b>Отчество:</b> '+m+'<br>':''}
-        <b>Дата рождения:</b> ${b}<br>
-        ${ps?'<b>Серия:</b> '+ps+'<br>':''}
-        <b>Номер:</b> ${pn}<br>
-        ${pd?'<b>Дата выдачи:</b> '+pd:''}
-      </div></div>
-    <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank">
-      <button class="btn g" style="margin-top:10px">🔍 Открыть реестр на МВД.РФ</button></a>`;
-}
-
-function doBan(){
-  const l=v('bn-l'),f=v('bn-f'),m=v('bn-m'),b=v('bn-b'),ps=v('bn-ps'),pn=v('bn-pn'),pd=v('bn-pd'),pe=v('bn-pe'),c=v('bn-c');
-  if(!l||!f||!b){toast('Заполните фамилию, имя и дату рождения');return;}
-  if(!pn){toast('Введите номер паспорта');return;}
-  sendBot('check_ban',{l,f,m,b,ps,pn,pd,pe,c,lang:S.lang});
-  document.getElementById('bn-result').innerHTML=`
-    <div class="res-card w" style="text-align:left">
-      <div class="res-ico" style="text-align:center">📋</div>
-      <div class="res-t" style="text-align:center">Введите на сайте МВД:</div>
-      <div style="font-size:13px;font-weight:700;margin-top:10px;line-height:1.8">
-        <b>Фамилия:</b> ${l}<br><b>Имя:</b> ${f}<br>
-        ${m?'<b>Отчество:</b> '+m+'<br>':''}
-        <b>Дата рождения:</b> ${b}<br>
-        ${ps?'<b>Серия:</b> '+ps+'<br>':''}
-        <b>Номер:</b> ${pn}<br>
-        ${pd?'<b>Дата выдачи:</b> '+pd+'<br>':''}
-        ${pe?'<b>Действует до:</b> '+pe:''}
-      </div></div>
-    <a href="https://xn--b1aew.xn--p1ai/services/1697527" target="_blank">
-      <button class="btn r" style="margin-top:10px">🔍 Проверить запрет на МВД.РФ</button></a>`;
-}
-
-// ============================================================
-// PAYMENT TRACKER
-// ============================================================
-function updatePaymentTracker(){ renderPaymentTracker(); }
-
-function renderPaymentTracker(){
-  const amount = parseInt(document.getElementById('pt-amount')?.value)||0;
-  const day = parseInt(document.getElementById('pt-day')?.value)||15;
-  const start = document.getElementById('pt-start')?.value;
-  const el = document.getElementById('payment-list');
-  const totalCard = document.getElementById('pt-total-card');
-  if(!el) return;
-  if(!start||!amount){
-    el.innerHTML='<div class="empty"><span class="em">💳</span>Заполните сумму и дату начала</div>';
-    return;
-  }
-  const startDate = new Date(start);
-  const today = new Date();
-  const months = [];
-  const cur = new Date(startDate);
-  for(let i=0;i<12;i++){
-    const payDate = new Date(cur.getFullYear(),cur.getMonth(),day);
-    const isPast = payDate < today;
-    const isCurrent = payDate.getMonth()===today.getMonth()&&payDate.getFullYear()===today.getFullYear();
-    const monthName = payDate.toLocaleDateString('ru-RU',{month:'long',year:'numeric'});
-    const isPaid = S.payments.includes(payDate.toISOString().slice(0,7));
-    let status='due',statusTxt='Ожидается';
-    if(isPaid){status='paid';statusTxt='✅ Оплачено';}
-    else if(isPast&&!isCurrent){status='late';statusTxt='⚠️ Просрочено';}
-    else if(isCurrent){status='due';statusTxt='📅 Текущий';}
-    months.push({monthName,payDate,status,statusTxt,isPaid,isCurrent});
-    cur.setMonth(cur.getMonth()+1);
-  }
-  let html='';
-  months.forEach(m=>{
-    html+=`<div class="pay-month-card" style="${m.isCurrent?'border-color:var(--blue)':''}">
-      <div class="pay-month-hdr">
-        <span class="pay-month-name">${m.monthName}</span>
-        <span class="pay-status ${m.status}">${m.statusTxt}</span>
-      </div>
-      <div class="pay-amount">До ${m.payDate.getDate()} числа · ${amount.toLocaleString('ru')} ₽</div>
-    </div>`;
+// ── RISK ANALYSIS ──────────────────────────────────────────
+function renderRiskAnalysis(){
+  const el=document.getElementById('risk-body');if(!el)return;
+  if(!S.docs.length){el.innerHTML='<div class="empty"><div class="empty-i">📊</div><div class="empty-t">Нет документов</div><div class="empty-s">Добавьте документы для анализа рисков</div></div><button class="btn" onclick="openOv(\'sh-doc\')">➕ Добавить документ</button>';return;}
+  let risks=[],score=100;
+  S.docs.forEach(d=>{
+    const dl=Math.ceil((new Date(d.exp)-new Date())/86400000);
+    const dt=DT[d.type]||DT.other;
+    if(dl<0){score-=40;risks.push({c:'var(--red)',icon:'🚨',t:`${dt.name} просрочен!`,s:`Просрочен на ${Math.abs(dl)} дней — угроза депортации`});}
+    else if(dl<=14){score-=30;risks.push({c:'var(--red)',icon:'⚠️',t:`${dt.name} истекает!`,s:`Осталось ${dl} дней — срочно продлите`});}
+    else if(dl<=30){score-=10;risks.push({c:'var(--or)',icon:'⏰',t:`${dt.name} — ${dl} дней`,s:'Рекомендуем начать продление'});}
+    else{risks.push({c:'var(--green)',icon:'✅',t:`${dt.name} в порядке`,s:`До окончания ${dl} дней`});}
   });
-  el.innerHTML=html;
-  const paid=months.filter(m=>m.isPaid).length;
-  const next=months.find(m=>!m.isPaid&&m.status!=='late');
-  if(totalCard){
-    totalCard.style.display='block';
-    document.getElementById('pt-paid-count').textContent=paid;
-    document.getElementById('pt-paid-sum').textContent=(paid*amount).toLocaleString('ru')+' ₽';
-    document.getElementById('pt-next').textContent=next?next.monthName:'Все оплачены ✅';
-  }
+  score=Math.max(0,score);
+  el.innerHTML=`
+    <div class="health-card" style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="font-size:44px;font-weight:900;color:${score>=80?'var(--green)':score>=60?'var(--or)':'var(--red)'}">${score}</div>
+        <div><div style="font-size:14px;font-weight:700">${score>=80?'Низкий риск':score>=60?'Средний риск':'Высокий риск!'}</div><div style="font-size:12px;color:var(--mu2)">из 100 баллов безопасности</div></div>
+      </div>
+    </div>
+    ${risks.map(r=>`<div class="card" style="border-color:rgba(${r.c.includes('green')?'34,197,94':r.c.includes('or')?'249,115,22':'239,68,68'},.2)">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font-size:24px">${r.icon}</span><div><div style="font-size:14px;font-weight:700;color:${r.c}">${r.t}</div><div style="font-size:12px;color:var(--mu2)">${r.s}</div></div></div>
+    </div>`).join('')}
+    ${score<80?`<button class="btn pi" onclick="go('lawyer')" style="margin-top:4px">⚖️ Записаться к юристу</button>`:''}
+    <button class="btn out" onclick="goBack()">← Назад</button>
+  `;
 }
 
-function markPaid(){
-  const today=new Date();
-  const key=today.toISOString().slice(0,7);
-  if(!S.payments.includes(key)){
-    S.payments.push(key);
-    localStorage.setItem('mpro_payments',JSON.stringify(S.payments));
-    renderPaymentTracker();
-    toast('✅ Текущий месяц отмечен оплаченным!');
-  } else {
-    toast('Этот месяц уже отмечен как оплаченный');
-  }
+// ── WHAT IF ────────────────────────────────────────────────
+const WI={
+  expired:{t:'🔴 Просрочен патент',h:`<div class="box r">❗ Срочно прекратите работу!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Немедленно прекратите работу — штраф до 5 000 ₽ + депортация</div></div><div class="sr"><div class="sn">2</div><div class="st">До 30 дней: выехать и въехать снова</div></div><div class="sr"><div class="sn">3</div><div class="st">Более 30 дней: возможен запрет — нужен юрист!</div></div></div>`},
+  lost_mk:{t:'📄 Потерял миграционную карту',h:`<div class="box o">⚠️ Обратитесь в ГУВМ МВД в течение 3 дней!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">ГУВМ МВД по месту пребывания</div></div><div class="sr"><div class="sn">2</div><div class="st">Паспорт + заявление о потере</div></div><div class="sr"><div class="sn">3</div><div class="st">Штраф: до 5 000 ₽</div></div></div>`},
+  no_pay:{t:'💸 Не заплатил за патент',h:`<div class="box r">❗ Пропуск = аннулирование патента!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Проверьте статус на сервисы.гувм.мвд.рф</div></div><div class="sr"><div class="sn">2</div><div class="st">Если активен — срочно оплатите</div></div><div class="sr"><div class="sn">3</div><div class="st">Если аннулирован — оформляйте новый</div></div></div>`},
+  no_salary:{t:'💼 Не выплатили зарплату',h:`<div class="box b">✅ Те же права, что у гражданина РФ!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Соберите доказательства: договор, расчётные листки</div></div><div class="sr"><div class="sn">2</div><div class="st">Трудовая инспекция (бесплатно) или прокуратура</div></div><div class="sr"><div class="sn">3</div><div class="st">Суд — срок подачи 1 год</div></div></div>`},
+  ban:{t:'🚫 Запрет на въезд',h:`<div class="box r">❗ Каждый день важен!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Узнайте причину: запрос в ГУВМ МВД</div></div><div class="sr"><div class="sn">2</div><div class="st">Ошибка → заявление об исправлении</div></div><div class="sr"><div class="sn">3</div><div class="st">Обжалование в суде — 10 дней!</div></div></div>`},
+  moved:{t:'🏠 Переехал в другой город',h:`<div class="box o">⚠️ Встать на учёт — 7 рабочих дней!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Миграционный учёт по новому адресу</div></div><div class="sr"><div class="sn">2</div><div class="st">Патент: только в регионе выдачи!</div></div><div class="sr"><div class="sn">3</div><div class="st">РВП/ВНЖ: уведомить ГУВМ о смене адреса</div></div></div>`},
+  job_change:{t:'💼 Сменил работодателя',h:`<div class="box o">⚠️ Уведомить МВД — 3 рабочих дня!</div><div class="card"><div class="sr"><div class="sn">1</div><div class="st">Старый работодатель уведомляет — 3 дня</div></div><div class="sr"><div class="sn">2</div><div class="st">Новый работодатель уведомляет — 3 дня</div></div><div class="sr"><div class="sn">3</div><div class="st">Заключите официальный трудовой договор</div></div></div>`}
+};
+function wi(key){const d=WI[key];if(!d)return;document.getElementById('wi-title').textContent=d.t;document.getElementById('wi-body').innerHTML=d.h+`<button class="btn pi" onclick="go('lawyer')" style="margin-top:4px">⚖️ Консультация юриста</button><button class="btn out" onclick="go('whatif')">← Назад</button>`;go('wi-d');}
+
+// ── B2B ────────────────────────────────────────────────────
+function empDl(e){if(!e.docExp||e.docType==='none')return null;return Math.ceil((new Date(e.docExp)-new Date())/86400000);}
+function empSt(e){const dl=empDl(e);if(dl===null)return{cls:'mu',icon:'❓',t:'Нет документов'};if(dl<0)return{cls:'r',icon:'🔴',t:`Просрочен ${Math.abs(dl)}д`};if(dl<=14)return{cls:'r',icon:'🔴',t:`${dl} д`};if(dl<=30)return{cls:'o',icon:'🟠',t:`${dl} д`};return{cls:'g',icon:'🟢',t:`${dl} д`};}
+function renderB2BHome(){
+  const emps=S.emps;let ok=0,w=0;
+  emps.forEach(e=>{const st=empSt(e);if(st.cls==='r'||st.cls==='mu')w++;else ok++;});
+  ['b2b-t','b2b-o','b2b-w'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=[emps.length,ok,w][i];});
+  const el=document.getElementById('emp-list-h');if(!el)return;
+  if(!emps.length){el.innerHTML='<div class="empty"><div class="empty-i">👥</div><div class="empty-t">Нет сотрудников</div><div class="empty-s">Добавьте первого сотрудника</div></div>';return;}
+  el.innerHTML=emps.slice(0,5).map((e,i)=>{
+    const st=empSt(e);const dt=DT[e.docType]||DT.other;
+    return`<div class="emp-card" onclick="showEmpD(${i})">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="emp-av">${(e.name||'?').charAt(0)}</div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:700">${e.name}</div><div style="font-size:12px;color:var(--mu2)">${CITS[e.cit]||'—'} · ${e.pos||'—'}</div></div>
+        <div class="badge ${st.cls}">${st.icon} ${st.text||st.t}</div>
+      </div>
+    </div>`;
+  }).join('');
+  if(emps.length>5)el.innerHTML+=`<button class="btn out" style="margin-top:4px" onclick="renderAllEmps()">Все сотрудники (${emps.length})</button>`;
+}
+function showEmpD(i){
+  const e=S.emps[i];if(!e)return;
+  const st=empSt(e);const dt=DT[e.docType]||DT.other;
+  document.getElementById('emp-dtitle').textContent=e.name;
+  document.getElementById('emp-dbody').innerHTML=`
+    <div class="card">
+      <div style="text-align:center;margin-bottom:14px">
+        <div class="emp-av" style="width:56px;height:56px;font-size:22px;margin:0 auto 8px">${(e.name||'?').charAt(0)}</div>
+        <div style="font-size:16px;font-weight:700">${e.name}</div>
+        <div style="font-size:13px;color:var(--mu2)">${CITS[e.cit]||'—'} · ${e.pos||'—'}</div>
+      </div>
+      <div class="irow"><span class="irow-l">Паспорт</span><span class="irow-v">${e.pn||'—'}</span></div>
+      <div class="irow"><span class="irow-l">Трудоустроен</span><span class="irow-v">${fd(e.hd)}</span></div>
+      <div class="irow"><span class="irow-l">Документ</span><span class="irow-v">${dt.emoji} ${dt.name}</span></div>
+      ${e.dn?`<div class="irow"><span class="irow-l">Номер</span><span class="irow-v">${e.dn}</span></div>`:''}
+      ${e.docExp?`<div class="irow"><span class="irow-l">До</span><span class="irow-v"><span class="badge ${st.cls}">${st.icon} ${fd(e.docExp)}</span></span></div>`:''}
+    </div>
+    <button class="btn t" onclick="sendBot('notify_mvd',{empName:'${e.name}'})">📬 Уведомить МВД</button>
+    <button class="btn r" onclick="delEmp(${i})" style="margin-top:4px">🗑️ Удалить</button>
+    <button class="btn out" onclick="goBack()">← Назад</button>
+  `;go('b2b-detail');
+}
+function saveEmp(){
+  const name=g('em-name'),cit=g('em-cit'),pos=g('em-pos'),pn=g('em-pn'),hd=g('em-hd'),docType=g('em-dtype'),dn=g('em-dn'),docExp=g('em-de');
+  if(!name||!pn){toast('⚠️ Введите ФИО и номер паспорта');return;}
+  S.emps.push({name,cit,pos,pn,hd,docType,dn,docExp});
+  localStorage.setItem('emps',JSON.stringify(S.emps));
+  ['em-name','em-pos','em-pn','em-hd','em-dn','em-de'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  toast('✅ Сотрудник добавлен!');sendBot('employee_added',{name,docType,docExp});
+  setRole('employer');go('home');
+}
+function delEmp(i){if(!confirm('Удалить сотрудника?'))return;S.emps.splice(i,1);localStorage.setItem('emps',JSON.stringify(S.emps));renderB2BHome();goBack();}
+function renderB2BRisk(){
+  const el=document.getElementById('b2b-risk-body');if(!el)return;
+  if(!S.emps.length){el.innerHTML='<div class="empty"><div class="empty-i">⚠️</div><div class="empty-t">Нет сотрудников</div></div><button class="btn p" onclick="go(\'b2b-add\')">➕ Добавить</button>';return;}
+  let rows=[],minF=0,maxF=0;
+  const FINE={expired:[250000,800000],warn:[125000,400000],none:[400000,1000000]};
+  S.emps.forEach(e=>{
+    const dl=empDl(e);const dt=DT[e.docType]||DT.other;
+    let c='var(--green)',t='',mn=0,mx=0;
+    if(e.docType==='none'||dl===null){c='var(--red)';t=`${e.name}: нет документов`;mn=FINE.none[0];mx=FINE.none[1];}
+    else if(dl<0){c='var(--red)';t=`${e.name}: ${dt.emoji} просрочен ${Math.abs(dl)}д`;mn=FINE.expired[0];mx=FINE.expired[1];}
+    else if(dl<=30){c='var(--or)';t=`${e.name}: ${dt.emoji} ${dl} дней`;mn=FINE.warn[0];mx=FINE.warn[1];}
+    else{c='var(--green)';t=`${e.name}: ${dt.emoji} ${dl} дней — ОК`;}
+    rows.push({c,t,mn,mx});minF+=mn;maxF+=mx;
+  });
+  el.innerHTML=`
+    ${rows.map(r=>`<div class="card" style="margin-bottom:8px;display:flex;align-items:center;gap:10px;padding:12px"><div style="width:7px;height:7px;border-radius:50%;background:${r.c};flex-shrink:0"></div><span style="font-size:13px;flex:1">${r.t}</span></div>`).join('')}
+    ${maxF>0?`<div class="card" style="margin-top:4px;border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.05)">
+      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px">💸 Потенциальные штрафы</div>
+      <div class="irow"><span class="irow-l">Минимум</span><span class="irow-v" style="color:var(--or)">${minF.toLocaleString('ru')} ₽</span></div>
+      <div class="irow"><span class="irow-l">Максимум</span><span class="irow-v" style="color:var(--red)">${maxF.toLocaleString('ru')} ₽</span></div>
+    </div>
+    <button class="btn pi" onclick="go('lawyer')" style="margin-top:4px">⚖️ Помощь юриста</button>`:'<div class="box g">✅ Рисков не обнаружено!</div>'}
+    <button class="btn out" onclick="goBack()">← Назад</button>
+  `;
+}
+function submitReq(){
+  const co=g('rq-co'),ci=g('rq-ci'),cnt=g('rq-cnt'),job=g('rq-job'),sal=g('rq-sal'),doc=g('rq-doc'),h=g('rq-h'),ct=g('rq-ct');
+  if(!co||!ci||!cnt||!ct){toast('⚠️ Заполните компанию, город, количество и контакт');return;}
+  sendBot('employer_request',{company:co,city:ci,count:cnt,jobType:job,salary:sal,docType:doc,housing:h,contact:ct});
+  toast('✅ Заявка отправлена!');
+  ['rq-co','rq-ci','rq-cnt','rq-job','rq-sal','rq-ct'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  goBack();
 }
 
-// ============================================================
-// REFERRAL
-// ============================================================
-function renderRefPage(){
-  const uid = S.user.id;
-  const botName = 'migr_pomoshnik_bot';
-  const link = `https://t.me/${botName}?start=ref_${uid}`;
-  const el=document.getElementById('ref-link');
-  if(el) el.textContent=link;
-  // Load stats from bot
-  sendBot('get_ref_stats',{});
-}
+// ── BOT BRIDGE ─────────────────────────────────────────────
+function sendBot(action,data){if(tg?.sendData){try{tg.sendData(JSON.stringify({action,...data,userId:S.user?.id,lang:S.lang}));}catch(e){console.log('sendData:',e);}}}
 
-function copyRefLink(){
-  const uid=S.user.id;
-  const link=`https://t.me/migr_pomoshnik_bot?start=ref_${uid}`;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(link).then(()=>toast('📋 Ссылка скопирована!')).catch(()=>toast('Скопируйте ссылку вручную'));
-  } else {
-    toast('Скопируйте ссылку выше');
-  }
-}
+// ── SHEET / OVERLAY ────────────────────────────────────────
+function openOv(id){document.getElementById(id).classList.add('open');}
+function clsOv(e,id){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');}
+function clsOv2(id){document.getElementById(id).classList.remove('open');}
 
-function shareRefLink(){
-  const uid=S.user.id;
-  const link=`https://t.me/migr_pomoshnik_bot?start=ref_${uid}`;
-  const text='Привет! Пользуюсь этим ботом — помогает с документами в России. Перейди по ссылке и получим оба по 7 дней бесплатно!';
-  if(tg?.openTelegramLink){
-    tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
-  } else {
-    window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`,'_blank');
-  }
-}
-
-// ============================================================
-// SUBSCRIPTION
-// ============================================================
-function pickPlan(el,plan,price){
-  document.querySelectorAll('.plan-it').forEach(p=>p.classList.remove('sel'));
-  el.classList.add('sel');S.plan=plan;S.price=price;
-  document.getElementById('pay-btn').textContent=`Оплатить ${price.toLocaleString('ru')} ₽`;
-}
-function pay(){
-  sendBot('subscribe',{plan:S.plan,price:S.price,lang:S.lang});
-  toast('⏳ Переходим к оплате через Telegram...');
-}
-
-// ============================================================
-// DOC ACTIONS
-// ============================================================
-function docAction(type){
-  sendBot('doc_action',{type,lang:S.lang});
-  toast('📎 Напишите боту для загрузки документа');
-}
-
-// ============================================================
-// SEND TO BOT
-// ============================================================
-function sendBot(action,data){
-  if(tg?.sendData){
-    try{tg.sendData(JSON.stringify({action,...data,userId:S.user?.id,lang:S.lang}));}
-    catch(e){console.log('sendData:',e);}
-  }
-}
-
-// ============================================================
-// SHEET
-// ============================================================
-function openSheet(id){document.getElementById(id).classList.add('open');}
-function closeSheet(e,id){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');}
-function closeSheet2(id){document.getElementById(id).classList.remove('open');}
-function stopProp(e){e.stopPropagation();}
-
-// ============================================================
-// UTILS
-// ============================================================
-function v(id){return document.getElementById(id)?.value?.trim()||'';}
+// ── UTILS ──────────────────────────────────────────────────
+function g(id){return document.getElementById(id)?.value?.trim()||'';}
 function fd(d){if(!d)return'—';try{return new Date(d).toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});}catch{return d;}}
 function toast(msg){const o=document.querySelector('.toast');if(o)o.remove();const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3400);}
+function clearData(){if(!confirm('Удалить все данные?'))return;['md','me','ml','role','emps','ob_done','consented','ai_used','ai_date','sub_until'].forEach(k=>localStorage.removeItem(k));csSet('consented','0');location.reload();}
 
-// ============================================================
-// INIT
-// ============================================================
-function init(){
-  const av=S.user.first_name?.charAt(0).toUpperCase()||'М';
-  ['av','cab-av'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=av;});
-  const nm=document.getElementById('cab-name');if(nm)nm.textContent=S.user.first_name||'—';
-  const cid=document.getElementById('cab-id');if(cid)cid.textContent='TG ID: '+S.user.id;
-  if(S.entry){const ei=document.getElementById('entry-inp');if(ei)ei.value=S.entry;updateStay(S.entry);}
-  const langs=['ru','uz','tj','kz','ky','az','md','ua','by','hy'];
-  document.querySelectorAll('.lang-btn').forEach((b,i)=>b.classList.toggle('on',langs[i]===S.lang));
-  renderPats();
+// ── INIT ───────────────────────────────────────────────────
+function initMain(){
+  hist=['home'];
+  const a=S.user.first_name?.charAt(0).toUpperCase()||'М';
+  const av=document.getElementById('av');if(av)av.textContent=a;
+  const hn=document.getElementById('hname');if(hn)hn.textContent=S.user.first_name||'МигрантПро';
 
-  // Show onboarding or consent
-  if(!S.onbDone){
-    document.getElementById('onb-overlay').style.display='flex';
-  } else if(!S.consented){
-    document.getElementById('consent-overlay').style.display='flex';
-  }
+  checkPro();
+  const hb=document.getElementById('hbadge');
+  if(hb)hb.innerHTML=S.isPro?'<div class="pro-badge">PRO ⭐</div>':'<div class="free-badge">FREE</div>';
+  const hs=document.getElementById('hsub');
+  if(hs)hs.textContent=S.isPro?`PRO до ${S.proUntil||'—'}`:'3 вопроса/день бесплатно';
 
-  // Activate home page
-  document.getElementById('pg-home').classList.add('active');
-  document.getElementById('nb-home').classList.add('on');
+  // Скрыть PRO баннер если PRO
+  const pb=document.getElementById('pro-banner');const pk=document.getElementById('pro-ok-card');
+  if(pb)pb.style.display=S.isPro?'none':'block';
+  if(pk){pk.style.display=S.isPro?'block':'none';if(S.isPro){const pu=document.getElementById('pro-until');if(pu)pu.textContent=`PRO активен до ${S.proUntil||'—'}`;}}
+
+  const ei=document.getElementById('entry-inp');if(ei&&S.entry){ei.value=S.entry;updateStay(S.entry);}
+  document.querySelectorAll('.lang-btn').forEach((b,i)=>{b.classList.toggle('on',['ru','uz','tj','kz','ky','az','md','ua','hy'][i]===S.lang);});
+  setRole(S.role);
+  renderDocs();adtc();
+  updateAiBar();
 }
-init();
+
+// ── BACK BUTTON ────────────────────────────────────────────
+if(tg?.BackButton){
+  tg.BackButton.onClick(()=>{
+    if(document.getElementById('pw').classList.contains('show')){closePW();return;}
+    if(hist.length>1){goBack();}else{tg.BackButton.hide();}
+  });
+}
+
+checkConsent();
 </script>
 </body>
 </html>
