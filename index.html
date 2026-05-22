@@ -554,7 +554,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
     <div class="fg"><label class="flbl">Серия бланка (оборотная, если есть)</label><input class="fi" id="cp-bs" placeholder="ПР, МФЦ... (или «—»)" maxlength="10"></div>
     <div class="fg"><label class="flbl">Номер бланка (оборотная, если есть)</label><input class="fi" id="cp-bn" placeholder="6892529" maxlength="15" inputmode="numeric"></div>
     <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="cp-p" placeholder="Номер паспорта" maxlength="20"></div>
-    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="cp-c">CITS_OPT</select></div>
+    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="cp-c"><option value="">-- Выберите --</option><option value="UZB">🇺🇿 Узбекистан</option><option value="TJK">🇹🇯 Таджикистан</option><option value="KAZ">🇰🇿 Казахстан</option><option value="KGZ">🇰🇬 Кыргызстан</option><option value="AZE">🇦🇿 Азербайджан</option><option value="ARM">🇦🇲 Армения</option><option value="BLR">🇧🇾 Беларусь</option><option value="MDA">🇲🇩 Молдова</option><option value="UKR">🇺🇦 Украина</option><option value="OTHER">Другая страна</option></select></div>
     <div id="cp-d" style="display:none;margin-bottom:14px"></div>
     <button class="btn g" onclick="showPatData()">📋 Показать данные для ввода</button>
     <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/tm" target="_blank"><button class="btn">🔍 Открыть проверку на МВД.РФ</button></a>
@@ -567,7 +567,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
   <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">🛡️ Реестр контролируемых лиц</div></div>
   <div class="px">
     <div class="box b">📌 Официальный реестр МВД РФ. Заполните — откроем сайт МВД.</div>
-    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="rg-c" onchange="updPass('rg-c','rg-ps','rg-pn','rg-ps-l','rg-pn-l')">CITS_OPT</select></div>
+    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="rg-c" onchange="updPass('rg-c','rg-ps','rg-pn','rg-ps-l','rg-pn-l')"><option value="">-- Выберите --</option><option value="UZB">🇺🇿 Узбекистан</option><option value="TJK">🇹🇯 Таджикистан</option><option value="KAZ">🇰🇿 Казахстан</option><option value="KGZ">🇰🇬 Кыргызстан</option><option value="AZE">🇦🇿 Азербайджан</option><option value="ARM">🇦🇲 Армения</option><option value="BLR">🇧🇾 Беларусь</option><option value="MDA">🇲🇩 Молдова</option><option value="UKR">🇺🇦 Украина</option><option value="OTHER">Другая страна</option></select></div>
     <div class="fg"><label class="flbl">Фамилия</label><input class="fi" id="rg-l" placeholder="Как в паспорте"></div>
     <div class="fg"><label class="flbl">Имя</label><input class="fi" id="rg-f" placeholder="Имя"></div>
     <div class="fg"><label class="flbl">Отчество (если есть)</label><input class="fi" id="rg-m" placeholder="Оставьте пустым если нет"></div>
@@ -586,7 +586,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
   <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">🚫 Запрет на въезд</div></div>
   <div class="px">
     <div class="box r">⚠️ Вводите данные ТОЧНО как в паспорте — ошибка = неверный результат</div>
-    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="bn-c" onchange="updPass('bn-c','bn-ps','bn-pn','bn-ps-l','bn-pn-l')">CITS_OPT</select></div>
+    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="bn-c" onchange="updPass('bn-c','bn-ps','bn-pn','bn-ps-l','bn-pn-l')"><option value="">-- Выберите --</option><option value="UZB">🇺🇿 Узбекистан</option><option value="TJK">🇹🇯 Таджикистан</option><option value="KAZ">🇰🇿 Казахстан</option><option value="KGZ">🇰🇬 Кыргызстан</option><option value="AZE">🇦🇿 Азербайджан</option><option value="ARM">🇦🇲 Армения</option><option value="BLR">🇧🇾 Беларусь</option><option value="MDA">🇲🇩 Молдова</option><option value="UKR">🇺🇦 Украина</option><option value="OTHER">Другая страна</option></select></div>
     <div class="fg"><label class="flbl">Фамилия (как в паспорте, латиницей)</label><input class="fi" id="bn-l" placeholder="IVANOV"></div>
     <div class="fg"><label class="flbl">Имя</label><input class="fi" id="bn-f" placeholder="IVAN"></div>
     <div class="fg"><label class="flbl">Отчество (если есть)</label><input class="fi" id="bn-m" placeholder="Оставьте пустым если нет"></div>
@@ -812,7 +812,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
   <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">➕ Добавить сотрудника</div></div>
   <div class="px">
     <div class="fg"><label class="flbl">ФИО сотрудника</label><input class="fi" id="em-name" placeholder="Фамилия Имя Отчество"></div>
-    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="em-cit">CITS_OPT</select></div>
+    <div class="fg"><label class="flbl">Гражданство</label><select class="fi" id="em-cit"><option value="">-- Выберите --</option><option value="UZB">🇺🇿 Узбекистан</option><option value="TJK">🇹🇯 Таджикистан</option><option value="KAZ">🇰🇿 Казахстан</option><option value="KGZ">🇰🇬 Кыргызстан</option><option value="AZE">🇦🇿 Азербайджан</option><option value="ARM">🇦🇲 Армения</option><option value="BLR">🇧🇾 Беларусь</option><option value="MDA">🇲🇩 Молдова</option><option value="UKR">🇺🇦 Украина</option><option value="OTHER">Другая страна</option></select></div>
     <div class="fg"><label class="flbl">Должность</label><input class="fi" id="em-pos" placeholder="Должность / профессия"></div>
     <div class="fg"><label class="flbl">Номер паспорта</label><input class="fi" id="em-pn" placeholder="Серия и номер" inputmode="numeric"></div>
     <div class="fg"><label class="flbl">Дата трудоустройства</label><input type="date" class="fi" id="em-hd"></div>
@@ -957,7 +957,7 @@ const DT={
 const CITS={UZB:'🇺🇿 Узбекистан',TJK:'🇹🇯 Таджикистан',KAZ:'🇰🇿 Казахстан',KGZ:'🇰🇬 Кыргызстан',AZE:'🇦🇿 Азербайджан',ARM:'🇦🇲 Армения',BLR:'🇧🇾 Беларусь',MDA:'🇲🇩 Молдова',UKR:'🇺🇦 Украина',OTHER:'Другая'};
 const NO_SERIES=['TJK'];
 const CITS_HTML=`<option value="">-- Выберите --</option>${Object.entries(CITS).map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}`;
-document.body.innerHTML=document.body.innerHTML.replaceAll('CITS_OPT',CITS_HTML);
+// CITS replaced at build time
 
 // ── STATE ──
 const S={
