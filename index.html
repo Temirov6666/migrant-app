@@ -422,6 +422,61 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
   <!-- EMPLOYER VIEW -->
   <div id="ve" style="display:none">
     <div class="px">
+
+      <!-- HERO -->
+      <div style="background:linear-gradient(135deg,#0a0f2e 0%,#111535 50%,#0d1a3a 100%);border-radius:var(--r);padding:24px 18px 20px;margin-bottom:14px;border:1px solid rgba(79,142,247,.2);position:relative;overflow:hidden">
+        <!-- Декоративные круги -->
+        <div style="position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;border:1px solid rgba(79,142,247,.1)"></div>
+        <div style="position:absolute;right:20px;bottom:-60px;width:120px;height:120px;border-radius:50%;border:1px solid rgba(139,92,246,.1)"></div>
+        <!-- Тег -->
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.25);border-radius:99px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--blue);letter-spacing:.5px;margin-bottom:14px">🏢 ДЛЯ РАБОТОДАТЕЛЕЙ</div>
+        <!-- Заголовок -->
+        <div style="font-size:22px;font-weight:900;line-height:1.3;margin-bottom:10px">Нанимаете мигрантов?<br><span style="color:var(--blue)">Контролируйте документы</span></div>
+        <!-- Подзаголовок -->
+        <div style="font-size:13px;color:var(--mu2);line-height:1.7;margin-bottom:16px">Штраф за просроченный патент одного сотрудника — <b style="color:var(--red)">до 800 000 ₽</b>. Мы предупредим за 30, 14 и 7 дней до истечения документов.</div>
+        <!-- Преимущества -->
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+            <div style="width:28px;height:28px;border-radius:8px;background:rgba(34,197,94,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">✅</div>
+            <span>Авто-напоминания о сроках патентов</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+            <div style="width:28px;height:28px;border-radius:8px;background:rgba(79,142,247,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">📊</div>
+            <span>Статусы по каждому сотруднику 🟢🟡🔴</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+            <div style="width:28px;height:28px;border-radius:8px;background:rgba(249,115,22,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">📬</div>
+            <span>Уведомления МВД о трудоустройстве за 3 дня</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px">
+            <div style="width:28px;height:28px;border-radius:8px;background:rgba(139,92,246,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">⚖️</div>
+            <span>Калькулятор штрафов и рисков</span>
+          </div>
+        </div>
+        <!-- CTA -->
+        <button class="btn g" onclick="go('b2b-add')" style="margin-bottom:8px;font-size:14px">➕ Добавить сотрудника</button>
+        <button class="btn out" onclick="go('b2b-req')" style="font-size:14px;margin-bottom:0">📋 Подбор сотрудников под заявку</button>
+      </div>
+
+      <!-- БОЛЬ -->
+      <div style="background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.12);border-radius:var(--r);padding:16px;margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px">💸 Сколько стоит халатность:</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <span style="color:var(--mu2)">Просрочен патент 1 сотрудника</span>
+            <span style="font-weight:800;color:var(--red)">до 800 000 ₽</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <span style="color:var(--mu2)">Не уведомили МВД о трудоустройстве</span>
+            <span style="font-weight:800;color:var(--or)">до 1 000 000 ₽</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+            <span style="color:var(--mu2)">Повторное нарушение</span>
+            <span style="font-weight:800;color:var(--red)">остановка бизнеса</span>
+          </div>
+        </div>
+      </div>
+
       <div class="card" id="b2b-stat">
         <div style="font-size:14px;font-weight:700;margin-bottom:10px">📊 Статус сотрудников</div>
         <div class="stat-grid">
@@ -639,7 +694,8 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
       <div class="li" onclick="sendBot('consult',{topic:'Работодатель'})"><div class="li-ico t">🏢</div><div class="li-txt"><div class="li-t">Вопросы работодателя</div></div><div class="arr">›</div></div>
       <div class="li" onclick="sendBot('consult',{topic:'Другое'})"><div class="li-ico y">📂</div><div class="li-txt"><div class="li-t">Другой вопрос</div></div><div class="arr">›</div></div>
     </div>
-    <div class="box b">💬 После нажатия — юрист напишет вам в Telegram в ближайшее время</div>
+    <div class="box b">💬 После нажатия юрист свяжется с вами в Telegram</div>
+    <a href="https://t.me/Temirov_officiaI" target="_blank"><button class="btn pi">💬 Написать юристу напрямую →</button></a>
   </div>
 </div>
 
@@ -905,7 +961,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
         <option value="patent">🪪 Патент на работу</option>
         <option value="rvp">📘 РВП — разрешение на проживание (3 года)</option>
         <option value="rvpo">📗 РВПО — для обучающихся</option>
-        <option value="vnj">🏠 ВНЖ — вид на жительство (бессрочный)</option>
+        <option value="vnj">🏠 ВНЖ — вид на жительство (бессрочный с 2019)</option>
         <option value="mk">📄 Миграционная карта (90 дней)</option>
         <option value="other">📋 Другой документ</option>
       </select>
@@ -978,29 +1034,29 @@ const FREE_AI=3;
 
 // ── REGIONS DATA ──
 const REGIONS={
-  msk:{name:'Москва и МО',mvd:{name:'ГУВМ МВД Москвы',addr:'ул. Большая Ордынка, 16/4',tel:'+7 (495) 332-28-50',url:'https://xn--b1aew.xn--p1ai/Deljatelnost/district/Moscow'},mmc:{name:'ММЦ Сахарово',addr:'Варшавское шоссе, 64-й км',tel:'+7 (495) 203-88-20',url:'https://mc.mos.ru',hours:'Ежедн. 8:00–20:00'},patent_cost:'7 500',medical:[{name:'ММЦ Сахарово (медкомиссия)',addr:'Варшавское шоссе, 64-й км',tel:'+7 (495) 203-88-20',price:'2000'},{name:'МЦ Миграция Здоровье',addr:'ул. Краснодарская, 52 стр.2',tel:'+7 (495) 645-59-75',price:'2500'},{name:'Клиника Инвитро',addr:'Многие точки в Москве',tel:'+7 (800) 200-36-36',price:'3000'}],links:[{ico:'📝',t:'Запись ММЦ Сахарово',url:'https://mmc.mos.ru/client-office'},{ico:'🏥',t:'Медкомиссия для патента',url:'https://mc.mos.ru/ru/services/medical/'},{ico:'📚',t:'Экзамен по русскому языку',url:'https://mc.mos.ru/ru/services/testing/'}]},
+  msk:{name:'Москва и МО',mvd:{name:'ГУВМ МВД Москвы',addr:'ул. Большая Ордынка, 16/4',tel:'+7 (495) 332-28-50',url:'https://xn--b1aew.xn--p1ai/Deljatelnost/district/Moscow'},mmc:{name:'ММЦ Сахарово',addr:'Варшавское шоссе, 64-й км',tel:'+7 (495) 203-88-20',url:'https://mc.mos.ru',hours:'Ежедн. 8:00–20:00'},patent_cost:'10 000',medical:[{name:'ММЦ Сахарово — Медцентр (вход №6)',addr:'Варшавское шоссе, 64-й км, стр.47',tel:'+7 (495) 539-55-33',price:'5150'},{name:'КДП №121 (аккредитована МВД)',addr:'ул. Маршала Бирюзова, 4',tel:'+7 (495) 941-07-97',price:'3500'}],links:[{ico:'📝',t:'Запись ММЦ Сахарово',url:'https://mmc.mos.ru/client-office'},{ico:'🏥',t:'Медкомиссия для патента',url:'https://mc.mos.ru/ru/services/medical/'},{ico:'📚',t:'Экзамен по русскому языку',url:'https://mc.mos.ru/ru/services/testing/'}]},
   spb:{name:'Санкт-Петербург',mvd:{name:'ГУВМ МВД СПб',addr:'ул. Красного Текстильщика, 10-12',tel:'+7 (812) 573-07-84',url:'https://78.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Санкт-Петербурга',addr:'Адреса МФЦ на сайте',tel:'004',url:'https://gu.spb.ru',hours:'Пн-Пт 9:00–18:00'},patent_cost:'8 000',links:[{ico:'📝',t:'Портал госуслуг СПб',url:'https://gu.spb.ru'},{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  ekb:{name:'Екатеринбург',mvd:{name:'ГУВМ МВД Свердловской обл.',addr:'ул. Крылова, 2',tel:'+7 (343) 358-61-57',url:'https://66.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Екатеринбурга',addr:'ул. Народной Воли, 65',tel:'+7 (343) 204-99-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'9 500',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  nsk:{name:'Новосибирск',mvd:{name:'ГУВМ МВД Новосибирской обл.',addr:'ул. Ленина, 12',tel:'+7 (383) 232-29-11',url:'https://54.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Новосибирска',addr:'ул. Дуси Ковальчук, 179',tel:'+7 (383) 217-99-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'10 860',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  krd:{name:'Краснодар',mvd:{name:'ГУВМ МВД Краснодарского края',addr:'ул. Северная, 4',tel:'+7 (861) 268-50-24',url:'https://23.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Краснодара',addr:'ул. Красная, 176',tel:'+7 (861) 992-00-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'17 120',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  rostov:{name:'Ростов-на-Дону',mvd:{name:'ГУВМ МВД Ростовской обл.',addr:'ул. Береговая, 12',tel:'+7 (863) 244-22-74',url:'https://61.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Ростова-на-Дону',addr:'пр. Стачки, 200/1',tel:'+7 (863) 282-55-55',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'7 500',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  sochi:{name:'Сочи',mvd:{name:'ГУВМ МВД (отдел Сочи)',addr:'ул. Несебрская, 1',tel:'+7 (862) 264-58-58',url:'https://23.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Сочи',addr:'ул. Навагинская, 16',tel:'+7 (862) 290-00-50',url:'https://мфц.рф',hours:'Пн-Пт 9:00–18:00'},patent_cost:'17 120',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  kazan:{name:'Казань',mvd:{name:'ГУВМ МВД Республики Татарстан',addr:'ул. Сибирский тракт, 34',tel:'+7 (843) 560-02-82',url:'https://16.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Казани',addr:'ул. Петербургская, 12',tel:'+7 (843) 207-80-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'7 937',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  ekb:{name:'Екатеринбург',mvd:{name:'ГУВМ МВД Свердловской обл.',addr:'ул. Крылова, 2',tel:'+7 (343) 358-61-57',url:'https://66.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Екатеринбурга',addr:'ул. Народной Воли, 65',tel:'+7 (343) 204-99-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'7 500',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  nsk:{name:'Новосибирск',mvd:{name:'ГУВМ МВД Новосибирской обл.',addr:'ул. Ленина, 12',tel:'+7 (383) 232-29-11',url:'https://54.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Новосибирска',addr:'ул. Дуси Ковальчук, 179',tel:'+7 (383) 217-99-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'7 906',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  krd:{name:'Краснодар',mvd:{name:'ГУВМ МВД Краснодарского края',addr:'ул. Северная, 4',tel:'+7 (861) 268-50-24',url:'https://23.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Краснодара',addr:'ул. Красная, 176',tel:'+7 (861) 992-00-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'27 283',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  rostov:{name:'Ростов-на-Дону',mvd:{name:'ГУВМ МВД Ростовской обл.',addr:'ул. Береговая, 12',tel:'+7 (863) 244-22-74',url:'https://61.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Ростова-на-Дону',addr:'пр. Стачки, 200/1',tel:'+7 (863) 282-55-55',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'10 000',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  sochi:{name:'Сочи',mvd:{name:'ГУВМ МВД (отдел Сочи)',addr:'ул. Несебрская, 1',tel:'+7 (862) 264-58-58',url:'https://23.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Сочи',addr:'ул. Навагинская, 16',tel:'+7 (862) 290-00-50',url:'https://мфц.рф',hours:'Пн-Пт 9:00–18:00'},patent_cost:'27 283',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  kazan:{name:'Казань',mvd:{name:'ГУВМ МВД Республики Татарстан',addr:'ул. Сибирский тракт, 34',tel:'+7 (843) 560-02-82',url:'https://16.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Казани',addr:'ул. Петербургская, 12',tel:'+7 (843) 207-80-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'7 315',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   ufa:{name:'Уфа',mvd:{name:'ГУВМ МВД Республики Башкортостан',addr:'ул. Мустая Карима, 12',tel:'+7 (347) 251-44-41',url:'https://02.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Уфы',addr:'ул. Комсомольская, 158',tel:'+7 (347) 246-00-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'6 500',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  samara:{name:'Самара',mvd:{name:'ГУВМ МВД Самарской обл.',addr:'ул. Арцыбушевская, 171',tel:'+7 (846) 278-97-81',url:'https://63.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Самары',addr:'ул. Авроры, 110',tel:'+7 (846) 200-00-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'11 157',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  perm:{name:'Пермь',mvd:{name:'ГУВМ МВД Пермского края',addr:'ул. Советская, 14',tel:'+7 (342) 212-63-48',url:'https://59.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Перми',addr:'ул. Революции, 2',tel:'+7 (342) 270-10-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'8 137',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  samara:{name:'Самара',mvd:{name:'ГУВМ МВД Самарской обл.',addr:'ул. Арцыбушевская, 171',tel:'+7 (846) 278-97-81',url:'https://63.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Самары',addr:'ул. Авроры, 110',tel:'+7 (846) 200-00-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'10 179',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  perm:{name:'Пермь',mvd:{name:'ГУВМ МВД Пермского края',addr:'ул. Советская, 14',tel:'+7 (342) 212-63-48',url:'https://59.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Перми',addr:'ул. Революции, 2',tel:'+7 (342) 270-10-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'7 100',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   chelyabinsk:{name:'Челябинск',mvd:{name:'ГУВМ МВД Челябинской обл.',addr:'ул. Елькина, 63',tel:'+7 (351) 263-53-87',url:'https://74.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Челябинска',addr:'ул. Энтузиастов, 2',tel:'+7 (351) 247-77-77',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'15 000',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  tyumen:{name:'Тюмень',mvd:{name:'ГУВМ МВД Тюменской обл.',addr:'ул. Холодильная, 56',tel:'+7 (3452) 68-18-68',url:'https://72.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Тюмени',addr:'ул. Орджоникидзе, 63',tel:'+7 (3452) 38-40-40',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'11 471',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  tyumen:{name:'Тюмень',mvd:{name:'ГУВМ МВД Тюменской обл.',addr:'ул. Холодильная, 56',tel:'+7 (3452) 68-18-68',url:'https://72.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Тюмени',addr:'ул. Орджоникидзе, 63',tel:'+7 (3452) 38-40-40',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'9 385',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   krasnoyarsk:{name:'Красноярск',mvd:{name:'ГУВМ МВД Красноярского края',addr:'ул. Дубровинского, 72',tel:'+7 (391) 246-55-55',url:'https://24.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Красноярска',addr:'ул. Карла Маркса, 95',tel:'+7 (391) 222-00-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'8 000',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   irkutsk:{name:'Иркутск',mvd:{name:'ГУВМ МВД Иркутской обл.',addr:'ул. Ленина, 6',tel:'+7 (3952) 33-55-04',url:'https://38.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Иркутска',addr:'ул. Партизанская, 28',tel:'+7 (3952) 55-30-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'12 000',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  omsk:{name:'Омск',mvd:{name:'ГУВМ МВД Омской обл.',addr:'ул. Тарская, 38',tel:'+7 (3812) 78-75-22',url:'https://55.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Омска',addr:'ул. Масленникова, 62',tel:'+7 (3812) 37-27-27',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'7 200',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  omsk:{name:'Омск',mvd:{name:'ГУВМ МВД Омской обл.',addr:'ул. Тарская, 38',tel:'+7 (3812) 78-75-22',url:'https://55.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Омска',addr:'ул. Масленникова, 62',tel:'+7 (3812) 37-27-27',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'6 683',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   kemerovo:{name:'Кемерово',mvd:{name:'ГУВМ МВД Кемеровской обл.',addr:'ул. Красноармейская, 121',tel:'+7 (3842) 36-91-52',url:'https://42.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Кемерово',addr:'пр. Советский, 63',tel:'+7 (3842) 58-01-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'7 000',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  tomsk:{name:'Томск',mvd:{name:'ГУВМ МВД Томской обл.',addr:'ул. Шевченко, 33',tel:'+7 (3822) 51-24-71',url:'https://70.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Томска',addr:'ул. Нахимова, 13',tel:'+7 (3822) 90-30-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'5 800',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  tomsk:{name:'Томск',mvd:{name:'ГУВМ МВД Томской обл.',addr:'ул. Шевченко, 33',tel:'+7 (3822) 51-24-71',url:'https://70.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Томска',addr:'ул. Нахимова, 13',tel:'+7 (3822) 90-30-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'8 491',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   vladivostok:{name:'Владивосток',mvd:{name:'ГУВМ МВД Приморского края',addr:'ул. Посьетская, 48',tel:'+7 (423) 226-63-93',url:'https://25.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Владивостока',addr:'ул. Светланская, 114',tel:'+7 (423) 240-28-28',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'12 600',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  khabarovsk:{name:'Хабаровск',mvd:{name:'ГУВМ МВД Хабаровского края',addr:'ул. Ленина, 4',tel:'+7 (4212) 30-71-04',url:'https://27.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Хабаровска',addr:'ул. Дикопольцева, 33',tel:'+7 (4212) 56-70-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'8 000',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  khabarovsk:{name:'Хабаровск',mvd:{name:'ГУВМ МВД Хабаровского края',addr:'ул. Ленина, 4',tel:'+7 (4212) 30-71-04',url:'https://27.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Хабаровска',addr:'ул. Дикопольцева, 33',tel:'+7 (4212) 56-70-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'8 405',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   yakutsk:{name:'Якутск',mvd:{name:'ГУВМ МВД Республики Саха',addr:'ул. Орджоникидзе, 18',tel:'+7 (4112) 42-71-61',url:'https://14.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Якутска',addr:'ул. Ойунского, 8',tel:'+7 (4112) 40-10-55',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'9 000',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   nnv:{name:'Нижний Новгород',mvd:{name:'ГУВМ МВД Нижегородской обл.',addr:'ул. Горького, 78',tel:'+7 (831) 431-90-00',url:'https://52.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Нижнего Новгорода',addr:'ул. Родионова, 192',tel:'+7 (831) 423-43-43',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'6 500',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
-  saratov:{name:'Саратов',mvd:{name:'ГУВМ МВД Саратовской обл.',addr:'ул. Слонова, 7',tel:'+7 (845) 236-52-26',url:'https://64.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Саратова',addr:'ул. Шехурдина, 2',tel:'+7 (845) 220-88-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'5 500',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
+  saratov:{name:'Саратов',mvd:{name:'ГУВМ МВД Саратовской обл.',addr:'ул. Слонова, 7',tel:'+7 (845) 236-52-26',url:'https://64.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Саратова',addr:'ул. Шехурдина, 2',tel:'+7 (845) 220-88-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'8 557',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   kaliningrad:{name:'Калининград',mvd:{name:'ГУВМ МВД Калининградской обл.',addr:'ул. Соммера, 9',tel:'+7 (4012) 95-28-02',url:'https://39.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Калининграда',addr:'ул. Клиническая, 63',tel:'+7 (4012) 60-70-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'7 000',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   murmansk:{name:'Мурманск',mvd:{name:'ГУВМ МВД Мурманской обл.',addr:'ул. Карла Маркса, 5',tel:'+7 (8152) 45-58-16',url:'https://51.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Мурманска',addr:'ул. Буркова, 10',tel:'+7 (8152) 40-08-09',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'8 000',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
   stavropol:{name:'Ставрополь',mvd:{name:'ГУВМ МВД Ставропольского края',addr:'ул. Ленина, 415',tel:'+7 (8652) 35-36-30',url:'https://26.xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ Ставрополя',addr:'ул. Мира, 337',tel:'+7 (8652) 25-10-00',url:'https://мфц.рф',hours:'Пн-Пт 8:00–20:00'},patent_cost:'5 500',links:[{ico:'🗺️',t:'Найти МФЦ',url:'https://мфц.рф'}]},
@@ -1365,7 +1421,8 @@ function saveDoc(){
   localStorage.setItem('md',JSON.stringify(S.docs));
   renderDocs();clsOv2('sh-doc');
   adtc(); // reset hint
-  toast('✅ Документ добавлен! Напоминания настроены.');
+  toast('✅ Документ добавлен!');
+  initMain(); // обновить профиль и health score
   sendBot('doc_added',{type,n,exp});
 }
 function gEl(id){return document.getElementById(id)?.value?.trim()||'';}
