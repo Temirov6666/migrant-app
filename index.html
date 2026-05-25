@@ -407,6 +407,12 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
         <div style="display:flex;align-items:center;gap:10px"><span style="font-size:26px">✅</span><div><div style="font-size:14px;font-weight:700;color:var(--green)">PRO активен</div><div style="font-size:12px;color:var(--mu2)" id="pro-until">—</div></div></div>
       </div>
 
+      <div class="stitle">🛠️ Инструменты</div>
+      <div class="li" onclick="go('dms')"><div class="li-ico g">🏥</div><div class="li-txt"><div class="li-t">ДМС — страховка для патента</div><div class="li-s">Оформить онлайн · обязательно!</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('checklist')"><div class="li-ico b">📋</div><div class="li-txt"><div class="li-t">Чеклист при въезде</div><div class="li-s">Что делать в первые 30 дней</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('templates')"><div class="li-ico o">📝</div><div class="li-txt"><div class="li-t">Шаблоны документов</div><div class="li-s">Жалобы, заявления · 50–100 Stars</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('region')"><div class="li-ico y">🧮</div><div class="li-txt"><div class="li-t">Стоимость патента по регионам</div><div class="li-s">Актуальные суммы 2026</div></div><div class="arr">›</div></div>
+      
       <div class="stitle">Услуги</div>
       <div class="li" onclick="go('notify')"><div class="li-ico t">📬</div><div class="li-txt"><div class="li-t">Уведомить МВД о работе</div><div class="li-s">Через Госуслуги — 3 дня!</div></div><div class="arr">›</div></div>
       <div class="li" onclick="proGate('risk')"><div class="li-ico o">📊</div><div class="li-txt"><div class="li-t">AI Анализ рисков</div><div class="li-s">Оценка вашего миграционного статуса</div></div><div class="arr">›</div></div>
@@ -964,6 +970,132 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
   <div class="px"><div id="b2b-risk-body"></div></div>
 </div>
 
+
+<!-- ===== ДМС СТРАХОВКА ===== -->
+<div class="pg" id="pg-dms">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">🏥 ДМС — страховка для патента</div></div>
+  <div class="px">
+    <div class="box r" style="margin-bottom:14px">⚠️ Без полиса ДМС патент не выдадут! Штраф — до 5 000 ₽ + выдворение.</div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px">📋 Требования к полису ДМС:</div>
+      <div class="irow"><div class="irow-l">Срок действия</div><div class="irow-v">Не менее 365 дней (совпадает с патентом)</div></div>
+      <div class="irow"><div class="irow-l">Страховая сумма</div><div class="irow-v">Не менее 100 000 ₽</div></div>
+      <div class="irow"><div class="irow-l">Территория</div><div class="irow-v">Вся Россия</div></div>
+      <div class="irow"><div class="irow-l">Для кого</div><div class="irow-v">Иностранные граждане без паспорта РФ</div></div>
+    </div>
+    <div class="stitle">Где оформить онлайн:</div>
+    <a class="li" href="https://reso.ru/individual/medicine/labordms/" target="_blank">
+      <div class="li-ico g">🏆</div>
+      <div class="li-txt"><div class="li-t">РЕСО-Гарантия — ДМС Трудовой</div><div class="li-s">270 000+ клиентов · Полис сразу на email · 3 мес — 3 года</div></div>
+      <div class="arr">›</div>
+    </a>
+    <a class="li" href="https://euro-ins.ru/medicinskiy-polis/dms-migrantov" target="_blank">
+      <div class="li-ico b">🛡️</div>
+      <div class="li-txt"><div class="li-t">ЕВРОИНС — ДМС для мигрантов</div><div class="li-s">18–70 лет · Студенты и трудовые мигранты</div></div>
+      <div class="arr">›</div>
+    </a>
+    <a class="li" href="https://www.insure.travel/voluntary/patent" target="_blank">
+      <div class="li-ico y">🔍</div>
+      <div class="li-txt"><div class="li-t">insure.travel — сравнить всех</div><div class="li-s">Агрегатор · Выбрать лучшую цену</div></div>
+      <div class="arr">›</div>
+    </a>
+    <a class="li" href="https://www.rsinsurance.ru/insurance/healthandlife/to-migrants/" target="_blank">
+      <div class="li-ico p">💳</div>
+      <div class="li-txt"><div class="li-t">Русский Стандарт Страхование</div><div class="li-s">От 3 месяцев · Онлайн оформление</div></div>
+      <div class="arr">›</div>
+    </a>
+    <div class="box b" style="margin-top:14px">💡 После оплаты — полис придёт на email или телефон. Распечатайте или сохраните в телефоне.</div>
+  </div>
+</div>
+
+<!-- ===== ЧЕКЛИСТ ПРИ ВЪЕЗДЕ ===== -->
+<div class="pg" id="pg-checklist">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">📋 Чеклист при въезде</div></div>
+  <div class="px">
+    <div class="box b" style="margin-bottom:14px">Только что приехали в Россию? Вот что нужно сделать по порядку.</div>
+    
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:var(--red);margin-bottom:12px">⏰ В течение 7 дней — ОБЯЗАТЕЛЬНО</div>
+      <div class="sr"><div class="sn">1</div><div class="st"><b>Встать на миграционный учёт.</b> Работодатель или хозяин жилья подаёт уведомление в МВД. Без регистрации — штраф 2 000–5 000 ₽!</div></div>
+      <div class="sr"><div class="sn">2</div><div class="st"><b>Сохранить миграционную карту.</b> Не теряйте — это ключевой документ. Сфотографируйте и сохраните копию.</div></div>
+    </div>
+    
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:var(--or);margin-bottom:12px">📋 В течение 30 дней (для патента)</div>
+      <div class="sr"><div class="sn">3</div><div class="st"><b>Пройти медицинское освидетельствование.</b> В ММЦ Сахарово или аккредитованной клинике. Стоимость: 2 000–5 000 ₽.</div></div>
+      <div class="sr"><div class="sn">4</div><div class="st"><b>Сдать тест на знание русского языка и истории.</b> В ММЦ или аккредитованном центре.</div></div>
+      <div class="sr"><div class="sn">5</div><div class="st"><b>Оформить полис ДМС.</b> Минимум на 1 год, не менее 100 000 ₽. Можно онлайн за 5 минут.</div></div>
+      <div class="sr"><div class="sn">6</div><div class="st"><b>Подать документы на патент</b> в МФЦ или ММЦ. Срок — 30 дней с въезда!</div></div>
+      <div class="sr"><div class="sn">7</div><div class="st"><b>Оплатить авансовый НДФЛ</b> за первый месяц патента. Реквизиты в боте.</div></div>
+    </div>
+    
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:12px">✅ После получения патента</div>
+      <div class="sr"><div class="sn">8</div><div class="st"><b>Работодатель уведомляет МВД</b> о трудоустройстве — 3 рабочих дня!</div></div>
+      <div class="sr"><div class="sn">9</div><div class="st"><b>Платить НДФЛ каждый месяц</b> — до дня получения патента. Просрочка = аннулирование!</div></div>
+      <div class="sr"><div class="sn">10</div><div class="st"><b>Обновить регистрацию</b> при смене адреса.</div></div>
+    </div>
+    
+    <div class="card" style="border-color:rgba(79,142,247,.3)">
+      <div style="font-size:13px;font-weight:800;color:var(--blue);margin-bottom:10px">🌍 Граждане ЕАЭС (особые правила)</div>
+      <div style="font-size:13px;color:var(--mu2);line-height:1.7"><b>Армения, Беларусь, Казахстан, Кыргызстан:</b><br>Патент НЕ нужен! Работают как граждане РФ.<br>Нужна только регистрация в течение 30 дней.<br>Срок пребывания не ограничен 365 днями.</div>
+    </div>
+    
+    <button class="btn t" onclick="go('dms')" style="margin-top:14px">🏥 Оформить ДМС онлайн →</button>
+    <button class="btn out" onclick="go('notify')" style="margin-top:8px">📬 Уведомить МВД о трудоустройстве →</button>
+  </div>
+</div>
+
+<!-- ===== ШАБЛОНЫ ДОКУМЕНТОВ ===== -->
+<div class="pg" id="pg-templates">
+  <div class="hdr"><button class="hdr-back" onclick="goBack()">‹</button><div class="hdr-title">📝 Шаблоны документов</div></div>
+  <div class="px">
+    <div class="box b" style="margin-bottom:14px">AI-юрист составит персональный документ с вашими данными за 30 секунд.</div>
+    
+    <div class="card" onclick="openTemplate('inspection')" style="cursor:pointer;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:700;margin-bottom:5px">⚖️ Жалоба в трудовую инспекцию</div>
+          <div style="font-size:12px;color:var(--mu2);line-height:1.5">При задержке зарплаты, незаконном увольнении, нарушении условий труда</div>
+        </div>
+        <div style="background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:800;color:var(--or);white-space:nowrap;margin-left:10px">50 ⭐</div>
+      </div>
+    </div>
+    
+    <div class="card" onclick="openTemplate('patent_restore')" style="cursor:pointer;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:700;margin-bottom:5px">🪪 Заявление на восстановление патента</div>
+          <div style="font-size:12px;color:var(--mu2);line-height:1.5">При утере, порче или аннулировании патента на работу</div>
+        </div>
+        <div style="background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:800;color:var(--or);white-space:nowrap;margin-left:10px">75 ⭐</div>
+      </div>
+    </div>
+    
+    <div class="card" onclick="openTemplate('employer_complaint')" style="cursor:pointer;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:700;margin-bottom:5px">🏢 Жалоба на работодателя</div>
+          <div style="font-size:12px;color:var(--mu2);line-height:1.5">Невыплата зарплаты, неофициальное трудоустройство, нарушение прав</div>
+        </div>
+        <div style="background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:800;color:var(--or);white-space:nowrap;margin-left:10px">50 ⭐</div>
+      </div>
+    </div>
+    
+    <div class="card" onclick="openTemplate('ban_appeal')" style="cursor:pointer;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:700;margin-bottom:5px">🚫 Апелляция на запрет въезда</div>
+          <div style="font-size:12px;color:var(--mu2);line-height:1.5">Обжалование решения о запрете въезда в ГУВМ МВД или суд</div>
+        </div>
+        <div style="background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:800;color:var(--or);white-space:nowrap;margin-left:10px">100 ⭐</div>
+      </div>
+    </div>
+    
+    <div class="box g" style="margin-top:14px">✅ После оплаты в боте — документ придёт через 30 секунд с вашими данными. Готов к печати и подаче.</div>
+  </div>
+</div>
+
 <!-- ===== SUB ===== -->
 <div class="pg" id="pg-sub">
   <div class="hdr"><div class="hdr-title">⭐ Migration Alliance PRO</div></div>
@@ -1219,8 +1351,29 @@ function sendAiMsg(){
 }
 function addAiMsg(text,type){const msgs=document.getElementById('ai-msgs');const div=document.createElement('div');div.className=`ai-msg ${type}`;div.textContent=text;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;}
 
+
+// ── TEMPLATES ──
+const TEMPLATE_BOT_LINKS={
+  inspection:'https://t.me/migr_pomoshnik_bot?start=tmpl_inspection',
+  patent_restore:'https://t.me/migr_pomoshnik_bot?start=tmpl_patent_restore',
+  employer_complaint:'https://t.me/migr_pomoshnik_bot?start=tmpl_employer_complaint',
+  ban_appeal:'https://t.me/migr_pomoshnik_bot?start=tmpl_ban_appeal',
+};
+const TEMPLATE_NAMES={
+  inspection:'Жалоба в трудовую инспекцию — 50 ⭐',
+  patent_restore:'Восстановление патента — 75 ⭐',
+  employer_complaint:'Жалоба на работодателя — 50 ⭐',
+  ban_appeal:'Апелляция на запрет въезда — 100 ⭐',
+};
+function openTemplate(key){
+  const name=TEMPLATE_NAMES[key]||key;
+  const url=TEMPLATE_BOT_LINKS[key];
+  if(confirm('Заказать: '+name+'\n\nОплата и получение — в боте Telegram. Документ придёт через 30 секунд.')){
+    Telegram.WebApp.openTelegramLink(url);
+  }
+}
 // ── ROUTING ──
-const PM={home:'pg-home',docs:'pg-docs',sos:'pg-sos','wi-d':'pg-wi-d',risk:'pg-risk',calendar:'pg-calendar',ocr:'pg-ocr','chk-patent':'pg-chk-patent','chk-registry':'pg-chk-registry','chk-ban':'pg-chk-ban',notify:'pg-notify',lawyer:'pg-lawyer',program:'pg-program',kb:'pg-kb','kb-article':'pg-kb-article',region:'pg-region',snils:'pg-snils',ref:'pg-ref',sub:'pg-sub','b2b-add':'pg-b2b-add','b2b-detail':'pg-b2b-detail','b2b-req':'pg-b2b-req','b2b-risk':'pg-b2b-risk'};
+const PM={home:'pg-home',docs:'pg-docs',sos:'pg-sos','wi-d':'pg-wi-d',risk:'pg-risk',calendar:'pg-calendar',ocr:'pg-ocr','chk-patent':'pg-chk-patent','chk-registry':'pg-chk-registry','chk-ban':'pg-chk-ban',notify:'pg-notify',lawyer:'pg-lawyer',program:'pg-program',kb:'pg-kb','kb-article':'pg-kb-article',region:'pg-region',snils:'pg-snils',ref:'pg-ref',sub:'pg-sub','b2b-add':'pg-b2b-add','b2b-detail':'pg-b2b-detail','b2b-req':'pg-b2b-req','b2b-risk':'pg-b2b-risk',dms:'pg-dms',checklist:'pg-checklist',templates:'pg-templates'};
 const NM={home:'nb-home',docs:'nb-docs',region:'nb-region',sub:'nb-sub'};
 let hist=[];
 function go(p){
@@ -1235,6 +1388,7 @@ function go(p){
   if(p==='kb')renderKB('');
   if(p==='region'){const sel=document.getElementById('region-sel');if(sel)renderRegion(sel.value);}
   if(p==='b2b-risk')renderB2BRisk();
+  if(p==='dms'||p==='checklist'||p==='templates'){window.scrollTo(0,0);}
   if(p==='docs')renderDocs();
   if(p==='ref')initRef();
   // Hide AI bubble on chat-like pages
