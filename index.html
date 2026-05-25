@@ -348,6 +348,28 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
   <!-- MIGRANT VIEW -->
   <div id="vm">
     <div class="px">
+
+      <!-- AUTO DAYS COUNTER — работает от даты въезда -->
+      <div id="days-auto-card" style="display:none;margin-bottom:12px">
+        <div id="days-ok" style="background:var(--s1);border-radius:var(--r);padding:14px 16px;border:1px solid var(--bd);display:flex;align-items:center;gap:14px">
+          <div style="text-align:center;min-width:56px">
+            <div style="font-size:32px;font-weight:900;line-height:1" id="days-num">—</div>
+            <div style="font-size:10px;color:var(--mu2);margin-top:2px">дней</div>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700;margin-bottom:2px" id="days-lbl">В России</div>
+            <div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden;margin-bottom:4px">
+              <div id="days-bar" style="height:100%;border-radius:3px;background:var(--green);transition:width 0.5s"></div>
+            </div>
+            <div style="font-size:11px;color:var(--mu2)" id="days-sub">Из 365 дней разрешённого пребывания</div>
+          </div>
+        </div>
+        <div id="days-warn" style="display:none;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:0 0 var(--r) var(--r);padding:8px 16px;font-size:12px;color:var(--red);font-weight:600" id="days-warn-txt"></div>
+      </div>
+      <div id="days-add-prompt" onclick="go('docs')" style="display:none;background:var(--s1);border-radius:var(--r);padding:12px 16px;border:1px dashed rgba(79,142,247,.3);margin-bottom:12px;cursor:pointer">
+        <div style="font-size:13px;color:var(--blue)">📅 Укажите дату въезда → автоматический счётчик дней пребывания</div>
+      </div>
+
       <!-- Health Score -->
       <div class="health-card" onclick="go('docs')">
         <div style="display:flex;align-items:center;gap:14px">
@@ -397,10 +419,9 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
       <!-- PRO -->
       <div id="pro-ban" style="background:linear-gradient(135deg,rgba(245,158,11,.9),rgba(249,115,22,.9));border-radius:var(--r);padding:16px;margin:12px 0;cursor:pointer;position:relative;overflow:hidden" onclick="showPW('')">
         <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:3px">⭐ Разблокировать PRO</div>
-        <div style="font-size:12px;color:rgba(255,255,255,.85);margin-bottom:10px">Безлимит AI · Анализ рисков · Календарь · OCR</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.85);margin-bottom:10px">Безлимит AI · Анализ рисков · OCR документов</div>
         <div style="font-size:12px;color:rgba(255,255,255,.9);margin-bottom:3px">✅ Безлимитный AI-юрист</div>
-        <div style="font-size:12px;color:rgba(255,255,255,.9);margin-bottom:3px">✅ Миграционный календарь</div>
-        <div style="font-size:12px;color:rgba(255,255,255,.9);margin-bottom:10px">✅ Фото-анализ документов</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.9);margin-bottom:10px">✅ Анализ документов и рисков (OCR)</div>
         <div style="background:rgba(0,0,0,.2);color:#fff;border-radius:10px;padding:9px;text-align:center;font-size:14px;font-weight:700">Оформить PRO — от 100 Stars →</div>
       </div>
       <div id="pro-ok" class="card" style="display:none;border-color:rgba(34,197,94,.3)">
@@ -411,13 +432,9 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
       <div class="li" onclick="go('dms')"><div class="li-ico g">🏥</div><div class="li-txt"><div class="li-t">ДМС — страховка для патента</div><div class="li-s">Оформить онлайн · обязательно!</div></div><div class="arr">›</div></div>
       <div class="li" onclick="go('checklist')"><div class="li-ico b">📋</div><div class="li-txt"><div class="li-t">Чеклист при въезде</div><div class="li-s">Что делать в первые 30 дней</div></div><div class="arr">›</div></div>
       <div class="li" onclick="go('templates')"><div class="li-ico o">📝</div><div class="li-txt"><div class="li-t">Шаблоны документов</div><div class="li-s">Жалобы, заявления · 50–100 Stars</div></div><div class="arr">›</div></div>
-      <div class="li" onclick="go('region')"><div class="li-ico y">🧮</div><div class="li-txt"><div class="li-t">Стоимость патента по регионам</div><div class="li-s">Актуальные суммы 2026</div></div><div class="arr">›</div></div>
-      
       <div class="stitle">Услуги</div>
       <div class="li" onclick="go('notify')"><div class="li-ico t">📬</div><div class="li-txt"><div class="li-t">Уведомить МВД о работе</div><div class="li-s">Через Госуслуги — 3 дня!</div></div><div class="arr">›</div></div>
-      <div class="li" onclick="proGate('risk')"><div class="li-ico o">📊</div><div class="li-txt"><div class="li-t">AI Анализ рисков</div><div class="li-s">Оценка вашего миграционного статуса</div></div><div class="arr">›</div></div>
-      <div class="li" onclick="proGate('calendar')"><div class="li-ico b">📅</div><div class="li-txt"><div class="li-t">Миграционный календарь</div><div class="li-s">Все важные даты и сроки</div></div><div class="arr">›</div></div>
-      <div class="li" onclick="go('ocr')"><div class="li-ico y">📷</div><div class="li-txt"><div class="li-t">Фото-анализ документа</div><div class="li-s">OCR — автозаполнение по фото</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="go('ocr')"><div class="li-ico o">📊</div><div class="li-txt"><div class="li-t">Анализ документа и рисков</div><div class="li-s">Фото → AI проверяет статус и риски автоматически</div></div><div class="arr">›</div></div>
       <div class="li" onclick="go('program')"><div class="li-ico g">🇷🇺</div><div class="li-txt"><div class="li-t">Программа переселения</div><div class="li-s">Госпрограмма соотечественников</div></div><div class="arr">›</div></div>
       <div class="li" onclick="go('kb')"><div class="li-ico p">📚</div><div class="li-txt"><div class="li-t">База знаний</div><div class="li-s">Инструкции, бланки, FAQ</div></div><div class="arr">›</div></div>
       <div class="li" onclick="go('snils')"><div class="li-ico t">🪪</div><div class="li-txt"><div class="li-t">СНИЛС / ИНН</div><div class="li-s">Пошаговые инструкции</div></div><div class="arr">›</div></div>
@@ -1372,6 +1389,62 @@ function openTemplate(key){
     Telegram.WebApp.openTelegramLink(url);
   }
 }
+
+// ── AUTO DAYS COUNTER ──
+function renderDaysAuto() {
+  const entryStr = localStorage.getItem('entryDate');
+  const autoCard = document.getElementById('days-auto-card');
+  const addPrompt = document.getElementById('days-add-prompt');
+  if (!autoCard) return;
+  
+  if (!entryStr) {
+    // Дата не указана — показываем подсказку
+    if (addPrompt) addPrompt.style.display = 'block';
+    autoCard.style.display = 'none';
+    return;
+  }
+  
+  if (addPrompt) addPrompt.style.display = 'none';
+  autoCard.style.display = 'block';
+  
+  const entry = new Date(entryStr);
+  const now = new Date();
+  const daysIn = Math.floor((now - entry) / 86400000);
+  const daysLeft = 365 - daysIn;
+  const pct = Math.min(100, Math.max(0, (daysIn / 365) * 100));
+  
+  const numEl = document.getElementById('days-num');
+  const lblEl = document.getElementById('days-lbl');
+  const subEl = document.getElementById('days-sub');
+  const barEl = document.getElementById('days-bar');
+  const warnEl = document.getElementById('days-warn');
+  
+  if (daysLeft < 0) {
+    if (numEl) numEl.textContent = Math.abs(daysLeft);
+    if (lblEl) { lblEl.textContent = 'Превышен срок!'; lblEl.style.color = 'var(--red)'; }
+    if (subEl) subEl.textContent = 'Дней сверх нормы 365';
+    if (barEl) { barEl.style.width = '100%'; barEl.style.background = 'var(--red)'; }
+    if (warnEl) { warnEl.style.display = 'block'; warnEl.textContent = '🚨 Срочно обратитесь к юристу — риск депортации!'; }
+  } else if (daysLeft <= 14) {
+    if (numEl) numEl.textContent = daysLeft;
+    if (lblEl) { lblEl.textContent = 'дней осталось'; lblEl.style.color = 'var(--red)'; }
+    if (subEl) subEl.textContent = 'Из 365 разрешённых. КРИТИЧНО!';
+    if (barEl) { barEl.style.width = pct + '%'; barEl.style.background = 'var(--red)'; }
+    if (warnEl) { warnEl.style.display = 'block'; warnEl.textContent = '⚡ Срочно решите вопрос продления или выезда!'; }
+  } else if (daysLeft <= 30) {
+    if (numEl) numEl.textContent = daysLeft;
+    if (lblEl) { lblEl.textContent = 'дней осталось'; lblEl.style.color = 'var(--or)'; }
+    if (subEl) subEl.textContent = 'Из 365 разрешённых. Скоро нужно действовать.';
+    if (barEl) { barEl.style.width = pct + '%'; barEl.style.background = 'var(--or)'; }
+    if (warnEl) { warnEl.style.display = 'none'; }
+  } else {
+    if (numEl) numEl.textContent = daysLeft;
+    if (lblEl) { lblEl.textContent = 'дней осталось'; lblEl.style.color = 'var(--green)'; }
+    if (subEl) subEl.textContent = `В России ${daysIn} дн · Разрешено 365 дн · Правило 90/365`;
+    if (barEl) { barEl.style.width = pct + '%'; barEl.style.background = 'var(--green)'; }
+    if (warnEl) { warnEl.style.display = 'none'; }
+  }
+}
 // ── ROUTING ──
 const PM={home:'pg-home',docs:'pg-docs',sos:'pg-sos','wi-d':'pg-wi-d',risk:'pg-risk',calendar:'pg-calendar',ocr:'pg-ocr','chk-patent':'pg-chk-patent','chk-registry':'pg-chk-registry','chk-ban':'pg-chk-ban',notify:'pg-notify',lawyer:'pg-lawyer',program:'pg-program',kb:'pg-kb','kb-article':'pg-kb-article',region:'pg-region',snils:'pg-snils',ref:'pg-ref',sub:'pg-sub','b2b-add':'pg-b2b-add','b2b-detail':'pg-b2b-detail','b2b-req':'pg-b2b-req','b2b-risk':'pg-b2b-risk',dms:'pg-dms',checklist:'pg-checklist',templates:'pg-templates'};
 const NM={home:'nb-home',docs:'nb-docs',region:'nb-region',sub:'nb-sub'};
@@ -1388,6 +1461,7 @@ function go(p){
   if(p==='kb')renderKB('');
   if(p==='region'){const sel=document.getElementById('region-sel');if(sel)renderRegion(sel.value);}
   if(p==='b2b-risk')renderB2BRisk();
+  if(p==='home')renderDaysAuto();
   if(p==='dms'||p==='checklist'||p==='templates'){window.scrollTo(0,0);}
   if(p==='docs')renderDocs();
   if(p==='ref')initRef();
@@ -1631,7 +1705,7 @@ function saveDoc(){
 function gEl(id){return document.getElementById(id)?.value?.trim()||'';}
 
 // ── STAY ──
-function saveEntry(v){S.entry=v;localStorage.setItem('me',v);updateStay(v);}
+function saveEntry(v){if(v){localStorage.setItem("entryDate",v);}renderDaysAuto();S.entry=v;localStorage.setItem('me',v);updateStay(v);}
 function updateStay(d){
   if(!d)return;
   const dI=Math.ceil((new Date()-new Date(d))/86400000);
