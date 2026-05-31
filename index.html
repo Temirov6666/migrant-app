@@ -558,7 +558,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
     <div class="li" onclick="wi('job_change')"><div class="li-ico t">💼</div><div class="li-txt"><div class="li-t">Сменил работодателя</div><div class="li-s">Уведомить МВД — 3 рабочих дня!</div></div><div class="arr">›</div></div>
     <div class="li" onclick="wi('border')"><div class="li-ico r">🛂</div><div class="li-txt"><div class="li-t">Проблемы на границе</div><div class="li-s">Не пускают, задержали</div></div><div class="arr">›</div></div>
     <div style="margin-top:4px">
-      <button class="btn pi" onclick="sendBot('consult',{topic:'SOS — срочная помощь'})">⚖️ Срочная консультация юриста</button>
+      <button class="btn pi" onclick="openLawyerChat('SOS — срочная помощь')">⚖️ Срочная консультация юриста</button>
     </div>
   </div>
 </div>
@@ -723,7 +723,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
     <button class="btn g" onclick="showBanData()">📋 Показать данные для ввода</button>
     <a href="https://xn--c1abzb4b.xn--b1aew.xn--p1ai/services/1697527" target="_blank"><button class="btn r">🔍 Проверить запрет на МВД.РФ</button></a>
     <div class="divider" style="height:1px;background:var(--bd);margin:14px 0"></div>
-    <button class="btn pi" onclick="sendBot('consult',{topic:'Нашёл запрет на въезд'})">⚡ Нашли запрет? Срочно к юристу!</button>
+    <button class="btn pi" onclick="openLawyerChat('Нашёл запрет на въезд')">⚡ Нашли запрет? Срочно к юристу!</button>
   </div>
 </div>
 
@@ -757,12 +757,12 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
     <div class="box g">✅ Migration Alliance — профессиональная юридическая помощь мигрантам</div>
     <div class="card">
       <div style="font-size:14px;font-weight:700;margin-bottom:12px">Выберите тему консультации:</div>
-      <div class="li" onclick="sendBot('consult',{topic:'Патент'})"><div class="li-ico b">🪪</div><div class="li-txt"><div class="li-t">Патент на работу</div></div><div class="arr">›</div></div>
-      <div class="li" onclick="sendBot('consult',{topic:'РВП/ВНЖ'})"><div class="li-ico p">📘</div><div class="li-txt"><div class="li-t">РВП / ВНЖ</div></div><div class="arr">›</div></div>
-      <div class="li" onclick="sendBot('consult',{topic:'Гражданство'})"><div class="li-ico g">🇷🇺</div><div class="li-txt"><div class="li-t">Гражданство России</div></div><div class="arr">›</div></div>
-      <div class="li" onclick="sendBot('consult',{topic:'Депортация'})"><div class="li-ico r">✈️</div><div class="li-txt"><div class="li-t">Депортация / запрет въезда</div></div><div class="arr">›</div></div>
-      <div class="li" onclick="sendBot('consult',{topic:'Работодатель'})"><div class="li-ico t">🏢</div><div class="li-txt"><div class="li-t">Вопросы работодателя</div></div><div class="arr">›</div></div>
-      <div class="li" onclick="sendBot('consult',{topic:'Другое'})"><div class="li-ico y">📂</div><div class="li-txt"><div class="li-t">Другой вопрос</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openLawyerChat('Патент на работу')"><div class="li-ico b">🪪</div><div class="li-txt"><div class="li-t">Патент на работу</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openLawyerChat('РВП/ВНЖ')"><div class="li-ico p">📘</div><div class="li-txt"><div class="li-t">РВП / ВНЖ</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openLawyerChat('Гражданство России')"><div class="li-ico g">🇷🇺</div><div class="li-txt"><div class="li-t">Гражданство России</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openLawyerChat('Депортация и запрет въезда')"><div class="li-ico r">✈️</div><div class="li-txt"><div class="li-t">Депортация / запрет въезда</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openLawyerChat('Вопросы работодателя')"><div class="li-ico t">🏢</div><div class="li-txt"><div class="li-t">Вопросы работодателя</div></div><div class="arr">›</div></div>
+      <div class="li" onclick="openLawyerChat('Другой вопрос')"><div class="li-ico y">📂</div><div class="li-txt"><div class="li-t">Другой вопрос</div></div><div class="arr">›</div></div>
     </div>
     <div class="box b">💬 После нажатия юрист свяжется с вами в Telegram</div>
     <a href="https://t.me/Temirov_officiaI" target="_blank"><button class="btn pi">💬 Написать юристу напрямую →</button></a>
@@ -807,7 +807,7 @@ body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--tx);ov
       </div>
     </div>
     <a href="https://xn--b1aew.xn--p1ai/Deljatelnost/compatriots" target="_blank"><button class="btn">🌐 Официальный сайт программы</button></a>
-    <button class="btn pi" onclick="sendBot('consult',{topic:'Программа переселения'})">⚖️ Консультация по программе</button>
+    <button class="btn pi" onclick="openLawyerChat('Программа переселения')">⚖️ Консультация по программе</button>
   </div>
 </div>
 
@@ -1212,6 +1212,11 @@ const CITS_HTML=`<option value="">-- Выберите --</option>${Object.entrie
 // CITS replaced at build time
 
 // ── STATE ──
+// ── AI PROXY — замените на реальный IP/домен вашего VPS ──
+// Пример: 'http://YOUR_SERVER_IP:8080/ai'
+// Если домен с HTTPS: 'https://your-domain.com/ai'
+const AI_PROXY_URL = 'http://YOUR_SERVER_IP:8080/ai';
+
 const S={
   user:tg?.initDataUnsafe?.user||{first_name:'Пользователь',id:'demo'},
   lang:localStorage.getItem('ml')||'ru',
@@ -1348,7 +1353,7 @@ function updateAIChatLimit(){const el=document.getElementById('ai-limit-lbl');if
 // ── AI CHAT ──
 let aiChatOpen=false;
 function toggleAiChat(){aiChatOpen=!aiChatOpen;document.getElementById('ai-chat').classList.toggle('open',aiChatOpen);if(aiChatOpen){document.getElementById('ai-bubble').style.display='none';updateAIChatLimit();}else{document.getElementById('ai-bubble').style.display='flex';}}
-function sendAiMsg(){
+async function sendAiMsg(){
   const inp=document.getElementById('ai-inp');
   const msg=inp.value.trim();
   if(!msg)return;
@@ -1357,14 +1362,35 @@ function sendAiMsg(){
   inp.value='';
   incAI();
   updateAIChatLimit();
-  addAiMsg('⏳ Анализирую...','bot typing');
-  sendBot('ai_question',{question:msg,lang:S.lang});
-  setTimeout(()=>{
-    const msgs=document.getElementById('ai-msgs');
-    const typing=msgs.querySelector('.typing');
-    if(typing)typing.remove();
-    addAiMsg('Ответ отправлен в бот @migr_pomoshnik_bot. Откройте бот чтобы увидеть полный ответ.','bot');
-  },1500);
+  addAiMsg('⏳ Анализирую вопрос...','bot typing');
+
+  const langNames={ru:'русском',uz:'узбекском',tj:'таджикском',kz:'казахском',ky:'кыргызском',az:'азербайджанском',md:'молдавском',ua:'украинском',hy:'армянском'};
+  const langName=langNames[S.lang]||'русском';
+
+  const systemPrompt=`Ты — AI-юрист Migration Alliance, помощник по миграционному законодательству России. 
+Отвечай на ${langName} языке. Давай чёткие, практичные ответы. 
+Ссылайся на конкретные статьи законов (ФЗ-115, ФЗ-114, ТК РФ и др.).
+Если ситуация сложная — рекомендуй обратиться к юристу Migration Alliance: @Temirov_officiaI.
+Отвечай кратко — максимум 200 слов. Не используй markdown.`;
+
+  try {
+    const resp = await fetch(AI_PROXY_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({question: msg, lang: S.lang})
+    });
+    const data = await resp.json();
+    const msgs = document.getElementById('ai-msgs');
+    const typing = msgs.querySelector('.typing');
+    if(typing) typing.remove();
+    const answer = data?.answer || data?.error || 'Не удалось получить ответ. Попробуйте позже.';
+    addAiMsg(answer, 'bot');
+  } catch(e) {
+    const msgs = document.getElementById('ai-msgs');
+    const typing = msgs.querySelector('.typing');
+    if(typing) typing.remove();
+    addAiMsg('Ошибка соединения. Проверьте интернет и попробуйте снова.', 'bot');
+  }
 }
 function addAiMsg(text,type){const msgs=document.getElementById('ai-msgs');const div=document.createElement('div');div.className=`ai-msg ${type}`;div.textContent=text;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;}
 
@@ -1753,7 +1779,7 @@ function wi(key){
   const d=WI[key];if(!d)return;
   document.getElementById('wi-title').textContent=d.t;
   document.getElementById('wi-body').innerHTML=d.h+`
-    <button class="btn pi" onclick="sendBot('consult',{topic:'${d.t}'})" style="margin-top:4px">⚖️ Срочная консультация юриста</button>
+    <button class="btn pi" onclick="openLawyerChat(d.t)" style="margin-top:4px">⚖️ Срочная консультация юриста</button>
     <button class="btn out" onclick="go('sos')">← Назад к SOS</button>`;
   go('wi-d');
 }
@@ -1864,7 +1890,7 @@ function filterKB(val){renderKB(val);}
 function showArticle(id){
   const k=KB.find(x=>x.id===id);if(!k)return;
   document.getElementById('kb-art-title').textContent=k.title;
-  document.getElementById('kb-art-body').innerHTML=k.body+`<div style="margin-top:20px"><button class="btn pi" onclick="sendBot('consult',{topic:'${k.title}'})" style="margin-bottom:8px">⚖️ Консультация по этой теме</button><button class="btn out" onclick="go('kb')">← База знаний</button></div>`;
+  document.getElementById('kb-art-body').innerHTML=k.body+`<div style="margin-top:20px"><button class="btn pi" onclick="openLawyerChat(k.title)" style="margin-bottom:8px">⚖️ Консультация по этой теме</button><button class="btn out" onclick="go('kb')">← База знаний</button></div>`;
   go('kb-article');
 }
 
@@ -2020,17 +2046,32 @@ function renderRegion(val){
   `;
 }
 
-function sendRegionQ(){
+async function sendRegionQ(){
   const inp=document.getElementById('region-ai-inp');
   const ans=document.getElementById('region-ai-ans');
   const q=inp?.value?.trim();
   if(!q)return;
   if(!checkAI()){toast('Лимит AI. Оформите PRO!');showPW('AI-юрист');return;}
-  if(ans){ans.style.display='block';ans.innerHTML='<div class="ai-msg bot" style="opacity:.6">⏳ Отправляю вопрос...</div>';}
-  sendBot('ai_question',{question:`Регион: ${document.getElementById('region-sel')?.value||'—'}. Вопрос: ${q}`,lang:S.lang});
+  if(ans){ans.style.display='block';ans.innerHTML='<div class="ai-msg bot" style="opacity:.6">⏳ Анализирую...</div>';}
   incAI();
   inp.value='';
-  if(ans)ans.innerHTML='<div class="ai-msg bot">✅ Вопрос отправлен! Ответ придёт в бот @migr_pomoshnik_bot</div>';
+
+  const region=document.getElementById('region-sel')?.value||'—';
+  const langNames={ru:'русском',uz:'узбекском',tj:'таджикском',kz:'казахском',ky:'кыргызском',az:'азербайджанском',md:'молдавском',ua:'украинском',hy:'армянском'};
+  const langName=langNames[S.lang]||'русском';
+
+  try {
+    const resp=await fetch(AI_PROXY_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({question:q, lang:S.lang, region:region})
+    });
+    const data=await resp.json();
+    const answer=data?.answer||data?.error||'Не удалось получить ответ.';
+    if(ans)ans.innerHTML=`<div class="ai-msg bot">${answer}</div>`;
+  } catch(e){
+    if(ans)ans.innerHTML='<div class="ai-msg bot">Ошибка соединения. Попробуйте снова.</div>';
+  }
 }
 
 // ── REFERRAL ──
@@ -2146,6 +2187,13 @@ function openOv(id){
 function clsOv(e,id){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');}
 function clsOv2(id){document.getElementById(id).classList.remove('open');}
 
+function openLawyerChat(topic){
+  const uid=S.user?.id||'demo';
+  const text=encodeURIComponent(`Здравствуйте! Хочу записаться на консультацию. Тема: ${topic}`);
+  const url=`https://t.me/Temirov_officiaI?text=${text}`;
+  if(tg?.openTelegramLink) tg.openTelegramLink(url);
+  else window.open(url,'_blank');
+}
 // ── BOT BRIDGE ──
 function sendBot(action,data){if(tg?.sendData){try{tg.sendData(JSON.stringify({action,...data,userId:S.user?.id,lang:S.lang}));}catch(e){console.log('sendData:',e);}}}
 
