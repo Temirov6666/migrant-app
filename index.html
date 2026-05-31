@@ -1267,6 +1267,7 @@ const REGIONS={
   other:{name:'Другой регион',mvd:{name:'МВД России',addr:'Найдите ваш региональный ГУВМ МВД',tel:'102',url:'https://xn--b1aew.xn--p1ai'},mmc:{name:'МФЦ России',addr:'мфц.рф — найти МФЦ в вашем городе',tel:'8-800-100-70-10',url:'https://мфц.рф',hours:'Уточните на сайте'},patent_cost:'уточните в регионе',links:[{ico:'🗺️',t:'Найти МФЦ в вашем городе',url:'https://мфц.рф'},{ico:'🏛️',t:'Портал Госуслуги',url:'https://gosuslugi.ru'}]}
 };
 
+function hideOcrResult(){const el=document.getElementById('ocr-result');if(el)el.style.display='none';}
 // ── KNOWLEDGE BASE ──
 const KB=[
   {id:'kb1',tag:'law',title:'Патент на работу: полная инструкция',body:`<b>Кто может получить:</b> граждане безвизовых стран (Узбекистан, Таджикистан, Молдова, Азербайджан и др.)<br><br><b>Срок действия:</b> от 1 до 12 месяцев<br><b>Стоимость в Москве:</b> 7 500 ₽/месяц<br><br><b>Порядок получения:</b><br>1. Въезд с пометкой «работа» в миграционной карте<br>2. В течение 30 дней — документы в ГУВМ МВД<br>3. Медицинское освидетельствование<br>4. Экзамен по русскому языку<br>5. Оплата НДФЛ авансом<br><br><b>❗ Важно:</b> Работать только в регионе выдачи и по указанной профессии!`},
@@ -1726,7 +1727,7 @@ function saveDoc(){
   adtc(); // reset hint
   toast('✅ Документ добавлен!');
   initMain(); // обновить профиль и health score
-  sendBot('doc_added',{type,n,exp});
+  // doc saved locally above - no bot bridge needed when opened via link
 }
 function gEl(id){return document.getElementById(id)?.value?.trim()||'';}
 
@@ -1754,24 +1755,21 @@ function showPatData(){
   const s=g('cp-s'),n=g('cp-n'),bs=g('cp-bs'),bn=g('cp-bn'),p=g('cp-p');
   if(!n){toast('Введите номер патента');return;}
   const e=document.getElementById('cp-d');e.style.display='block';
-  e.innerHTML=`<div class="box b"><b style="color:var(--tx)">📋 Введите на сайте МВД:</b><br>Номер патента: <b style="color:var(--tx)">${n}</b><br>${p?`Паспорт: <b style="color:var(--tx)">${p}</b>`:''}</div>`;
-  sendBot('check_patent',{s,n,bs,bn,p});
+  e.innerHTML=`<div class="box b"><b style="color:var(--tx)">📋 Ваши данные для проверки:</b><br>Номер патента: <b style="color:var(--tx)">${n}</b><br>${p?`Паспорт: <b style="color:var(--tx)">${p}</b><br>`:''}<br><button class="btn b" style="margin-top:8px" onclick="if(tg?.openTelegramLink)tg.openTelegramLink('https://xn--c1acnelc5b.xn--b1aew.xn--p1ai/services/');else window.open('https://xn--c1acnelc5b.xn--b1aew.xn--p1ai/services/','_blank')">🔍 Открыть проверку на МВД</button></div>`;
 }
 function showRgData(){
   const l=g('rg-l'),f=g('rg-f'),b=g('rg-b'),pn=g('rg-pn');
   if(!l||!f||!b){toast('Заполните ФИО и дату рождения');return;}
   if(!pn){toast('Введите номер паспорта');return;}
   const e=document.getElementById('rg-d');e.style.display='block';
-  e.innerHTML=`<div class="box b"><b style="color:var(--tx)">📋 Введите на сайте МВД:</b><br>Фамилия: <b style="color:var(--tx)">${l}</b><br>Имя: <b style="color:var(--tx)">${f}</b><br>Дата рождения: <b style="color:var(--tx)">${b}</b><br>Паспорт: <b style="color:var(--tx)">${pn}</b></div>`;
-  sendBot('check_registry',{l,f,b,pn});
+  e.innerHTML=`<div class="box b"><b style="color:var(--tx)">📋 Ваши данные для проверки:</b><br>Фамилия: <b style="color:var(--tx)">${l}</b><br>Имя: <b style="color:var(--tx)">${f}</b><br>Дата рождения: <b style="color:var(--tx)">${b}</b><br>Паспорт: <b style="color:var(--tx)">${pn}</b><br><button class="btn b" style="margin-top:8px" onclick="if(tg?.openTelegramLink)tg.openTelegramLink('https://xn--b1aew.xn--p1ai/mvd/structure1/Centri/guvm/gosuslugi/Reestr_inostrannih_grazdan/');else window.open('https://xn--b1aew.xn--p1ai/mvd/structure1/Centri/guvm/gosuslugi/Reestr_inostrannih_grazdan/','_blank')">🔍 Открыть реестр МВД</button></div>`;
 }
 function showBanData(){
   const l=g('bn-l'),f=g('bn-f'),b=g('bn-b'),pn=g('bn-pn');
   if(!l||!f||!b){toast('Заполните ФИО и дату рождения');return;}
   if(!pn){toast('Введите номер паспорта');return;}
   const e=document.getElementById('bn-d');e.style.display='block';
-  e.innerHTML=`<div class="box b"><b style="color:var(--tx)">📋 Введите на сайте МВД:</b><br>Фамилия: <b style="color:var(--tx)">${l}</b><br>Имя: <b style="color:var(--tx)">${f}</b><br>Дата рождения: <b style="color:var(--tx)">${b}</b><br>Паспорт: <b style="color:var(--tx)">${pn}</b></div>`;
-  sendBot('check_ban',{l,f,b,pn});
+  e.innerHTML=`<div class="box b"><b style="color:var(--tx)">📋 Ваши данные для проверки:</b><br>Фамилия: <b style="color:var(--tx)">${l}</b><br>Имя: <b style="color:var(--tx)">${f}</b><br>Дата рождения: <b style="color:var(--tx)">${b}</b><br>Паспорт: <b style="color:var(--tx)">${pn}</b><br><button class="btn r" style="margin-top:8px" onclick="if(tg?.openTelegramLink)tg.openTelegramLink('https://xn--b1aew.xn--p1ai/request_main');else window.open('https://xn--b1aew.xn--p1ai/request_main','_blank')">🔍 Проверить запрет на МВД</button></div>`;
 }
 
 // ── SOS ──
@@ -1857,17 +1855,35 @@ function renderCalendar(){
 
 // ── OCR ──
 function startOCR(){document.getElementById('ocr-file').click();}
-function processOCR(input){
+async function processOCR(input){
   if(!input.files||!input.files[0])return;
   const file=input.files[0];
+  const res=document.getElementById('ocr-result');
+  res.style.display='block';
+  res.innerHTML='<div class="box b">⏳ Анализирую документ... подождите 10–15 секунд</div>';
   const reader=new FileReader();
-  reader.onload=function(e){
+  reader.onload=async function(e){
     const base64=e.target.result.split(',')[1];
-    sendBot('ocr_photo',{photo:base64,lang:S.lang});
-    const res=document.getElementById('ocr-result');
-    res.style.display='block';
-    res.innerHTML=`<div class="box g">📸 Фото отправлено на анализ!<br>Результат придёт в бот @migr_pomoshnik_bot через несколько секунд.</div>`;
-    toast('✅ Фото отправлено! Проверьте бот.');
+    const mediaType=file.type||'image/jpeg';
+    const langNames={ru:'русском',uz:'узбекском',tj:'таджикском',kz:'казахском',ky:'кыргызском',az:'азербайджанском',md:'молдавском',ua:'украинском',hy:'армянском'};
+    const langName=langNames[S.lang]||'русском';
+    try{
+      const resp=await fetch(AI_PROXY_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          question:'Это фото миграционного документа. Распознай все данные: ФИО, серию и номер, дату выдачи, срок действия, орган выдавший документ, тип документа (патент/РВП/ВНЖ/паспорт/миграционная карта). Выведи чётко по полям. Если срок действия истекает менее чем через 30 дней — предупреди об этом отдельно. Если документ просрочен — предупреди об угрозе депортации. Отвечай на '+langName+' языке.',
+          lang:S.lang,
+          image_base64:base64,
+          image_media_type:mediaType
+        })
+      });
+      const data=await resp.json();
+      const answer=data?.answer||data?.error||'Не удалось распознать документ.';
+      res.innerHTML=`<div class="box g" style="white-space:pre-line">📋 <b>Результат распознавания:</b>\n\n${answer}</div><button class="btn out" style="margin-top:8px" onclick="hideOcrResult()">✕ Закрыть</button>`;
+    }catch(err){
+      res.innerHTML='<div class="box r">❌ Ошибка соединения. Проверьте интернет и попробуйте снова.</div>';
+    }
   };
   reader.readAsDataURL(file);
 }
@@ -2131,7 +2147,7 @@ function showEmpD(i){
       ${e.dn?`<div class="irow"><span class="irow-l">Номер</span><span class="irow-v">${e.dn}</span></div>`:''}
       ${e.docExp?`<div class="irow"><span class="irow-l">До</span><span class="irow-v"><span class="badge ${st.cls}">${st.icon} ${fd(e.docExp)}</span></span></div>`:''}
     </div>
-    <button class="btn t" onclick="sendBot('notify_mvd',{empName:'${e.name}'});go('notify')">📬 Уведомить МВД о трудоустройстве</button>
+    <button class="btn t" onclick="go('notify')">📬 Уведомить МВД о трудоустройстве</button>
     <button class="btn r" onclick="delEmp(${i})" style="margin-top:4px">🗑️ Удалить сотрудника</button>
     <button class="btn out" onclick="goBack()">← Назад</button>`;
   go('b2b-detail');
@@ -2143,7 +2159,7 @@ function saveEmp(){
   localStorage.setItem('emps',JSON.stringify(S.emps));
   ['em-name','em-pos','em-pn','em-hd','em-dn','em-de'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   toast('✅ Сотрудник добавлен!');
-  sendBot('employee_added',{name,docType,docExp});
+  // employee saved to localStorage above - no bot bridge needed
   setRole('employer');go('home');
 }
 function delEmp(i){if(!confirm('Удалить сотрудника?'))return;S.emps.splice(i,1);localStorage.setItem('emps',JSON.stringify(S.emps));renderB2BHome();goBack();}
@@ -2173,8 +2189,16 @@ function renderB2BRisk(){
 function submitReq(){
   const co=g('rq-co'),ci=g('rq-ci'),cnt=g('rq-cnt'),job=g('rq-job'),sal=g('rq-sal'),ct=g('rq-ct');
   if(!co||!ci||!cnt||!ct){toast('⚠️ Заполните компанию, город, количество и контакт');return;}
-  sendBot('employer_request',{company:co,city:ci,count:cnt,jobType:job,salary:sal,contact:ct});
-  toast('✅ Заявка отправлена! Ответим в ближайшее время.');
+  // Сохранить локально
+  const req={company:co,city:ci,count:cnt,jobType:job,salary:sal,contact:ct,date:new Date().toISOString()};
+  const reqs=JSON.parse(localStorage.getItem('emp_reqs')||'[]');
+  reqs.push(req);
+  localStorage.setItem('emp_reqs',JSON.stringify(reqs));
+  // Отправить в Telegram юристу
+  const msg=encodeURIComponent('📋 Заявка на подбор сотрудников\nКомпания: '+co+'\nГород: '+ci+'\nКоличество: '+cnt+'\nВид работы: '+(job||'не указан')+'\nЗарплата: '+(sal||'не указана')+'\nКонтакт: '+ct);
+  const url='https://t.me/Temirov_officiaI?text='+msg;
+  if(tg?.openTelegramLink)tg.openTelegramLink(url);else window.open(url,'_blank');
+  toast('✅ Заявка отправлена! Мы свяжемся с вами.');
   ['rq-co','rq-ci','rq-cnt','rq-job','rq-sal','rq-ct'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   goBack();
 }
