@@ -1105,26 +1105,6 @@ async def what_if_menu(callback: types.CallbackQuery):
     except Exception as e:
         log.error(f"what_if_menu error: {e}")
 
-@dp.callback_query(F.data == "test_ai")
-async def test_ai_handler(callback: types.CallbackQuery, state: FSMContext):
-    await state.set_state(QuestionState.waiting)
-    try:
-        await callback.message.edit_text(
-            "<b>Тест AI-юриста</b>\n\n"
-            "Задайте любой вопрос по миграционному законодательству России.\n\n"
-            "Примеры:\n"
-            "- Что делать если просрочен патент?\n"
-            "- Как уведомить МВД о смене работодателя?\n\n"
-            "Напишите ваш вопрос:",
-            parse_mode="HTML",
-            reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
-                InlineKeyboardButton(text="Назад", callback_data="start")
-            ]])
-        )
-        await callback.answer()
-    except Exception as e:
-        log.debug(f"test_ai error: {e}")
-
 @dp.callback_query(F.data.startswith("wif_"))
 async def what_if_scenario(callback: types.CallbackQuery):
     scenario = WHAT_IF_SCENARIOS.get(callback.data)
@@ -2105,19 +2085,7 @@ async def successful_payment(message: types.Message):
             b2b_plan = B2B_PLANS.get(plan_key)
 
         now = datetime.now()
-
-        # FIX: Стакуем дни — берём max(сейчас, текущая sub_until) как базу
-        # Если у пользователя осталось 20 дней и он продлевает — они сохраняются
-        async with aiosqlite.connect(DB_PATH) as db:
-            async with db.execute("SELECT sub_until FROM users WHERE user_id=?", (uid,)) as _cur:
-                _row = await _cur.fetchone()
-            existing_sub = _row[0] if _row and _row[0] else None
-            try:
-                base_date = max(now, datetime.strptime(existing_sub, "%d.%m.%Y")) if existing_sub else now
-            except (ValueError, TypeError):
-                base_date = now
-
-        expires = base_date + timedelta(days=plan["days"])
+        expires = now + timedelta(days=plan["days"])
         expires_str = expires.strftime("%d.%m.%Y")
 
         async with aiosqlite.connect(DB_PATH) as db:
@@ -2126,6 +2094,7 @@ async def successful_payment(message: types.Message):
                 (uid, plan_key, stars, plan["days"], now.strftime("%d.%m.%Y %H:%M"), expires_str, charge_id)
             )
 
+            # ФИКС: Разделили на два отдельных UPDATE вместо сломанной динамической строки
             await db.execute("UPDATE users SET sub_until=?, stars_total=stars_total+? WHERE user_id=?",
                              (expires_str, stars, uid))
 
@@ -2204,29 +2173,6 @@ async def b2b_panel(callback: types.CallbackQuery):
 @dp.callback_query(F.data == "emp_list")
 async def emp_list(callback: types.CallbackQuery):
     uid = callback.from_user.id
-    user = await db_get_user(uid)
-
-    # Проверка истечения B2B подписки
-    if user and user.get("user_type") == "b2b":
-        b2b_sub = user.get("sub_until", "")
-        try:
-            if b2b_sub and datetime.strptime(b2b_sub, "%d.%m.%Y") < datetime.now():
-                try:
-                    await callback.message.edit_text(
-                        "<b>Подписка B2B истекла</b>\n\nПродлите тариф для доступа к списку сотрудников.",
-                        parse_mode="HTML",
-                        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                            [InlineKeyboardButton(text="Продлить", callback_data="become_b2b")],
-                            [InlineKeyboardButton(text="Назад", callback_data="b2b_panel")],
-                        ])
-                    )
-                    await callback.answer()
-                except Exception as e:
-                    log.debug(f"emp_list sub_expired error: {e}")
-                return
-        except (ValueError, AttributeError):
-            pass
-
     employees = await db_get_employees(uid)
     if not employees:
         try:
@@ -2703,6 +2649,100 @@ async def handle_photo(message: types.Message, state: FSMContext):
                 [InlineKeyboardButton(text="➕ Добавить вручную", callback_data="add_doc")]
             ]))
 
+
+@dp.message(F.web_app_data)
+async def handle_web_app_data(message: types.Message, state: FSMContext):
+    """Обработчик данных из Mini App (tg.sendData)"""
+    uid = message.from_user.id
+    user = await db_get_user(uid)
+
+    try:
+        import json as _json
+        data = _json.loads(message.web_app_data.data)
+        action = data.get("action", "")
+        log.info(f"web_app_data from {uid}: action={action} data={data}")
+    except Exception as e:
+        log.error(f"web_app_data parse error: {e}")
+        return
+
+    # ── КОНСУЛЬТАЦИЯ из Mini App ──────────────────────────────
+    if action == "consult":
+        topic    = data.get("topic", "Другое")
+        name     = data.get("name") or message.from_user.full_name or "—"
+        phone    = data.get("phone", "—")
+        city     = data.get("city", "—")
+        urgency  = data.get("urgency", "🟡 Из приложения")
+        username = message.from_user.username
+        lang     = data.get("lang", "ru")
+
+        # Сохраняем в БД
+        try:
+            async with aiosqlite.connect(DB_PATH) as db:
+                await db.execute(
+                    "INSERT INTO consultations (user_id,name,phone,city,topic,urgency,created_at) VALUES (?,?,?,?,?,?,?)",
+                    (uid, name, phone, city, topic, urgency,
+                     datetime.now().strftime("%d.%m.%Y %H:%M"))
+                )
+                await db.commit()
+        except Exception as e:
+            log.error(f"Consult save from webapp error: {e}")
+
+        # Уведомление администратору с кнопками
+        urgency_icon = "🔴" if "СРОЧНО" in urgency or "срочн" in topic.lower() else "🟡"
+        tg_link = f"@{username}" if username else f"tg://user?id={uid}"
+        admin_text = (
+            f"{urgency_icon} <b>НОВАЯ ЗАЯВКА НА КОНСУЛЬТАЦИЮ</b>\n\n"
+            f"👤 <b>Имя:</b> {name}\n"
+            f"📞 <b>Телефон:</b> {phone}\n"
+            f"🏙️ <b>Город:</b> {city}\n"
+            f"📂 <b>Тема:</b> {topic}\n"
+            f"⚡ <b>Срочность:</b> {urgency}\n"
+            f"🆔 <b>Telegram:</b> {tg_link} (<code>{uid}</code>)\n"
+            f"🕐 <b>Время:</b> {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+        )
+        admin_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(
+                text="💬 Написать клиенту",
+                url=f"tg://user?id={uid}"
+            )],
+            [InlineKeyboardButton(
+                text="👤 Профиль клиента",
+                url=f"https://t.me/{username}" if username else f"tg://user?id={uid}"
+            )],
+        ])
+        try:
+            await bot.send_message(ADMIN_ID, admin_text, parse_mode="HTML", reply_markup=admin_kb)
+        except Exception as e:
+            log.error(f"Admin consult notify (webapp) error: {e}")
+
+        # Ответ пользователю — предлагаем написать напрямую
+        user_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(
+                text="💬 Написать юристу сейчас",
+                url=f"https://t.me/Temirov_official"
+            )],
+        ])
+        try:
+            await message.answer(
+                f"✅ <b>Заявка принята!</b>\n\n"
+                f"📂 Тема: <b>{topic}</b>\n\n"
+                f"Юрист свяжется с вами в ближайшее время.\n"
+                f"Или напишите напрямую 👇",
+                parse_mode="HTML",
+                reply_markup=user_kb
+            )
+        except Exception as e:
+            log.debug(f"Consult reply error: {e}")
+
+        await track_action(uid, "consult_webapp", topic)
+        return
+
+    # ── Другие действия из Mini App ───────────────────────────
+    if action == "ocr_photo":
+        await handle_text.__wrapped__(message, state) if hasattr(handle_text, '__wrapped__') else None
+        return
+
+    log.debug(f"web_app_data unknown action={action} from {uid}")
 
 @dp.message(F.text & ~F.text.startswith("/"))
 async def handle_text(message: types.Message, state: FSMContext):
